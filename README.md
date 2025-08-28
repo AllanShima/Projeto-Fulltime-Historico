@@ -13,6 +13,14 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ---
 
+### Extensões do VSCode p projeto:
+- Live Share: https://prod.liveshare.vsengsaas.visualstudio.com/join?845B6BA47A568B6077D6160AA79F35A9548F (link convite live share)
+- ES7 React/Redux/GraphQL/React-Native snippets;
+- Prettier;
+- Tailwind CSS Intellisense;
+
+---
+
 ### Inicialização do projeto:
 pra desenvolvimento: 'npm run dev';
 
