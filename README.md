@@ -22,7 +22,7 @@ If you are developing a production application, we recommend using TypeScript wi
 ---
 
 ### Inicialização do projeto:
-pra desenvolvimento: 'npm run dev';
+Ligar ambiente de desenvolvimento: 'npm run dev';
 
 construção do projeto (build): 'npm run build';
 implatação do proejeto (deploy): 'firebase deploy'; 
