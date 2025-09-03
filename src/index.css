@@ -1,1 +1,16 @@
-@import "tailwindcss";
+/* @import is a new syntax in 4.0 tailwind */
+@import "tailwindcss"; 
+
+@font-face {
+  font-family: InterRegular;
+  src: url('./assets/fonts/Inter/static/Inter_18pt-Regular.ttf');
+}
+
+@theme {
+  --font-regular: InterRegular;
+  --color-border: #E0E0E0;
+  --color-primary: #030213;
+  --color-card: #fff;
+  --color-home: #141414;
+  --color-gray-black: #050505;
+}

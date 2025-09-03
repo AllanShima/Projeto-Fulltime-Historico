@@ -19,6 +19,10 @@ If you are developing a production application, we recommend using TypeScript wi
 - Prettier;
 - Tailwind CSS Intellisense;
 
+#### Modelo e Design do site no Figma: https://www.figma.com/make/7dUkP1EXmsNFcUiUyluHUv/Camera-Event-List-Website?node-id=0-1&p=f&t=OkLz57h0AY02nwVi-0
+
+OBS: Modelo inflenciado pelo software "Moni Softwares". Design elaborado pelo figma AI.
+
 ---
 
 ### Inicialização do projeto:
@@ -41,3 +45,4 @@ Site implantado: https://fulltime-historico.web.app
     - "firebase init hosting"
     - buildando o projeto com vite: "npm run build"
     - emitindo o projeto: "firebase deploy"
+- Instalando os icons de react: 'npm install react-icons --save'
