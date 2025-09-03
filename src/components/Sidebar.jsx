@@ -5,7 +5,7 @@ import { GoAlert } from "react-icons/go";
 import CameraItem from './CameraItem'
 import EventItem from './EventItem';
 
-const Sidebar = ({cameras, events, selectedCam, setSelectedCam}) => {
+const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams}) => {
 
   const [activeTab, setActiveTab] = useState("cameras");
 
@@ -31,7 +31,10 @@ const Sidebar = ({cameras, events, selectedCam, setSelectedCam}) => {
             </span>   
             <div className='space-y-3 mt-3 overflow-y-scroll max-h-120'>
               {cameras.map(camera => (
-                <button key={camera.id} onClick={() => setSelectedCam(camera.id)} className='w-full'>
+                <button key={camera.id} onClick={() => {
+                    setSelectedCam(camera.id)
+                    setRemainingCams(cameras.filter(cams => cams.id !== camera.id))
+                  }} className='w-full'>
                   <CameraItem camera={camera} selectedId={selectedCam}/>                  
                 </button>
               ))}              

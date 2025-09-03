@@ -46,3 +46,4 @@ Site implantado: https://fulltime-historico.web.app
     - buildando o projeto com vite: "npm run build"
     - emitindo o projeto: "firebase deploy"
 - Instalando os icons de react: 'npm install react-icons --save'
+- Instalando rombo motion (https://rombo.co/tailwind/)

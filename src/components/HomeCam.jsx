@@ -2,7 +2,7 @@ import React from 'react'
 import CameraScreen from './CameraScreen';
 
 // selectedId
-const HomeCam = ({cameras, selectedCam}) => {
+const HomeCam = ({cameras, selectedCam, remainingCams}) => {
 
   const imageMap = {
     "1": "https://images.unsplash.com/photo-1646521790482-a76619a564db?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -17,6 +17,8 @@ const HomeCam = ({cameras, selectedCam}) => {
   const currentCamera = cameras.find(cam => cam.id === selectedCam)
   const currentImage = imageMap[selectedCam];
 
+  const secondRowCams = remainingCams.slice(1, 4);
+
   if(!currentCamera){
     return <div>Camera not found.</div>
   }
@@ -26,13 +28,13 @@ const HomeCam = ({cameras, selectedCam}) => {
       <div className='ml-auto mr-auto pl-5 pr-5 w-290'>
         <div className='flex mt-6 h-1/2 space-x-6'>
           <CameraScreen camera={currentCamera} image={currentImage}/>
-          <CameraScreen camera={cameras[1]} image={currentImage}/>
+          <CameraScreen camera={remainingCams[0]} image={imageMap[remainingCams[0].id]}/>
         </div>
 
         <div className='mt-5 mb-auto h-2/5 flex justify-between space-x-6'>
-          <CameraScreen camera={cameras[2]} image={currentImage}/>
-          <CameraScreen camera={cameras[3]} image={currentImage}/>
-          <CameraScreen camera={cameras[4]} image={currentImage}/>
+          {secondRowCams.map((cam) => 
+            <CameraScreen camera={cam} image={imageMap[cam.id]}/>
+          )}
         </div>
       </div>
     </div>

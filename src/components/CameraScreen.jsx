@@ -1,6 +1,7 @@
 import React from 'react'
 import CameraStatusUi from './ui/CameraStatusUi';
 import CameraDataElements from './ui/CameraDataElements';
+import RecordingIndicator from './ui/RecordingIndicator';
 
 const CameraScreen = ({camera, image}) => {
   
@@ -29,7 +30,7 @@ const CameraScreen = ({camera, image}) => {
           </div>
           <div className='grid content-between h-full w-fit'>
             <span><CameraStatusUi status={camera.status}/></span>
-            <span className=''><CameraDataElements text="REC" element='O'/></span>
+            <span className=''><CameraDataElements text="REC" element={<RecordingIndicator/>}/></span>
           </div>
           
         </div>
