@@ -27,13 +27,13 @@ const HomeCam = ({cameras, selectedCam, remainingCams}) => {
     <div className='grid w-full text-white'>
       <div className='ml-auto mr-auto pl-5 pr-5 w-290'>
         <div className='flex mt-6 h-1/2 space-x-6'>
-          <CameraScreen camera={currentCamera} image={currentImage}/>
-          <CameraScreen camera={remainingCams[0]} image={imageMap[remainingCams[0].id]}/>
+          <CameraScreen camera={currentCamera}/>
+          <CameraScreen camera={remainingCams[0]}/>
         </div>
 
         <div className='mt-5 mb-auto h-2/5 flex justify-between space-x-6'>
           {secondRowCams.map((cam) => 
-            <CameraScreen camera={cam} image={imageMap[cam.id]}/>
+            <CameraScreen camera={cam}/>
           )}
         </div>
       </div>

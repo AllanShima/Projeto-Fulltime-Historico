@@ -4,6 +4,7 @@ import { RxExit } from "react-icons/rx";
 import Avatar from "./ui/Avatar";
 import { CiViewTimeline } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
+import { RiNotification3Line } from "react-icons/ri";
 
 const Header = () => {
   const name = "Allan";
@@ -32,9 +33,12 @@ const Header = () => {
             </button>
         </span>
         <div className='grid grid-flow-col justify-end w-full text-primary'>
-          <span className='grid grid-flow-col items-center self-end space-x-4'>
+          <span className='grid grid-flow-col items-center self-end space-x-3'>
             <span className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
               <CiSettings/>
+            </span>
+            <span className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+              <RiNotification3Line/>
             </span>
             <span className='flex'>
               <Avatar name={name} last_name={last_name}/>

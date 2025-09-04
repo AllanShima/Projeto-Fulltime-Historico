@@ -1,4 +1,3 @@
-import Header from './components/Header'
 import HomeMonitor from './components/HomeMonitor'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import NotFoundPage from './components/NotFoundPage'
@@ -13,7 +12,6 @@ function App() {
       path: '/',
       element: (
         <>
-          <Header/>
           <HomeHistory/>
           {/* <HomeMonitor/> */}
         </>
