@@ -1,8 +1,12 @@
+import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
-import Sidebar from './components/Sidebar'
-import HomeCam from './components/HomeCam'
+import Sidebar from './Sidebar'
+import HomeCam from './HomeCam'
 
-const Home = () => {
+const HomeMonitor = ({ currentTab }) => {
+  const navigate = useNavigate();
+
+
   // totalTimeRecorded = tempo total de gravação da câmera
   const cameras = [
     { id: "1", name: "Câmera 1", image: "", location: "Entrada Principal", status: "online", totalTimeRecorded: "17:08:59" },
@@ -13,10 +17,9 @@ const Home = () => {
     { id: "6", name: "Câmera 6", image: "", location: "Sala do Servidor", status: "online", totalTimeRecorded: "19:08:59" },
   ];
 
-  // location will be according what the user selects based on the cameras
-  // User will be depending on the login
-  // BS: Cameras need to be everywhere
-
+  // location será de acordo com o que o monitor colocar ao adicionar cameras
+  // User vai depender do login
+  // BS: O alerta só será ativado quando o usuário escolher a localização dele
   const events = [
     { id: "1", user: "Funcionário 1", location: "Entrada Principal", time: "há 2 min", type: "assalto" },
     { id: "2", user: "Proprietário 2", location: "Andar do Escritório", time: "5 min ago", type: "socorro" },
@@ -32,11 +35,12 @@ const Home = () => {
   const [remainingCams, setRemainingCams] = useState(cameras.filter(cam => cam.id !== selectedCam))
 
   return (
-    <>
+    
+    <div className='flex flex-1 bg-white'>
       <Sidebar cameras={cameras} events={events} selectedCam={selectedCam} setSelectedCam={setSelectedCam} setRemainingCams={setRemainingCams}/>
       <HomeCam cameras={cameras} selectedCam={selectedCam} remainingCams={remainingCams}/>
-    </>
+    </div>
   )
 }
 
-export default Home
+export default HomeMonitor

@@ -26,8 +26,11 @@ OBS: Modelo inflenciado pelo software "Moni Softwares". Design elaborado pelo fi
 ---
 
 ### Inicialização do projeto:
+Instale as dependencias: 'npm install';
+
 Ligar ambiente de desenvolvimento: 'npm run dev';
 
+### Build e Deploy
 construção do projeto (build): 'npm run build';
 implatação do proejeto (deploy): 'firebase deploy'; 
 
@@ -47,3 +50,4 @@ Site implantado: https://fulltime-historico.web.app
     - emitindo o projeto: "firebase deploy"
 - Instalando os icons de react: 'npm install react-icons --save'
 - Instalando rombo motion (https://rombo.co/tailwind/)
+- Instalando react router: "npm install react-router-dom@6.22.1"
