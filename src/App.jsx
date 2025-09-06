@@ -1,9 +1,9 @@
-import Header from './components/Header'
-import HomeMonitor from './components/HomeMonitor'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import TabMonitor from './components/TabMonitor'
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import NotFoundPage from './components/NotFoundPage'
-import HomeCam from './components/HomeCam'
-import HomeHistory from './components/HomeHistory'
+import TabHistory from './components/TabHistory'
+import Header from './components/Header'
+import Login from './components/Login'
 
 function App() {
 
@@ -14,21 +14,25 @@ function App() {
       element: (
         <>
           <Header/>
-          <HomeHistory/>
-          {/* <HomeMonitor/> */}
+          <Outlet/>
         </>
       ),
       errorElement: <NotFoundPage/>,
       children: [
         {
-          path: '/monitor/cameras',
-          element: <HomeCam/>
+          index: true, // Default child route
+          path: 'monitor/cameras',
+          element: <TabMonitor/>
         },
         {
-          path: '/monitor/history',
-          element: <HomeHistory/>
+          path: 'monitor/history',
+          element: <TabHistory/>
         }
       ]
+    },
+    {
+      path: '/login',
+      element: <Login/>
     },
   ])
 

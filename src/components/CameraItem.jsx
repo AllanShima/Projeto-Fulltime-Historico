@@ -10,9 +10,20 @@ const CameraItem = ({ camera, selectedId }) => {
     return (
         <div className={`flex items-center w-full h-15 rounded-xl bg-white ${selected} ${hoverClass}`}>
             <span className='flex w-full h-10 text-primary '>
-                <span className='flex ml-3 w-14 rounded-lg justify-center items-center bg-gray-200'>
-                {camera.image == "" ? <BsCameraVideo/> : <img src={camera.location} alt={camera.location}/>}
-                </span>
+                {camera.imageUrl == "" ? 
+                    <span className='flex ml-3 w-14 rounded-lg justify-center items-center bg-gray-200'>
+                        <BsCameraVideo/>
+                    </span> : 
+                    <span className='flex ml-3 w-14 rounded-lg justify-center items-center bg-gray-200'
+                        style={{ 
+                            backgroundImage: `url(${camera.imageUrl})`, 
+                            backgroundSize: 'cover', 
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat'
+                        }}>
+                    </span>
+                }
+
                 <span className='flex w-full items-center justify-between content-center ml-3 mr-3'>
                 <span className='text-sm'>
                     <h1 className='w-fit'>{camera.name}</h1>

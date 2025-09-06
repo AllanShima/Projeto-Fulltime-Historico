@@ -3,13 +3,13 @@ import CameraStatusUi from './ui/CameraStatusUi';
 import CameraDataElements from './ui/CameraDataElements';
 import RecordingIndicator from './ui/RecordingIndicator';
 
-const CameraScreen = ({camera, image}) => {
+const CameraScreen = ({camera}) => {
   
   return (
     <>
       <div className='relative w-1/2 rounded-xl'
         style={{ 
-          backgroundImage: `url(${image})`, 
+          backgroundImage: `url(${camera.imageUrl})`, 
           backgroundSize: 'cover', 
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
