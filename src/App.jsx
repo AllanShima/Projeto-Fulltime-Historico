@@ -4,6 +4,7 @@ import NotFoundPage from './components/NotFoundPage'
 import TabHistory from './components/TabHistory'
 import Header from './components/Header'
 import Login from './components/Login'
+import Register from './components/Register'
 
 function App() {
 
@@ -33,6 +34,10 @@ function App() {
     {
       path: '/login',
       element: <Login/>
+    },
+    {
+      path: '/register',
+      element: <Register/>
     },
   ])
 

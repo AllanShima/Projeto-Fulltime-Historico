@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { CiSettings } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import Avatar from "./ui/Avatar";
 import { CiViewTimeline } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
 import { RiNotification3Line } from "react-icons/ri";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const name = "Allan";
@@ -17,6 +17,12 @@ const Header = () => {
   const tabOffClass = "bg-gray-200 text-primary transition duration-200";
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // navegando para cameras quando o app é iniciado
+    navigate('/monitor/cameras');
+  }, [])
 
   return (
     <div className='grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
@@ -51,9 +57,9 @@ const Header = () => {
             <Avatar name={name} last_name={last_name}/>
             <h3 className='pl-2 content-center'>{fullName}</h3>
           </span>
-          <span className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
-            <RxExit/>
-          </span>          
+          <a href="/login" className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300 cursor-default'>
+              <RxExit/>
+          </a>
         </span>
       </div>
     </div>

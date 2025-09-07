@@ -51,3 +51,6 @@ Site implantado: https://fulltime-historico.web.app
 - Instalando os icons de react: 'npm install react-icons --save'
 - Instalando rombo motion (https://rombo.co/tailwind/)
 - Instalando react router: "npm install react-router-dom@6.22.1"
+- Setando Firebase Authentication
+    - Firebase website: authentication > on
+    - Firebase website: settings > authorized domains

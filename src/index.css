@@ -5,8 +5,18 @@
   font-family: InterRegular;
   src: url('./assets/fonts/Inter/static/Inter_18pt-Regular.ttf');
 }
+@font-face {
+  font-family: InterBold;
+  src: url('./assets/fonts/Inter/static/Inter_18pt-Bold.ttf');
+}
+@font-face {
+  font-family: InterExtraBold;
+  src: url('./assets/fonts/Inter/static/Inter_18pt-ExtraBold.ttf');
+}
 
 @theme {
+  --font-extrabold: InterExtraBold;
+  --font-bold: InterBold;
   --font-regular: InterRegular;
   --color-border: #E0E0E0;
   --color-primary: #030213;
