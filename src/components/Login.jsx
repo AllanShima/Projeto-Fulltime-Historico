@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { FaBuildingShield } from "react-icons/fa6"; //FullCond
 import { BiSolidCctv } from "react-icons/bi"; // fullcam
@@ -10,13 +10,31 @@ import { BsFillHouseExclamationFill } from "react-icons/bs"; // FullArm
 import { IoMdPerson } from "react-icons/io"; // user
 import { FaUnlock } from "react-icons/fa"; // password
 
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 const Login = () => {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPassFocused, setIsPassFocused] = useState(false);
+
+    const signIn = e => {
+        e.preventDefault()
+
+        // firebase login function
+        signInWithEmailAndPassword(auth, email, password)
+        .then((auth) => {
+            // logado com sucesso
+            console.log(auth);
+            navigate('/monitor/cameras')
+        })
+        .catch(error => alert(error.message))
+    }
 
     // setFocusClass("border-2 border-gray-black text-gray-700")
 
@@ -60,11 +78,12 @@ const Login = () => {
                                <FaUnlock className='text-gray-900/90 w-3'/>
                             </span>
                             <input className={`w-full pl-4 focus:outline-none`} onFocus={() => setIsPassFocused(true)} onBlur={() => setIsPassFocused(false)} 
-                            type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='e.g.allanshima123' />                            
+                            type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='e.g.allanshima123' />                            
                         </span>
                     </span> 
                 
-                    <button className='w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white'>
+                    <button onClick={signIn}
+                    className='w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white'>
                         Login
                     </button>
 
