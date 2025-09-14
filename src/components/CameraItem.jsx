@@ -9,7 +9,7 @@ const CameraItem = ({ camera, selectedId }) => {
 
     return (
         <div className={`flex items-center w-full h-15 rounded-xl bg-white ${selected} ${hoverClass}`}>
-            <span className='flex w-full h-10 text-primary '>
+            <span className='flex w-full h-10 text-primary'>
                 {camera.imageUrl == "" ? 
                     <span className='flex ml-3 w-14 rounded-lg justify-center items-center bg-gray-200'>
                         <BsCameraVideo/>
@@ -25,14 +25,14 @@ const CameraItem = ({ camera, selectedId }) => {
                 }
 
                 <span className='flex w-full items-center justify-between content-center ml-3 mr-3'>
-                <span className='text-sm'>
-                    <h1 className='w-fit'>{camera.name}</h1>
-                    <span className='flex text-xs text-gray-600 items-center space-x-1'>
-                    <CiLocationOn/>
-                    <h3>{camera.location}</h3>                              
+                    <span className='text-sm space-y-1'>
+                        <h1 className='w-fit'>{camera.name}</h1>
+                        <span className='flex text-xs text-gray-600 items-center space-x-1'>
+                            <CiLocationOn/>
+                            <h3>{camera.location}</h3>                              
+                        </span>
                     </span>
-                </span>
-                <CameraStatusUi status={camera.status}/>
+                    <CameraStatusUi status={camera.status}/>
                 </span>
             </span>
         </div>

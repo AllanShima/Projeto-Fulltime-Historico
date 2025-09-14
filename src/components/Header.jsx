@@ -21,11 +21,13 @@ const Header = () => {
 
   useEffect(() => {
     // navegando para cameras quando o app é iniciado
+    
+    // Navegar para a aba do usuário logado
     navigate('/monitor/cameras');
   }, [])
 
   return (
-    <div className='grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
+    <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
       {/* FullCenter logo */}
       <div className='flex content-center mt-auto mb-auto w-40 space-x-4'>
           <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>

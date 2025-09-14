@@ -1,15 +1,13 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { FaBuildingShield } from "react-icons/fa6"; //FullCond
-import { BiSolidCctv } from "react-icons/bi"; // fullcam
-import { FaUserShield } from "react-icons/fa"; // fsafe
-import { FaPersonRays } from "react-icons/fa6"; // F/Detect
-import { BsFillHouseExclamationFill } from "react-icons/bs"; // FullArm
+import { BsCameraVideo } from "react-icons/bs";
+import { CiViewTimeline } from "react-icons/ci";
 
 import { IoMdPerson } from "react-icons/io"; // user
 import { FaUnlock } from "react-icons/fa"; // password
 import { FaLock } from "react-icons/fa"; // confirm password
+import { FaUserShield } from "react-icons/fa"; // fsafe
 
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -32,6 +30,7 @@ const Register = () => {
     const [isPassFocused, setIsPassFocused] = useState(false);
     const [isPassConfirmFocused, setIsPassConfirmFocused] = useState(false);
 
+    const [buttonSelected, setButtonSelected] = useState("monitor");
     // setFocusClass("outline-2 outline-gray-black text-gray-700")
     const register = e => {
         e.preventDefault()
@@ -42,7 +41,12 @@ const Register = () => {
             .then((auth) => {
                 // registrado com sucesso
                 console.log(auth);
-                navigate('/monitor/cameras')
+                if(buttonSelected === "monitor"){
+                    navigate('/monitor/cameras')
+                } else {
+                    navigate('/user/main')
+                }
+                
 
                 // Registrar no data layer (useContext) o nome, sobrenome, email e senha (autocompletion dps)
             })
@@ -52,6 +56,13 @@ const Register = () => {
         }
 
     }
+
+    const buttonClass = "flex space-x-2 w-full py-1 cursor-default justify-center content-center items-center rounded-lg";
+    const buttonOnClass = "bg-primary text-white transition duration-200";
+    const buttonOnSafeClass = "bg-red-700 text-white transition duration-200";
+    const buttonOffClass = "bg-gray-200 text-primary transition duration-200";
+
+    
 
     return (
         <div className='flex w-full h-full items-center justify-center bg-gray-50 font-regular'>
@@ -127,6 +138,18 @@ const Register = () => {
                             type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder='e.g.allanshima123' />                            
                         </span>
                     </span> 
+                    <span className='flex w-xs ml-auto mr-auto h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
+                      <button onClick={() => setButtonSelected("monitor")} className={`${buttonClass}
+                        ${buttonSelected === "monitor" ? buttonOnClass : buttonOffClass}`}>
+                        <BsCameraVideo className='w-4'/>
+                        <h4>Monitor</h4>
+                      </button>
+                      <button onClick={() => setButtonSelected("f/safe")} className={`${buttonClass} 
+                        ${buttonSelected === "f/safe" ? buttonOnSafeClass : buttonOffClass}`}>
+                        <FaUserShield className='w-4'/>
+                        <h4>F/Safe</h4>
+                      </button>
+                    </span>
                 
                     <button onClick={register}
                     className='w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white'>
@@ -136,46 +159,8 @@ const Register = () => {
                     <Link className="underline text-blue-700" to={"/login"}>Já cadastrou uma conta?</Link>
                     
                 </div>    
-                <div className='flex w-fit h-12 space-x-13 font-bold'>
-                    {/* FullCond */}
-                    <span className='flex items-center w-full h-full text-red-600'>
-                        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-                            <FaBuildingShield className='w-full h-full'/>
-                        </span>            
-                        <h2 className='pl-2 text-xl'>FullCond</h2>        
-                    </span>
-                    
-                    {/* FullCam */}
-                    <span className='flex items-center w-full h-full text-red-600'>
-                        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-                            <BiSolidCctv className='w-full h-full'/>
-                        </span>            
-                        <h2 className='pl-2 text-xl'>FullCam</h2>        
-                    </span>
-                    
-                    {/* F/Safe */}
-                    <span className='flex items-center w-full h-full text-red-600'>
-                        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-                            <FaUserShield className='w-full h-full'/>
-                        </span>            
-                        <h2 className='pl-2 text-xl'>F/Safe</h2>        
-                    </span>
-                    {/* FullCam */}
-                    <span className='flex items-center w-full h-full text-red-600'>
-                        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-                            <FaPersonRays className='w-full h-full'/>
-                        </span>            
-                        <h2 className='pl-2 text-xl'>F/Detect</h2>        
-                    </span>
-                    {/* FullCam */}
-                    <span className='flex items-center w-full h-full text-red-600'>
-                        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-                            <BsFillHouseExclamationFill className='w-full h-full'/>
-                        </span>            
-                        <h2 className='pl-2 text-xl'>FullArm</h2>        
-                    </span>
 
-                </div>
+                
             </div>
 
         </div>

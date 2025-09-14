@@ -47,7 +47,7 @@ const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams
             </span>   
             <div className='space-y-3 mt-3 overflow-y-scroll max-h-120'>
               {events.map(event => 
-                <EventItem key={event.id} event={event}/>                
+                <EventItem key={event.id} event={event} simplified={true}/>                
               )}              
             </div>
           </div>

@@ -50,16 +50,108 @@ const cameras = [
   },
 ];
 
+// // emergency pode ser eventos pelo f/safe ou alarmes ativados pelo FullArm
+// const event_type = ["emergency", "system", "motion", "access"];
+
+// // software DE ONDE o evento é reportado
+// const softwares = ["F/Detect", "F/Safe", "FullCond", "FullCam", "FullArm"]
+
+// // nível de severidade
+// const severity = ["low", "medium", "high", "critical"]
+
+// Enumeração dos valores em um único objeto:
+
+const EventConstants = {
+    TYPES: {
+        EMERGENCY: "emergency",
+        SYSTEM: "system",
+        MOTION: "motion",
+        ACCESS: "access",
+    },
+    SOFTWARES: {
+        F_DETECT: "F/Detect",
+        F_SAFE: "F/Safe",
+        FULL_COND: "FullCond",
+        FULL_CAM: "FullCam",
+        FULL_ARM: "FullArm",
+    },
+    SEVERITIES: {
+        LOW: "low",
+        MEDIUM: "medium",
+        HIGH: "high",
+        CRITICAL: "critical",
+    }
+};
+
+
+const VideosRecorded = [
+  {
+    id: "1",
+    id_event: "1",
+    size: "15MB",
+    //from_camera: cameras[0]  
+  },
+  {
+    id: "2",
+    id_event: "2",
+    size: "15MB",
+    //from_camera: cameras[0]  
+  },
+  {
+    id: "3",
+    id_event: "3",
+    size: "15MB",
+    //from_camera: cameras[0]  
+  },
+]
+
 // location será de acordo com o que o monitor colocar ao adicionar cameras
 // User vai depender do login
 // BS: O alerta só será ativado quando o usuário escolher a localização dele
+// Date inclui a data e o horário do ocorrido
 const events = [
-  { id: "1", user: "Funcionário 1", location: "Entrada Principal", time: "há 2 min", type: "assalto" },
-  { id: "2", user: "Proprietário 2", location: "Andar do Escritório", time: "5 min ago", type: "socorro" },
-  { id: "3", user: "Gerente", location: "Entrada Principal", time: "há 10 min", type: "infraestrutura" },
-  { id: "4", user: "Funcionário 2", location: "Entrada Principal", time: "há 15 min", type: "acidente" },
-  { id: "5", user: "Funcionário 3", location: "Entrada Principal", time: "há 20 min", type: "incendio" },
-  { id: "6", user: "Gerente", location: "Entrada Principal", time: "há 25 min", type: "socorro" },
+  { 
+    id: "1", 
+    software_from: EventConstants.SOFTWARES.F_SAFE,
+    title: "Assalto armado",
+    description: "Assalto armado no local",
+    type: EventConstants.TYPES.EMERGENCY,
+    severity: EventConstants.SEVERITIES.CRITICAL,
+    device: "Usuário 1", 
+    camera: cameras[2], 
+    location: cameras[2].location,
+    date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[0]
+  },
+  { 
+    id: "2", 
+    software_from: EventConstants.SOFTWARES.F_SAFE,
+    title: "Assalto armado",
+    description: "Assalto armado no local",
+    type: EventConstants.TYPES.EMERGENCY,
+    severity: EventConstants.SEVERITIES.CRITICAL,
+    device: "Usuário 2", 
+    camera: cameras[0],
+    location: cameras[0].location, 
+    date: new Date(2024, 12, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[1]
+  },
+  { 
+    id: "3", 
+    software_from: EventConstants.SOFTWARES.FULL_CAM,
+    title: "Atualização da câmera",
+    description: "Atualização da câmera 2 realizada com sucesso",
+    type: EventConstants.TYPES.SYSTEM,
+    severity: EventConstants.SEVERITIES.LOW,
+    device: "System", 
+    camera: cameras[2],
+    location: cameras[2].location, 
+    date: new Date(2024, 12, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[2]
+  },
 ];
 
 

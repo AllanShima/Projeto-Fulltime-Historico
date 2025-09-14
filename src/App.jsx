@@ -5,6 +5,7 @@ import TabHistory from './components/TabHistory'
 import Header from './components/Header'
 import Login from './components/Login'
 import Register from './components/Register'
+import UserHome from './components/UserHome'
 
 function App() {
 
@@ -28,6 +29,10 @@ function App() {
         {
           path: 'monitor/history',
           element: <TabHistory/>
+        },
+        {
+          path: 'user/home',
+          element: <UserHome/>
         }
       ]
     },
