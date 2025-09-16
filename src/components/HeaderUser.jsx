@@ -7,7 +7,8 @@ import { BsCameraVideo } from "react-icons/bs";
 import { RiNotification3Line } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-const Header = () => {
+const HeaderUser = () => {
+    // Importar o usuário do useContext
   const name = "Allan";
   const last_name = "Shinhama";
   const fullName = name + " " + last_name;
@@ -23,7 +24,7 @@ const Header = () => {
     // navegando para cameras quando o app é iniciado
     
     // Navegar para a aba do usuário logado
-    // navigate('/monitor/cameras');
+    navigate('/monitor/cameras');
   }, [])
 
   return (
@@ -68,4 +69,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default HeaderUser
