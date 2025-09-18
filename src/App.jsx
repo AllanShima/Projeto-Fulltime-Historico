@@ -1,5 +1,10 @@
+// <<<<<<< HEAD
 import WindowMonitor from './components/WindowMonitor'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
+// =======
+import HomeMonitor from './components/HomeMonitor'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+// >>>>>>> b295140b3a6be19e90cafe3053a269867c9a2682
 import NotFoundPage from './components/NotFoundPage'
 import TabHistory from './components/TabHistory'
 import HeaderMonitor from './components/HeaderMonitor'
@@ -23,8 +28,13 @@ function App() {
       path: '/monitor',
       element: (
         <>
+{/* <<<<<<< HEAD */}
           <HeaderMonitor/>
           <Outlet/>
+{/* ======= */}
+          <HomeHistory/>
+          {/* <HomeMonitor/> */}
+{/* >>>>>>> b295140b3a6be19e90cafe3053a269867c9a2682 */}
         </>
       ),
       children: [
