@@ -1,4 +1,5 @@
 import React from 'react'
+// Esse file vai conter os botões dos eventos
 
 const HomeUser = () => {
   return (

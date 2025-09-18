@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useState } from 'react'
-import Sidebar from './Sidebar'
+import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
-import {cameras, events} from '../assets/data/MonitorData'
+import {cameras, events} from '../assets/data/TempData'
 
-const TabMonitor = () => {
+const WindowMonitor = () => {
 
   const [selectedCam, setSelectedCam] = useState("1");
 
@@ -14,7 +14,7 @@ const TabMonitor = () => {
   return (
     <>
       <div className='flex flex-1 bg-white'>
-        <Sidebar cameras={cameras} events={events} selectedCam={selectedCam} setSelectedCam={setSelectedCam} setRemainingCams={setRemainingCams}/>
+        <SidebarMonitor cameras={cameras} events={events} selectedCam={selectedCam} setSelectedCam={setSelectedCam} setRemainingCams={setRemainingCams}/>
         <HomeCam cameras={cameras} selectedCam={selectedCam} remainingCams={remainingCams}/>
       </div>    
     </>
@@ -22,4 +22,4 @@ const TabMonitor = () => {
   )
 }
 
-export default TabMonitor
+export default WindowMonitor

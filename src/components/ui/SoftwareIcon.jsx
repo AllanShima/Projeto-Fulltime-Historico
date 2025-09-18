@@ -14,7 +14,7 @@ const icons = {
   "FullArm": BsFillHouseExclamationFill
 }
 
-const softwareIcon = ({ title, showTitle=false }) => {
+const SoftwareIcon = ({ title, showTitle=false }) => {
   const IconComponent = icons[title];
 
   if (!IconComponent){
@@ -29,9 +29,9 @@ const softwareIcon = ({ title, showTitle=false }) => {
         <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
             <IconComponent className="w-full h-full"/>
         </span>            
-        {showTitle === true ? <h2 className='pl-2 text-lg'>{title}</h2> : null}
+        {showTitle === true ? <h2 className='pl-2 text-lg font-regular'>{title}</h2> : null}
     </div>
   )
 }
 
-export default softwareIcon
+export default SoftwareIcon

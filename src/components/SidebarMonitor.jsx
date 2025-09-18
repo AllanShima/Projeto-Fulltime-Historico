@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { BsCameraVideo } from "react-icons/bs";
 import { GoAlert } from "react-icons/go";
 
-import CameraItem from './CameraItem'
-import EventItem from './EventItem';
+import CameraCard from './ui/CameraCard'
+import EventCard from './ui/EventCardMonitor';
 
-const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams}) => {
+const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams}) => {
 
   const [activeTab, setActiveTab] = useState("cameras");
 
@@ -35,7 +35,7 @@ const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams
                     setSelectedCam(camera.id)
                     setRemainingCams(cameras.filter(cams => cams.id !== camera.id))
                   }} className='w-full'>
-                  <CameraItem camera={camera} selectedId={selectedCam}/>                  
+                  <CameraCard camera={camera} selectedId={selectedCam}/>                  
                 </button>
               ))}              
             </div>
@@ -47,7 +47,7 @@ const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams
             </span>   
             <div className='space-y-3 mt-3 overflow-y-scroll max-h-120'>
               {events.map(event => 
-                <EventItem key={event.id} event={event} simplified={true}/>                
+                <EventCard key={event.id} event={event} simplified={true}/>                
               )}              
             </div>
           </div>
@@ -57,4 +57,4 @@ const Sidebar = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams
   )
 }
 
-export default Sidebar
+export default SidebarMonitor

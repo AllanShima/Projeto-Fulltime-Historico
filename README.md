@@ -54,3 +54,4 @@ Site implantado: https://fulltime-historico.web.app
 - Setando Firebase Authentication
     - Firebase website: authentication > on
     - Firebase website: settings > authorized domains
+- useContext: user-context.jsx

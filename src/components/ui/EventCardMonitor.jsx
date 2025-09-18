@@ -12,9 +12,11 @@ import { CiCalendar } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
 import { CiClock1 } from "react-icons/ci";
 
-import SoftwareIcon from './ui/SoftwareIcon';
-import ExportButton from './ui/ExportButton';
-import Avatar from './ui/Avatar';
+import SoftwareIcon from './SoftwareIcon';
+import ExportButton from './ExportButton';
+import Avatar from './Avatar';
+
+import getTimePassed from '../../assets/functions/GetTimePassed'; 
 
 const typeSpecs = {
   "emergency": ["bg-orange-100 text-orange-800", GoAlert],
@@ -23,42 +25,8 @@ const typeSpecs = {
   "access": ["bg-green-100 text-green-800", FaRegEye],
 }
 
-const EventItem = ({ event, simplified }) => {
+const EventCard = ({ event, simplified }) => {
   const [timePassed, setTimePassed] = useState('');
-
-  const getTimePassed = (eventDate) => {
-    // Diferença do tempo atual para o tempo do incidente em milissegundos
-    const ms = new Date().getTime() - eventDate.getTime();
-
-    // Converte e arredonda para o número mais próximo
-    const seconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30); // Precisa checar dps
-    const years = Math.floor(days / 365);
-
-    if (years > 0) {
-      return `${years} ${years === 1 ? 'ano' : 'anos'}`;
-    }
-    if (months > 0) {
-      return `${months} ${months === 1 ? 'mês' : 'meses'}`;
-    }
-    if (days > 0) {
-      return `${days} ${days === 1 ? 'dia' : 'dias'}`;
-    }
-    if (hours > 0) {
-      return `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
-    }
-    if (minutes > 0) {
-      return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`;
-    }
-    if (seconds > 0) {
-      return `${seconds} ${seconds === 1 ? 'segundo' : 'segundos'}`;
-    }
-
-    return 'agora'; // Fallback para eventos mais recentes
-  };
 
   useEffect(() => {
     // Essa função vai ser executada a cada segundo
@@ -110,7 +78,7 @@ const EventItem = ({ event, simplified }) => {
               </div>
             </span>
             <span className='w-8 text-xs pr-1'>
-              {event.software_from === "F/Safe" ? <Avatar name="Allan" last_name="Shinhama"/> : <SoftwareIcon title={event.software_from} showTitle={false}/>}
+              {event.software_from === "F/Safe" ? <Avatar fullName={event.device}/> : <SoftwareIcon title={event.software_from} showTitle={false}/>}
             </span>
           </span>
         ) : (
@@ -150,7 +118,7 @@ const EventItem = ({ event, simplified }) => {
                 <ExportButton text="Exportar"/>
               </button>
               <span className='w-6'>
-                {event.software_from === "F/Safe" ? <Avatar name="Allan" last_name="Shinhama"/> : <SoftwareIcon title={event.software_from} showTitle={false}/>}
+                {event.software_from === "F/Safe" ? <Avatar fullName={event.device}/> : <SoftwareIcon title={event.software_from} showTitle={false}/>}
               </span>
             </span>
           </span>
@@ -160,4 +128,4 @@ const EventItem = ({ event, simplified }) => {
   )
 }
 
-export default EventItem
+export default EventCard

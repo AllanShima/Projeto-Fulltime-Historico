@@ -4,9 +4,9 @@ const cameras = [
     id: "1", 
     name: "Câmera 1", 
     imageUrl: "https://images.unsplash.com/photo-1646521790482-a76619a564db?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Entrada Principal", 
+    location: "Entrada Principal",
     status: "online", 
-    totalTimeRecorded: "17:08:59" 
+    totalTimeRecorded: "17:08:59"
   },
   { 
     id: "2", 
@@ -60,8 +60,7 @@ const cameras = [
 // const severity = ["low", "medium", "high", "critical"]
 
 // Enumeração dos valores em um único objeto:
-
-const EventConstants = {
+const MonitorEventConstants = {
     TYPES: {
         EMERGENCY: "emergency",
         SYSTEM: "system",
@@ -112,47 +111,98 @@ const VideosRecorded = [
 const events = [
   { 
     id: "1", 
-    software_from: EventConstants.SOFTWARES.F_SAFE,
+    software_from: MonitorEventConstants.SOFTWARES.F_SAFE,
     title: "Assalto armado",
     description: "Assalto armado no local",
-    type: EventConstants.TYPES.EMERGENCY,
-    severity: EventConstants.SEVERITIES.CRITICAL,
-    device: "Usuário 1", 
+    type: MonitorEventConstants.TYPES.EMERGENCY,
+    severity: MonitorEventConstants.SEVERITIES.CRITICAL,
+    device: "Eduarda Ferreira", 
     camera: cameras[2], 
-    location: cameras[2].location,
     date: new Date(2024, 6, 15, 14, 20, 20),
     video_available: true,
     video_recorded: VideosRecorded[0]
   },
   { 
     id: "2", 
-    software_from: EventConstants.SOFTWARES.F_SAFE,
+    software_from: MonitorEventConstants.SOFTWARES.F_SAFE,
     title: "Assalto armado",
     description: "Assalto armado no local",
-    type: EventConstants.TYPES.EMERGENCY,
-    severity: EventConstants.SEVERITIES.CRITICAL,
-    device: "Usuário 2", 
+    type: MonitorEventConstants.TYPES.EMERGENCY,
+    severity: MonitorEventConstants.SEVERITIES.CRITICAL,
+    device: "Paulo Sérgio", 
     camera: cameras[0],
-    location: cameras[0].location, 
     date: new Date(2024, 12, 15, 14, 20, 20),
     video_available: true,
     video_recorded: VideosRecorded[1]
   },
   { 
     id: "3", 
-    software_from: EventConstants.SOFTWARES.FULL_CAM,
+    software_from: MonitorEventConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
-    type: EventConstants.TYPES.SYSTEM,
-    severity: EventConstants.SEVERITIES.LOW,
+    type: MonitorEventConstants.TYPES.SYSTEM,
+    severity: MonitorEventConstants.SEVERITIES.LOW,
     device: "System", 
     camera: cameras[2],
-    location: cameras[2].location, 
+    date: new Date(2024, 12, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[2]
+  },
+  { 
+    id: "4", 
+    software_from: MonitorEventConstants.SOFTWARES.FULL_CAM,
+    title: "Atualização da câmera",
+    description: "Atualização da câmera 2 realizada com sucesso",
+    type: MonitorEventConstants.TYPES.SYSTEM,
+    severity: MonitorEventConstants.SEVERITIES.LOW,
+    device: "System", 
+    camera: cameras[2],
     date: new Date(2024, 12, 15, 14, 20, 20),
     video_available: true,
     video_recorded: VideosRecorded[2]
   },
 ];
 
+const UserEventConstants = {
+    TYPES: {
+        MESSAGE: "message",
+        HELP: "help",
+        FORMS: "forms",
+        REPORT: "report",
+        CAMERA: "camera",
+        ALERT: "alert",
+    }
+};
 
-export {cameras, events};
+const userEvents = [
+  { 
+    id: "1", 
+    title: "Mensagem Nova",
+    description: "Nova mensagem do Operador",
+    type: UserEventConstants.TYPES.MESSAGE,
+    show_button: false, 
+    camera: null, 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+  },
+  { 
+    id: "2", 
+    title: "Acompanhar a Equipe de Resgate",
+    description: "Clique no botão para acompanhar o GPS em tempo real",
+    type: UserEventConstants.TYPES.HELP,
+    show_button: true,
+    camera: null, 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+  },
+  { 
+    id: "3", 
+    title: "Acompanhar Câmera",
+    description: "Clique no botão para visualizar a câmera em tempo real",
+    type: UserEventConstants.TYPES.CAMERA,
+    show_button: true,
+    camera: cameras[0], 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+  }
+]
+
+
+export {cameras, events, userEvents};

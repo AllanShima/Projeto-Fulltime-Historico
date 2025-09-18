@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { CiLocationOn } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
-import CameraStatusUi from './ui/CameraStatusUi';
+import CameraStatusUi from './CameraStatusUi';
 
-const CameraItem = ({ camera, selectedId }) => {
+const CameraCard = ({ camera, selectedId }) => {
     const hoverClass = "hover:cursor-pointer hover:shadow-md transition duration-200";
     const selected = camera.id == selectedId ? "border-2 text-primary" : "border-1"
 
@@ -39,4 +39,4 @@ const CameraItem = ({ camera, selectedId }) => {
     )
 }
 
-export default CameraItem
+export default CameraCard

@@ -2,9 +2,12 @@ import React from 'react'
 
 const LandingPage = () => {
   return (
-    <div>
-      <h1>Landing page</h1>
-    </div>
+    // O header, body e Footer são únicos da Landingpage
+    <>
+      <div>
+        <h1>Landing page Header</h1>
+      </div>
+    </>
   )
 }
 

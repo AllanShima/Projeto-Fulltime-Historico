@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import SoftwareIcon from './ui/SoftwareIcon';
@@ -8,10 +8,13 @@ import { FaUnlock } from "react-icons/fa"; // password
 
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import {useUserContext} from '../contexts/user-context';
 
 const Login = () => {
 
     const navigate = useNavigate();
+
+    const { userState, userDispatch } = useUserContext();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,6 +31,8 @@ const Login = () => {
             // logado com sucesso
 
             // Atualizar um useState pra verificar se ele está logado ou não
+            // getName e getLastName do firebase firestore
+            userDispatch({ type: "LOGIN", payload: {fullName: "Diego Fernandes", usertype: "monitor"} })
 
             console.log(auth);
             navigate('/monitor/cameras')

@@ -1,14 +1,13 @@
-import TabMonitor from './components/TabMonitor'
+import WindowMonitor from './components/WindowMonitor'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import NotFoundPage from './components/NotFoundPage'
 import TabHistory from './components/TabHistory'
-import Header from './components/Header'
+import HeaderMonitor from './components/HeaderMonitor'
 import Login from './components/Login'
 import Register from './components/Register'
-import HomeUser from './components/HomeUser'
 import LandingPage from './components/LandingPage'
 import HeaderUser from './components/HeaderUser'
-import UserContext from './contexts/user-context'
+import WindowUser from './components/WindowUser'
 
 function App() {
 
@@ -24,17 +23,17 @@ function App() {
       path: '/monitor',
       element: (
         <>
-          <Header/>
+          <HeaderMonitor/>
           <Outlet/>
         </>
       ),
       children: [
         {
-          path: 'monitor/cameras',
-          element: <TabMonitor/>
+          path: 'cameras',
+          element: <WindowMonitor/>
         },
         {
-          path: 'monitor/history',
+          path: 'history',
           element: <TabHistory/>
         }
       ]
@@ -50,8 +49,8 @@ function App() {
       children: [
         {
           index: true, // Default child route
-          path: 'user/home',
-          element: <HomeUser/>
+          path: 'home',
+          element: <WindowUser/>
         }
       ]
     },
@@ -66,11 +65,9 @@ function App() {
   ])
 
   return (
-    <UserContext>
-      <div className='w-screen h-screen flex flex-col bg-white'>
-        <RouterProvider router={router}/>              
-      </div>      
-    </UserContext>
+    <div className='w-screen h-screen flex flex-col bg-white'>
+      <RouterProvider router={router}/>              
+    </div>      
   )
 }
 

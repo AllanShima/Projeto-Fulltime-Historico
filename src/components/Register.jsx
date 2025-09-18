@@ -42,9 +42,10 @@ const Register = () => {
                 // registrado com sucesso
                 console.log(auth);
                 if(buttonSelected === "monitor"){
+                    // Guardar informação no firebase firestore
                     navigate('/monitor/cameras')
                 } else {
-                    navigate('/user/main')
+                    navigate('/user/home')
                 }
                 
 

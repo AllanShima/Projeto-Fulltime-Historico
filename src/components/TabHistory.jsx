@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import EventCard from './ui/EventCard';
 import ExportButton from './ui/ExportButton';
 import { IoSearchOutline } from "react-icons/io5";
-import EventItem from './EventItem';
-import { events } from '../assets/data/MonitorData'
+import EventCard from './ui/EventCardMonitor';
+import { events } from '../assets/data/TempData'
 import { IoIosArrowDown } from "react-icons/io";
 
 const TabHistory = () => {
@@ -57,7 +56,7 @@ const TabHistory = () => {
             </div>
             <div className='space-y-3 mt-3 overflow-y-scroll max-h-120 p-5'>
                 {events.map(e => (
-                    <EventItem key={e.id} event={e} simplified={false}/>
+                    <EventCard key={e.id} event={e} simplified={false}/>
                 ))}                
             </div>
 
