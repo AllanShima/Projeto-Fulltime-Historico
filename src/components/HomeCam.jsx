@@ -24,7 +24,7 @@ const HomeCam = ({cameras, selectedCam, remainingCams}) => {
 
         <div className='mt-5 mb-auto h-2/5 flex justify-between space-x-6'>
           {secondRowCams.map((cam) => 
-            <CameraScreen camera={cam}/>
+            <CameraScreen key={cam.id} camera={cam}/>
           )}
         </div>
       </div>

@@ -29,7 +29,7 @@ const CameraCard = ({ camera, selectedId }) => {
                         <h1 className='w-fit'>{camera.name}</h1>
                         <span className='flex text-xs text-gray-600 items-center space-x-1'>
                             <CiLocationOn/>
-                            <h3>{camera.location}</h3>                              
+                            <h3 className='text-left'>{camera.location}</h3>                              
                         </span>
                     </span>
                     <CameraStatusUi status={camera.status}/>

@@ -22,7 +22,7 @@ const HeaderMonitor = () => {
 
   var fullName = "Null Null";
 
-  if (userState.isLoggedIn == true) {
+  if (userState.user) {
     fullName = userState.fullName;
   }
 

@@ -1,10 +1,5 @@
-// <<<<<<< HEAD
 import WindowMonitor from './components/WindowMonitor'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
-// =======
-import HomeMonitor from './components/HomeMonitor'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-// >>>>>>> b295140b3a6be19e90cafe3053a269867c9a2682
 import NotFoundPage from './components/NotFoundPage'
 import TabHistory from './components/TabHistory'
 import HeaderMonitor from './components/HeaderMonitor'
@@ -13,8 +8,11 @@ import Register from './components/Register'
 import LandingPage from './components/LandingPage'
 import HeaderUser from './components/HeaderUser'
 import WindowUser from './components/WindowUser'
+import { useUserContext } from './contexts/user-context'
 
 function App() {
+
+  const { userState, userDispatch } = useUserContext();
 
   const router = createBrowserRouter([
     // Default path
@@ -28,13 +26,8 @@ function App() {
       path: '/monitor',
       element: (
         <>
-{/* <<<<<<< HEAD */}
           <HeaderMonitor/>
           <Outlet/>
-{/* ======= */}
-          <HomeHistory/>
-          {/* <HomeMonitor/> */}
-{/* >>>>>>> b295140b3a6be19e90cafe3053a269867c9a2682 */}
         </>
       ),
       children: [

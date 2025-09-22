@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 
 // Event Alert Icons
-import { GoAlert } from "react-icons/go"; // emergency
-import { FaRegClock } from "react-icons/fa6"; // system
-import { LuCctv } from "react-icons/lu"; // motion
 import { FaRegEye } from "react-icons/fa"; // access
+import { IoAlertCircleOutline } from "react-icons/io5";
+import { FaLocationArrow } from "react-icons/fa6";
+import { IoDocumentText } from "react-icons/io5";
+import { FaFileCirclePlus } from "react-icons/fa6";
+import { BsChatRightTextFill } from "react-icons/bs";
 
 // Event info Icons
 import { CiLocationOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
-import { CiClock1 } from "react-icons/ci";
 
 import SoftwareIcon from './SoftwareIcon';
 import ExportButton from './ExportButton';
@@ -21,12 +22,12 @@ import ViewButton from './ViewButton';
 
 // message, help, forms, report, camera, alert
 const typeSpecs = {
-  "message": ["bg-orange-100 text-orange-800", GoAlert],
-  "help": ["bg-gray-200 text-gray-800", FaRegClock],
-  "forms": ["bg-blue-100 text-blue-800", LuCctv],
-  "report": ["bg-green-100 text-green-800", FaRegEye],
+  "message": ["bg-orange-100 text-orange-800", BsChatRightTextFill],
+  "help": ["bg-gray-200 text-gray-800", FaLocationArrow],
+  "forms": ["bg-blue-100 text-blue-800", IoDocumentText],
+  "report": ["bg-green-100 text-green-800", FaFileCirclePlus],
   "camera": ["bg-green-100 text-green-800", FaRegEye],
-  "alert": ["bg-green-100 text-green-800", FaRegEye],
+  "alert": ["bg-blue-100 text-blue-800", IoAlertCircleOutline],
 }
 
 const EventCardUser = ({ event }) => {
@@ -52,7 +53,7 @@ const EventCardUser = ({ event }) => {
   }, [event.date]);
 
   // message, help, forms, report, camera, alert
-  const type = event.type;
+  const type = event.alert;
   const colorClass = typeSpecs[type][0];
 
   const EventIconComponent = typeSpecs[type][1];
@@ -73,22 +74,27 @@ const EventCardUser = ({ event }) => {
             <span className='text-sm w-full space-y-2'>
               <h1 className='font-bold'>{event.title}</h1>
               <p className='text-xs text-gray-500'>{event.description}</p>
-              <div className='text-xs w-5/6 text-gray-800 space-y-2'>
-                <span className='flex w-full justify-between text-md'>
-                  <span className='flex items-center space-x-1'>
+              <div className='text-xs w-full text-gray-800 space-y-2'>
+                <span className='flex w-full justify-between text-md '>
+                  <span className='flex w-full items-center space-x-1'>
                     <CiCalendar className='w-4 h-4'/>
                     <h3>{event.date.toString()}</h3>   
                     <li className='ml-5'><h3>{timePassed}</h3></li>                           
                   </span>
-                  <span className='flex items-center space-x-1'>
-                    <CiLocationOn className='w-4 h-4'/>
-                    {/* <h3>{event.camera.location}</h3>                               */}
-                  </span>
-                  {/* <span className='flex items-center space-x-1'>
-                    <BsCameraVideo className='w-4 h-4'/>
-                    <h3>{event.camera.name}</h3>                              
-                  </span> */}
                 </span>
+                {event.camera !== null ? (
+                  <span className='flex space-x-2'>
+                    <span className='flex items-center space-x-1'>
+                      <BsCameraVideo className='w-4 h-4'/>
+                      <h3>{event.camera.name}</h3>                              
+                    </span>
+                    <span className='flex items-center space-x-1'>
+                      <CiLocationOn className='w-4 h-4'/>
+                      <h3>{event.camera.location}</h3>                              
+                    </span>                          
+                  </span>
+              
+                ) : null}
 
               </div>
 

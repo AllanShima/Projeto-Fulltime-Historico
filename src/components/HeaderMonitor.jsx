@@ -21,7 +21,7 @@ const HeaderMonitor = () => {
 
   var fullName = "Null Null";
 
-  if (userState.isLoggedIn == true) {
+  if (userState.isLoggedIn) {
     fullName = userState.fullName;
   }
 
@@ -43,7 +43,7 @@ const HeaderMonitor = () => {
   return (
     <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
       {/* FullCenter logo */}
-      <div className='flex content-center mt-auto mb-auto w-40 space-x-4'>
+      <div className='flex content-center mt-auto mb-auto w-40 space-x-2'>
           <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
           <h1 className='mt-auto mb-auto font-regular text-primary'>
             FullCenter

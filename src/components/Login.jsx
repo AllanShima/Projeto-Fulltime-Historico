@@ -22,6 +22,10 @@ const Login = () => {
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPassFocused, setIsPassFocused] = useState(false);
 
+    useEffect(() => {
+        console.log("Updated user state:", userState.user);
+    }, [userState.user]);
+
     const signIn = e => {
         e.preventDefault()
 
@@ -32,8 +36,7 @@ const Login = () => {
 
             // Atualizar um useState pra verificar se ele está logado ou não
             // getName e getLastName do firebase firestore
-            userDispatch({ type: "LOGIN", payload: {fullName: "Diego Fernandes", usertype: "monitor"} })
-
+            userDispatch({ type: "LOGIN", payload: {user: auth.user, fullName: "Diego Fernandes", usertype: "monitor"} })
             console.log(auth);
             navigate('/monitor/cameras')
         })

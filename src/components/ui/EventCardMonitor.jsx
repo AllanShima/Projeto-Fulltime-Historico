@@ -72,7 +72,7 @@ const EventCard = ({ event, simplified }) => {
               <div className='text-xs text-gray-800 space-y-1'>
                 <span className='flex  items-center space-x-1'>
                   <CiLocationOn/>
-                  <h3>{event.location}</h3>                              
+                  <h3>{event.camera.location}</h3>                              
                 </span>
                 <h3>{timePassed}</h3>              
               </div>
@@ -95,7 +95,7 @@ const EventCard = ({ event, simplified }) => {
                   </span>
                   <span className='flex items-center space-x-1'>
                     <CiLocationOn className='w-4 h-4'/>
-                    <h3>{event.location}</h3>                              
+                    <h3>{event.camera.location}</h3>                              
                   </span>
                   <span className='flex items-center space-x-1'>
                     <BsCameraVideo className='w-4 h-4'/>

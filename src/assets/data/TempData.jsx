@@ -60,7 +60,7 @@ const cameras = [
 // const severity = ["low", "medium", "high", "critical"]
 
 // Enumeração dos valores em um único objeto:
-const MonitorEventConstants = {
+const EventsConstants = {
     TYPES: {
         EMERGENCY: "emergency",
         SYSTEM: "system",
@@ -79,6 +79,14 @@ const MonitorEventConstants = {
         MEDIUM: "medium",
         HIGH: "high",
         CRITICAL: "critical",
+    },
+    ALERTS: {
+        MESSAGE: "message",
+        HELP: "help",
+        FORMS: "forms",
+        REPORT: "report",
+        CAMERA: "camera",
+        ALERT: "alert",
     }
 };
 
@@ -104,6 +112,8 @@ const VideosRecorded = [
   },
 ]
 
+// Todos os eventos onde serão processados para o operador
+
 // location será de acordo com o que o monitor colocar ao adicionar cameras
 // User vai depender do login
 // BS: O alerta só será ativado quando o usuário escolher a localização dele
@@ -111,11 +121,13 @@ const VideosRecorded = [
 const events = [
   { 
     id: "1", 
-    software_from: MonitorEventConstants.SOFTWARES.F_SAFE,
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
     title: "Assalto armado",
     description: "Assalto armado no local",
-    type: MonitorEventConstants.TYPES.EMERGENCY,
-    severity: MonitorEventConstants.SEVERITIES.CRITICAL,
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.FORMS,
+    show_button: true,
     device: "Eduarda Ferreira", 
     camera: cameras[2], 
     date: new Date(2024, 6, 15, 14, 20, 20),
@@ -124,11 +136,11 @@ const events = [
   },
   { 
     id: "2", 
-    software_from: MonitorEventConstants.SOFTWARES.F_SAFE,
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
     title: "Assalto armado",
     description: "Assalto armado no local",
-    type: MonitorEventConstants.TYPES.EMERGENCY,
-    severity: MonitorEventConstants.SEVERITIES.CRITICAL,
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
     device: "Paulo Sérgio", 
     camera: cameras[0],
     date: new Date(2024, 12, 15, 14, 20, 20),
@@ -137,11 +149,11 @@ const events = [
   },
   { 
     id: "3", 
-    software_from: MonitorEventConstants.SOFTWARES.FULL_CAM,
+    software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
-    type: MonitorEventConstants.TYPES.SYSTEM,
-    severity: MonitorEventConstants.SEVERITIES.LOW,
+    type: EventsConstants.TYPES.SYSTEM,
+    severity: EventsConstants.SEVERITIES.LOW,
     device: "System", 
     camera: cameras[2],
     date: new Date(2024, 12, 15, 14, 20, 20),
@@ -150,11 +162,11 @@ const events = [
   },
   { 
     id: "4", 
-    software_from: MonitorEventConstants.SOFTWARES.FULL_CAM,
+    software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
-    type: MonitorEventConstants.TYPES.SYSTEM,
-    severity: MonitorEventConstants.SEVERITIES.LOW,
+    type: EventsConstants.TYPES.SYSTEM,
+    severity: EventsConstants.SEVERITIES.LOW,
     device: "System", 
     camera: cameras[2],
     date: new Date(2024, 12, 15, 14, 20, 20),
@@ -163,46 +175,97 @@ const events = [
   },
 ];
 
-const UserEventConstants = {
-    TYPES: {
-        MESSAGE: "message",
-        HELP: "help",
-        FORMS: "forms",
-        REPORT: "report",
-        CAMERA: "camera",
-        ALERT: "alert",
-    }
-};
-
 const userEvents = [
   { 
     id: "1", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
     title: "Mensagem Nova",
-    description: "Nova mensagem do Operador",
-    type: UserEventConstants.TYPES.MESSAGE,
-    show_button: false, 
+    description: "Nova mensagem do Operador disponível no Live Chat",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.MESSAGE,
+    show_button: false,
+    device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: false,
+    video_recorded: null
   },
   { 
     id: "2", 
-    title: "Acompanhar a Equipe de Resgate",
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Autoridades à Caminho",
     description: "Clique no botão para acompanhar o GPS em tempo real",
-    type: UserEventConstants.TYPES.HELP,
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.HELP,
     show_button: true,
+    device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: false,
+    video_recorded: null
   },
   { 
     id: "3", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
     title: "Acompanhar Câmera",
-    description: "Clique no botão para visualizar a câmera em tempo real",
-    type: UserEventConstants.TYPES.CAMERA,
+    description: "Clique no botão para acompanhar a câmera em tempo real",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.CAMERA,
     show_button: true,
+    device: "Eduarda Ferreira", 
     camera: cameras[0], 
     date: new Date(2024, 6, 15, 14, 20, 20),
-  }
+    video_available: false,
+    video_recorded: null
+  },
+  { 
+    id: "4", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Formulário de Complemento do Incidente",
+    description: "Preencha o formulário o quanto possível",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.FORMS,
+    show_button: true,
+    device: "Eduarda Ferreira", 
+    camera: null, 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: false,
+    video_recorded: null
+  }, 
+  { 
+    id: "5", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Relatório Disponível",
+    description: "Relatório completo do incidente disponível no e-mail",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.REPORT,
+    show_button: true,
+    device: "Eduarda Ferreira", 
+    camera: null, 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: false,
+    video_recorded: null
+  }, 
+  { 
+    id: "6", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Aviso",
+    description: "Preencha o formulário",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.ALERT,
+    show_button: true,
+    device: "Eduarda Ferreira", 
+    camera: null, 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: false,
+    video_recorded: null
+  }, 
 ]
-
 
 export {cameras, events, userEvents};

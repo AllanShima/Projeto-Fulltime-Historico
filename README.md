@@ -55,3 +55,4 @@ Site implantado: https://fulltime-historico.web.app
     - Firebase website: authentication > on
     - Firebase website: settings > authorized domains
 - useContext: user-context.jsx
+- Instalando react fireabse hooks (useAuthState em user-context): npm install react-firebase-hooks firebase

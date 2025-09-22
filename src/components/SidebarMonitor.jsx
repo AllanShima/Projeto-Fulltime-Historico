@@ -10,7 +10,7 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
   const [activeTab, setActiveTab] = useState("cameras");
 
   return (
-    <div className='w-120 h-full left-0 bg-gray-100 border-r-1 text-gray-300'>
+    <div className='flex flex-col w-120 h-full left-0 bg-gray-100 border-r-1 text-gray-300'>
       <div className='flex items-center justify-center w-full h-20 border-b-1'>
         <span className='flex w-9/10 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
             <button onClick={() => setActiveTab("cameras")} className={`flex space-x-2 w-full py-1 justify-center content-center items-center rounded-lg ${activeTab == "cameras" ? "bg-primary text-white transition duration-200" : "bg-gray-200 text-primary transition duration-200"}`}>
@@ -23,31 +23,33 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
             </button>
         </span>
       </div>
-      <div className='h-fit w-full p-4'>
+      <div className='flex flex-col flex-1 w-full pl-4 pt-4'>
         {activeTab == "cameras" ? (
-          <div className='h-full'>
+          <div className='flex flex-col flex-1 w-full max-h-130'>
             <span className='justify-center text-primary'>
               <h1>Camera List ({cameras.filter(c => c.status == "online").length} online)</h1>
             </span>   
-            <div className='space-y-3 mt-3 overflow-y-scroll max-h-120'>
+            <div className='flex-1 space-y-3 mt-3 w-full overflow-y-auto'>
               {cameras.map(camera => (
                 <button key={camera.id} onClick={() => {
                     setSelectedCam(camera.id)
                     setRemainingCams(cameras.filter(cams => cams.id !== camera.id))
-                  }} className='w-full'>
+                  }} className='w-full pr-4'>
                   <CameraCard camera={camera} selectedId={selectedCam}/>                  
                 </button>
               ))}              
             </div>
           </div>
         ) : (
-          <div className='h-full'>
+          <div className='h-full max-h-130'>
             <span className='justify-center text-primary'>
-              <h1>Event List ({events.length})</h1>
+              <h1>Lista de Eventos ({events.length})</h1>
             </span>   
-            <div className='space-y-3 mt-3 overflow-y-scroll max-h-120'>
+            <div className='flex-1 space-y-3 mt-3 overflow-y-auto'>
               {events.map(event => 
-                <EventCard key={event.id} event={event} simplified={true}/>                
+                <span className='flex w-full pr-4'>
+                  <EventCard key={event.id} event={event} simplified={true}/>                    
+                </span>
               )}              
             </div>
           </div>
