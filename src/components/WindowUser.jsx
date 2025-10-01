@@ -6,12 +6,12 @@ import {userEvents} from '../assets/data/TempData'
 const WindowUser = () => {
   return (
     <>
-      <div className='flex flex-1 w-full'>
+      <div className='flex flex-1 w-full h-full'>
         <div className='w-1/2 h-full'>
           <SidebarUser userEvents={userEvents}/>
         </div>
         
-        <div className='w-1/2'>
+        <div className='w-1/2 h-full'>
           <HomeUser />
         </div>
         

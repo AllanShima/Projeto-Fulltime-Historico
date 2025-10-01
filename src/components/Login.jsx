@@ -6,15 +6,17 @@ import SoftwareIcon from './ui/SoftwareIcon';
 import { IoMdPerson } from "react-icons/io"; // user
 import { FaUnlock } from "react-icons/fa"; // password
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {useUserContext} from '../contexts/user-context';
+
+import { useUserContext } from '../contexts/user-context';
+import { where, query, getDocs, collection } from 'firebase/firestore';
 
 const Login = () => {
 
-    const navigate = useNavigate();
-
     const { userState, userDispatch } = useUserContext();
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,23 +24,20 @@ const Login = () => {
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPassFocused, setIsPassFocused] = useState(false);
 
-    useEffect(() => {
-        console.log("Updated user state:", userState.user);
-    }, [userState.user]);
-
     const signIn = e => {
         e.preventDefault()
 
         // firebase login function
         signInWithEmailAndPassword(auth, email, password)
-        .then((auth) => {
+        .then((userCredential) => {
             // logado com sucesso
-
-            // Atualizar um useState pra verificar se ele está logado ou não
-            // getName e getLastName do firebase firestore
-            userDispatch({ type: "LOGIN", payload: {user: auth.user, fullName: "Diego Fernandes", usertype: "monitor"} })
-            console.log(auth);
-            navigate('/monitor/cameras')
+            console.log(userCredential)
+            
+            if(userState.usertype == "monitor"){
+                navigate('/monitor/cameras')
+            } else {
+                navigate('/user/home');
+            }
         })
         .catch(error => alert(error.message))
     }

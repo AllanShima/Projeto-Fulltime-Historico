@@ -1,4 +1,5 @@
 // totalTimeRecorded = tempo total de gravação da câmera
+// Cameras não precisa armazenar no banco
 const cameras = [
   { 
     id: "1", 
@@ -268,4 +269,32 @@ const userEvents = [
   }, 
 ]
 
-export {cameras, events, userEvents};
+// Informações do usuário no firestore (esse é só temporário)
+const contacts = [
+  {
+    id: "1",
+    name: "Cleber",
+    last_name: "Josh",
+    role: "monitor",
+    profileUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f4/USAFA_Hosts_Elon_Musk_%28Image_1_of_17%29_%28cropped%29.jpg"
+    // phone_number: ""
+  },
+  {
+    id: "2",
+    name: "Gabriel",
+    last_name: "Claus",
+    role: "user",
+    profileUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIx4Rf0-jGr4y-LNHxN_jWlPsZj6dxmJQ9mw&s"
+    // phone_number: ""
+  },
+  {
+    id: "3",
+    name: "Carlos",
+    last_name: "Bulgarelli",
+    role: "user",
+    profileUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIx4Rf0-jGr4y-LNHxN_jWlPsZj6dxmJQ9mw&s"
+    // phone_number: ""
+  },
+]
+
+export {cameras, events, userEvents, contacts};

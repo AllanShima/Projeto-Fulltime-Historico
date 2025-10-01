@@ -56,3 +56,12 @@ Site implantado: https://fulltime-historico.web.app
     - Firebase website: settings > authorized domains
 - useContext: user-context.jsx
 - Instalando react fireabse hooks (useAuthState em user-context): npm install react-firebase-hooks firebase
+- Login do usuário pelo App.jsx
+- Correção de erro de sintaxe antiga do firestore: 
+    O objeto db do Firebase v9 não tem o método .collection(). Em vez disso, você deve usar as funções collection() e addDoc().
+- firebase emulators:start
+- Trocando o modo do Firestore para Teste;
+
+---
+### Notes:
+- Organizar depois: https://www.youtube.com/watch?v=W30jg08UQow

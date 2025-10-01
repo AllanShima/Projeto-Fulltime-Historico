@@ -8,6 +8,7 @@ import { RiNotification3Line } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../contexts/user-context';
 import { auth } from "../firebase";
+import { onAuthStateChanged } from 'firebase/auth';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -19,26 +20,32 @@ const HeaderMonitor = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  var fullName = "Null Null";
-
-  if (userState.isLoggedIn) {
-    fullName = userState.fullName;
-  }
-
   const handleLogout = () => {
     // Atualizando o user no data layer
-    userDispatch({type: "LOGOUT"})
+    // userDispatch({type: "LOGOUT"})
     // Logout no firebase
     auth.signOut();
+    // dispatch é feito no app.jsx
     navigate('/login');
   }
 
   useEffect(() => {
-    // navegando para cameras quando o app é iniciado
-    
-    // Navegar para a aba do usuário logado
-    navigate('/monitor/cameras');
-  }, [])
+    navigate('/monitor/cameras')
+  }, []);
+
+  useEffect(() => {
+    if(auth.currentUser) {
+      if(userState.usertype === "f/safe"){
+        console.log("Usuário não permitido, navegando p local correto.");
+        navigate('/user/home');
+      } else if (userState.usertype === "monitor"){
+        navigate('/monitor/cameras');
+      }
+    } else{
+      console.log("carregando");
+      //navigate('/loading');
+    }
+  }, [auth.currentUser])
 
   return (
     <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
@@ -49,7 +56,7 @@ const HeaderMonitor = () => {
             FullCenter
           </h1>
       </div>
-      <span className='flex w-90 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
+      <span className='flex w-130 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
         <Link to={"cameras"} className={`${tabClass}
           ${location.pathname === "/monitor/cameras" ? tabOnClass : tabOffClass}`}>
           <BsCameraVideo className='w-4'/>
@@ -59,6 +66,11 @@ const HeaderMonitor = () => {
           ${location.pathname === "/monitor/history" ? tabOnClass : tabOffClass}`}>
           <CiViewTimeline className='w-4'/>
           <h4>Histórico de Eventos</h4>
+        </Link>
+        <Link to={"chat"} className={`${tabClass} 
+          ${location.pathname === "/monitor/chat" ? tabOnClass : tabOffClass}`}>
+          <CiViewTimeline className='w-4'/>
+          <h4>Live Chat + GPS</h4>
         </Link>
       </span>
       <div className='grid grid-flow-col justify-end w-full text-primary'>
@@ -70,8 +82,7 @@ const HeaderMonitor = () => {
             <RiNotification3Line/>
           </span>
           <span className='flex'>
-            <Avatar fullName={fullName} showName={true}/>
-            
+            <Avatar fullName={userState.fullName} showName={true}/>
           </span>
           <a onClick={handleLogout} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300 cursor-default'>
               <RxExit/>

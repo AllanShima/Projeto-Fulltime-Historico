@@ -8,16 +8,15 @@ import { auth } from '../firebase'
 // This value is used by components when they try to access the context, but no corresponding <Context.Provider> is found in the component tree above them.
 export const UserContext = createContext();
 
-// const user = "";
-
 const userContext = (state, action) => {
   switch(action.type){                 
     case "LOGIN":
-        console.log("Logged in!");
-        return {...state, isLoggedIn: true, fullName:action.payload.fullName, usertype: action.payload.usertype}
+        const userObject = {...state, isLoggedIn: true, uid:action.payload.uid, fullName:action.payload.fullName, usertype: action.payload.usertype}
+        console.log("Usuário logado: " + userObject.fullName);
+        return userObject;
     case "LOGOUT":
-        console.log("Logged Out!");
-        return {...state, isLoggedIn: false, user:null, fullName:null, usertype:null }
+        console.log("Usuário atual desconectado.");
+        return {...state, isLoggedIn: false, uid:null, fullName:"Null Null", usertype:null }
     default:
         console.log("Returning state for unknown reason");
         return state;
@@ -26,7 +25,7 @@ const userContext = (state, action) => {
 
 export const UserStateProvider = ({ children }) => {
     // Procurar no firestore e inserir no valor padrão
-    const [userState, userDispatch] = useReducer(userContext, { isLoggedIn:false, fullName:null, usertype:null })
+    const [userState, userDispatch] = useReducer(userContext, { isLoggedIn:false, uid:null, fullName:"Null Null", usertype:null })
     return (
         <UserContext value={{userState, userDispatch}}>
             {children}

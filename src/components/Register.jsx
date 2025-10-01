@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { BsCameraVideo } from "react-icons/bs";
@@ -9,10 +9,18 @@ import { FaUnlock } from "react-icons/fa"; // password
 import { FaLock } from "react-icons/fa"; // confirm password
 import { FaUserShield } from "react-icons/fa"; // fsafe
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
+import { addDoc, collection } from 'firebase/firestore';
+
 const Register = () => {
+
+    // const [dbInstance, setDbInstance] = useState(null);
+
+    // useEffect(() => {
+    //     setDbInstance(db);
+    // }, [])
 
     const navigate = useNavigate();
 
@@ -25,37 +33,64 @@ const Register = () => {
 
     const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
     const [isLastNameFocused, setIsLastNameFocused] = useState(false);
-
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPassFocused, setIsPassFocused] = useState(false);
     const [isPassConfirmFocused, setIsPassConfirmFocused] = useState(false);
 
     const [buttonSelected, setButtonSelected] = useState("monitor");
-    // setFocusClass("outline-2 outline-gray-black text-gray-700")
+
+    const registrarNovoUsuario = async(userId) => {
+
+        // if (!dbInstance) {
+        //     throw new Error("Firestore DB is not initialized.");
+        // }
+
+        //const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // CONSTRUÇÃO DO CAMINHO PRIVADO OBRIGATÓRIO (MANDATORY PRIVATE PATH): 
+        // /artifacts/{appId}/users/{userId}/user_profile/{docId}
+        // Usamos 'data' como docId para garantir um documento de perfil único.
+        try {
+            const docRef = await addDoc(collection(db, "users"), {
+                uid: userId,
+                first: firstName,
+                last: lastName,
+                email: email,
+                usertype: buttonSelected,
+                createdAt: new Date()
+            });
+            console.log("Usuário inserido com o ID: ", docRef.id);
+        } catch (e) {
+            console.error("Erro ao adicionar o usuário: ", e);
+        }
+    }
     const register = e => {
         e.preventDefault()
 
         // firebase register function
         if(password === confirmPassword) {
             createUserWithEmailAndPassword(auth, email, password)
-            .then((auth) => {
-                // registrado com sucesso
-                console.log(auth);
-                if(buttonSelected === "monitor"){
-                    // Guardar informação no firebase firestore
-                    navigate('/monitor/cameras')
-                } else {
-                    navigate('/user/home')
-                }
+            .then((userCredential) => {
                 
+                // registrado com sucesso
+                     
+                // Captura o objeto de usuário recém-criado
+                const user = userCredential.user;
 
-                // Registrar no data layer (useContext) o nome, sobrenome, email e senha (autocompletion dps)
+                // Registrando no firestore o UID, fullName, type
+                registrarNovoUsuario(user.uid);
+
+                // O usuário é automaticamente logado depois da sua conta criada
+                if(buttonSelected === "monitor"){
+                    navigate('/monitor/cameras');
+                } else{
+                    navigate('/user/home');
+                }
             })
             .catch(error => alert(error.message))            
         } else {
             alert("Confirme a senha novamente!")
         }
-
     }
 
     const buttonClass = "flex space-x-2 w-full py-1 cursor-default justify-center content-center items-center rounded-lg";
@@ -63,15 +98,13 @@ const Register = () => {
     const buttonOnSafeClass = "bg-red-700 text-white transition duration-200";
     const buttonOffClass = "bg-gray-200 text-primary transition duration-200";
 
-    
-
     return (
         <div className='flex w-full h-full items-center justify-center bg-gray-50 font-regular'>
             <div className='grid w-fit h-full justify-center'>
                 {/* Fulltime Logo */}
                 <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
-                    <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
-                    <h1 className='mt-auto mb-auto text-primary font-bold'>
+                    <img src="/icon.png" alt="Fulltime logo" className='w-9 rounded-sm'/>
+                    <h1 className='mt-auto mb-auto text-red-600 font-bold text-xl'>
                         FullCenter
                     </h1>
                 </div>
