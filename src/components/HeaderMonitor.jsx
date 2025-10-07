@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CiSettings } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import Avatar from "./ui/Avatar";
@@ -12,6 +12,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
+
+  const [ fullname, setFullname ] = useState("");
 
   const tabClass = "flex space-x-2 w-full py-1 cursor-default justify-center content-center items-center rounded-lg";
   const tabOnClass = "bg-primary text-white transition duration-200";
@@ -34,18 +36,23 @@ const HeaderMonitor = () => {
   }, []);
 
   useEffect(() => {
-    if(auth.currentUser) {
+    navigate('/monitor/cameras');
+    onAuthStateChanged(auth, async (user) => {
+      // se estiver logado
+      if (user){
+        // Buscando o usuário registrado no firestore
       if(userState.usertype === "f/safe"){
         console.log("Usuário não permitido, navegando p local correto.");
         navigate('/user/home');
       } else if (userState.usertype === "monitor"){
-        navigate('/monitor/cameras');
+        console.log("Caminho correto, mantendo a janela.");
       }
-    } else{
-      console.log("carregando");
-      //navigate('/loading');
-    }
-  }, [auth.currentUser])
+        setFullname(userState.first + " " + userState.last);
+      } else {
+        console.log("Usuário Carregando... ou não")
+      }
+    })
+  }, [])
 
   return (
     <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>

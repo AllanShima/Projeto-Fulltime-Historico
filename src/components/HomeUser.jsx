@@ -32,7 +32,7 @@ const userAlerts = [
     icon: FaHeartbeat
   },
   {
-    title: "FALHA NA ILUMINAÇÃO PÚBLICA",
+    title: "FALHA NA ILUMINAÇÃO",
     icon: FaLightbulb
   },
   {
@@ -62,13 +62,15 @@ const HomeUser = () => {
             const IconComponent = alert.icon;
             // key é crucial para a melhor performance e funcionamento do react.
             return (
-              <li key={index} className='relative flex flex-col justify-center items-center ml-auto mr-auto space-y-2 w-30 h-30 rounded-2xl shadow-md bg-gray-200'>
-                <IconComponent className='w-10 h-10'/>
-                <span className='text-center font-bold text-xs'>{alert.title}</span>
-                {/* Pra esconder com o hover */}
-                <span className='absolute grid items-center justify-center w-full h-full rounded-2xl opacity-0 hover:opacity-90 hover:cursor-pointer bg-gray-300/90 transition duration-200'>
-                  <GoAlert className='w-13 h-13 text-red-500'/>
-                </span>
+              <li key={index} className='ml-auto mr-auto w-30 h-30 rounded-2xl shadow-md bg-gray-200'>
+                <div className='relative flex flex-col justify-center items-center w-full h-full'>
+                  <IconComponent className='w-10 h-10 mb-2'/>
+                  <span className='text-center font-bold text-xs'>{alert.title}</span>
+                  {/* Pra esconder com o hover */}
+                  <span className='absolute grid items-center justify-center w-full h-full rounded-2xl opacity-0 hover:opacity-90 hover:cursor-pointer bg-gray-300/90 transition duration-200'>
+                    <GoAlert className='w-13 h-13 text-red-500'/>
+                  </span>                  
+                </div>
               </li>              
             )
           })}

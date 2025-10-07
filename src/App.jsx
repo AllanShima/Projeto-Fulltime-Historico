@@ -22,7 +22,7 @@ function App() {
 
   const searchUserById = async (uid) => {
         // 1. Cria a referência exata do documento.
-        // Caminho: db -> coleção 'users' -> documento 'uid'
+        // Caminho: db -> coleção 'users' -> coleção 'user' -> documento 'uid'
         const userDocRef = collection(db, "users");
         
         // 2. Pegando o resultado a partir da query
@@ -50,14 +50,13 @@ function App() {
       if (user){
         // Buscando o usuário registrado no firestore
         const userData = await searchUserById(user.uid);
-        console.log(userData);
         // Armazenando o usuário logado no data layer
         const fullName = userData.first + " " + userData.last;
-        await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, fullName: fullName, usertype: userData.usertype}});
+        await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, first: userData.first, last: userData.last, usertype: userData.usertype}});
         if(userData.usertype === "monitor"){
-          console.log("é monitor");
+          //console.log("é monitor");
         } else{
-          console.log("é usuário");
+          //console.log("é usuário");
         }
       } else {
         userDispatch({ type: "LOGOUT" })

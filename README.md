@@ -65,3 +65,15 @@ Site implantado: https://fulltime-historico.web.app
 ---
 ### Notes:
 - Organizar depois: https://www.youtube.com/watch?v=W30jg08UQow
+
+---
+### Bibliotecas
+
+- Rombo Motion (Abandonado - Não funciona)
+- Firebase
+    - Hooks;
+    - Authentication;
+    - Firestore;
+- React Icons
+- React Router
+- 

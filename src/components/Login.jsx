@@ -33,7 +33,7 @@ const Login = () => {
             // logado com sucesso
             console.log(userCredential)
             
-            if(userState.usertype == "monitor"){
+            if(userState.usertype == "f/center"){
                 navigate('/monitor/cameras')
             } else {
                 navigate('/user/home');
@@ -63,11 +63,11 @@ const Login = () => {
             <div className='grid w-fit h-full justify-center'>
                 {/* Fulltime Logo */}
                 <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
-                    <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
-                    <h1 className='mt-auto mb-auto text-primary font-bold'>
-                        FullCenter
-                    </h1>
-                </div>
+                    <a href='https://fulltime.com.br/' className='w-fit h-full flex flex-col'>
+                        <img src="https://isp-br.ops.fulltime.com.br/wp-content/themes/fulltimeisp4/images/icon.png" alt="Fulltime logo" className='w-15 ml-auto mr-auto rounded-sm text-white'/>
+                        <h1 className='ml-auto mr-auto font-bold text-2xl text-red-600'>Fulltime</h1>
+                    </a>
+                </div>                    
                 
                 {/* Welcome title */}
                 <h1 className='h-fit mt-auto mb-auto mr-auto ml-auto text-4xl font-extrabold text-gray-800'>
@@ -110,6 +110,7 @@ const Login = () => {
 
                 {/* Fulltime Softwares */}
                 <div className='flex w-fit h-12 space-x-13 font-bold'>
+                    <SoftwareIcon title="FullCenter" showTitle={true}/>
                     <SoftwareIcon title="FullCond" showTitle={true}/>
                     <SoftwareIcon title="FullCam" showTitle={true}/>
                     <SoftwareIcon title="F/Safe" showTitle={true}/>

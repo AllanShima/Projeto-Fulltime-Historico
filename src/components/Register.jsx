@@ -12,7 +12,7 @@ import { FaUserShield } from "react-icons/fa"; // fsafe
 import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 
 const Register = () => {
 
@@ -37,26 +37,19 @@ const Register = () => {
     const [isPassFocused, setIsPassFocused] = useState(false);
     const [isPassConfirmFocused, setIsPassConfirmFocused] = useState(false);
 
-    const [buttonSelected, setButtonSelected] = useState("monitor");
+    const [buttonSelected, setButtonSelected] = useState("f/center");
 
-    const registrarNovoUsuario = async(userId) => {
-
-        // if (!dbInstance) {
-        //     throw new Error("Firestore DB is not initialized.");
-        // }
-
-        //const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-        // CONSTRUÇÃO DO CAMINHO PRIVADO OBRIGATÓRIO (MANDATORY PRIVATE PATH): 
-        // /artifacts/{appId}/users/{userId}/user_profile/{docId}
-        // Usamos 'data' como docId para garantir um documento de perfil único.
+    const insertNewUser = async(userId) => {
         try {
-            const docRef = await addDoc(collection(db, "users"), {
+            const userNamePath = (firstName + "_" + lastName).toLowerCase();
+            const userDocRef = doc(db, "users", userNamePath);
+            const docRef = setDoc(userDocRef, {
                 uid: userId,
                 first: firstName,
                 last: lastName,
                 email: email,
                 usertype: buttonSelected,
+                pfpUrl: null,
                 createdAt: new Date()
             });
             console.log("Usuário inserido com o ID: ", docRef.id);
@@ -78,10 +71,10 @@ const Register = () => {
                 const user = userCredential.user;
 
                 // Registrando no firestore o UID, fullName, type
-                registrarNovoUsuario(user.uid);
+                insertNewUser(user.uid);
 
                 // O usuário é automaticamente logado depois da sua conta criada
-                if(buttonSelected === "monitor"){
+                if(buttonSelected === "f/center"){
                     navigate('/monitor/cameras');
                 } else{
                     navigate('/user/home');
@@ -173,10 +166,10 @@ const Register = () => {
                         </span>
                     </span> 
                     <span className='flex w-xs ml-auto mr-auto h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
-                      <button onClick={() => setButtonSelected("monitor")} className={`${buttonClass}
-                        ${buttonSelected === "monitor" ? buttonOnClass : buttonOffClass}`}>
+                      <button onClick={() => setButtonSelected("f/center")} className={`${buttonClass}
+                        ${buttonSelected === "f/center" ? buttonOnClass : buttonOffClass}`}>
                         <BsCameraVideo className='w-4'/>
-                        <h4>Monitor</h4>
+                        <h4>FullCenter</h4>
                       </button>
                       <button onClick={() => setButtonSelected("f/safe")} className={`${buttonClass} 
                         ${buttonSelected === "f/safe" ? buttonOnSafeClass : buttonOffClass}`}>

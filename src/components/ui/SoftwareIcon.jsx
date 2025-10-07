@@ -17,7 +17,7 @@ const icons = {
 const SoftwareIcon = ({ title, showTitle=false }) => {
   const IconComponent = icons[title];
 
-  if (!IconComponent){
+  if (!IconComponent && title !== "FullCenter"){
     console.error(`There is no corresponding icon from the title passed down: ${title}`);
 
     // Não procede com o próximo return.
@@ -26,10 +26,23 @@ const SoftwareIcon = ({ title, showTitle=false }) => {
   
   return (
     <div className='flex items-center w-full h-full text-red-600'>
-        <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
-            <IconComponent className="w-full h-full"/>
-        </span>            
-        {showTitle === true ? <h2 className='pl-2 text-lg font-regular'>{title}</h2> : null}
+      {title === "FullCenter" ? (
+        <>
+          <span className='w-10'>
+              <img src="/icon.png" alt="Fulltime logo" className='w-full rounded-lg shadow-md'/>
+          </span>            
+          {showTitle === true ? <h2 className='pl-2 text-lg font-bold'>{title}</h2> : null} 
+        </>
+
+      ) : (
+        <>
+          <span className='w-10 rounded-lg outline-3 p-1 bg-white shadow-md'>
+              <IconComponent className="w-full h-full"/>
+          </span>            
+          {showTitle === true ? <h2 className='pl-2 text-lg font-regular'>{title}</h2> : null} 
+        </>
+      )}
+
     </div>
   )
 }

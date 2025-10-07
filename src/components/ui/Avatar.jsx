@@ -1,4 +1,6 @@
+import { onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect, useState } from 'react'
+import { auth } from '../../firebase';
 
 
 const Avatar = ({fullName="Null Null", showName=false, profileUrl=null, customSize=null}) => {
@@ -9,15 +11,10 @@ const Avatar = ({fullName="Null Null", showName=false, profileUrl=null, customSi
   // Ainda testando
   const customSizeStyle = customSize !== null ? {width: `${customSize}px`, height: `${customSize}px`} : {};
 
-  const [abbreviation, setAbbreviation] = useState("");
-
-  useEffect(() => {
-    const firstChars = (firstName[0] + lastName[0]).toUpperCase();
-    setAbbreviation(firstChars)
-  }, [])
+  const abbreviation = (firstName[0] + lastName[0]).toUpperCase();
 
   return (
-    <div className='grid grid-flow-col content-center justify-center items-center'>
+    <div className='grid grid-flow-col content-center justify-center items-center text-primary font-regular'>
       {profileUrl !== null ? (
         <div style={{
           backgroundImage: `url(${profileUrl})`, 
