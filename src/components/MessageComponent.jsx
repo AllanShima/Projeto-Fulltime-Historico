@@ -137,7 +137,6 @@ const MessageComponent = ({ selectedContact }) => {
                 // Trata qualquer erro não capturado pelo seu try/catch interno
                 console.error("Erro no update de mensagens:", error);
             });
-
     }, [])
 
     return (
