@@ -7,6 +7,7 @@ import { useUserContext } from '../contexts/user-context';
 const MessageComponent = ({ selectedContact }) => {
     const [messages, setMessages] = useState([{}])
     const [textareaValue, setTextAreaValue] = useState("");
+    const [isTextareaFocused, setIsTextareaFocused] = useState(false);
     const { userState, userDispatch } = useUserContext();
 
     const updateMessages = async(selectedContact) => {
@@ -140,7 +141,7 @@ const MessageComponent = ({ selectedContact }) => {
     }, [])
 
     return (
-        <div className='flex flex-col border-b-1 text-gray-300 w-full h-full bg-amber-400'>
+        <div className='flex flex-col border-b-1 text-gray-300 w-full h-full'>
             <div className='flex items-center w-full h-12 border-b-1 text-gray-300'>
                 <h1 className='w-fit h-fit text-lg font-bold ml-auto mr-auto text-primary'>
                     {selectedContact.first + " " + selectedContact.last}
@@ -150,22 +151,30 @@ const MessageComponent = ({ selectedContact }) => {
                 {messages.length !== 0 ? (
                     <>
                         <div className='relative flex flex-col h-fit mt-2'>
-                            <h3 className='z-10 w-fit px-2 ml-auto mr-auto bg-amber-50 text-xs'>
+                            <h3 className='z-10 w-fit px-2 ml-auto mr-auto bg-white text-xs text-gray-700'>
                                 Conversa iniciada: Hoje, 03:12
                             </h3>
                             {/* Linha horizontal */}
                             <div className='z-0 absolute w-full h-[0.4px] my-2 bg-gray-300'></div>       
                         </div>
-                        <div className='grid content-between w-full h-full p-2 bg-amber-100'>
-                            <div className='flex flex-col w-full h-fit bg-amber-700 overflow-auto max-h-90'>
+                        <div className='flex flex-col w-full h-full py-4'>
+                            <div className='flex flex-col w-full px-4 overflow-auto grow h-0'>
                                 {messages.map(message => (
                                     <Message key={message.id} message={message}/>
                                 ))}        
                             </div>
                             
-                            <div className='flex w-full h-20 p-2 space-x-2 bg-amber-300'>
+                            <div className='flex w-full h-20 mt-4 px-4 space-x-2'>
                                 <div className='w-full h-full'>
-                                    <textarea name="message" rows="5" cols="40" placeholder="Escreva sua mensagem aqui..." value={textareaValue} onChange={(e) => setTextAreaValue(e.target.value)} className='w-full h-full resize-none text-primary p-2'/>
+                                    <div className={`w-full h-full outline-2 text-gray-400 rounded-lg transition ${isTextareaFocused ? ("outline-2 outline-gray-600") : ("")}`}>
+                                        <textarea name="message" rows="5" cols="40" 
+                                        onFocus={() => setIsTextareaFocused(true)} 
+                                        onBlur={() => setIsTextareaFocused(false)}
+                                        placeholder="Escreva sua mensagem aqui..." 
+                                        value={textareaValue} 
+                                        onChange={(e) => setTextAreaValue(e.target.value)} 
+                                        className='w-full h-full focus:outline-none resize-none text-gray-600 p-2'/>
+                                    </div>
                                 </div>   
 
                                 <span className='flex items-end w-fit h-full'>
