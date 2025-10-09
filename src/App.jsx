@@ -13,7 +13,7 @@ import TabChat from './components/TabChat'
 import { useEffect } from 'react'
 import { auth, db } from './firebase'
 import { onAuthStateChanged } from 'firebase/auth'
-import { where, collection, query, doc, getDocs } from 'firebase/firestore';
+import { where, collection, query, doc, getDocs, getDoc } from 'firebase/firestore';
 import Loading from './components/Loading'
 
 function App() {
@@ -21,26 +21,24 @@ function App() {
   const { userState, userDispatch } = useUserContext();
 
   const searchUserById = async (uid) => {
-        // 1. Cria a referência exata do documento.
-        // Caminho: db -> coleção 'users' -> coleção 'user' -> documento 'uid'
-        const userDocRef = collection(db, "users");
-        
-        // 2. Pegando o resultado a partir da query
-        const q = query(userDocRef, where("uid", "==", uid));
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const userDocRef = doc(db, "users", uid); 
+    // Caminho: users/ [o valor do uid]
 
-        // 3. Pegando o resultado a partir da query
-        const querySnapshot = await getDocs(q);
+    // 2. Busque o documento
+    const documentSnapshot = await getDoc(userDocRef);
 
-      if (!querySnapshot.empty) {
-          // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
-          const userDoc = querySnapshot.docs[0];
-          // Retorna o objeto de dados do documento.
-          return userDoc.data();
-      } else {
-          // O documento não existe.
-          console.log("Nenhum usuário encontrado com este UID!");
-          return null;
-      }
+    if (!documentSnapshot.empty) {
+        // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
+        const userData = documentSnapshot.data();
+        // Retorna o objeto de dados do documento.
+        //console.log(userData);
+        return userData;
+    } else {
+        // O documento não existe.
+        console.log("Nenhum usuário encontrado com este UID!");
+        return null;
+    }
   };
 
   // Armazenar o usuário logado ou não no data layer
@@ -51,7 +49,7 @@ function App() {
         // Buscando o usuário registrado no firestore
         const userData = await searchUserById(user.uid);
         // Armazenando o usuário logado no data layer
-        const fullName = userData.first + " " + userData.last;
+        //const fullName = userData.first + " " + userData.last;
         await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, first: userData.first, last: userData.last, usertype: userData.usertype}});
         if(userData.usertype === "monitor"){
           //console.log("é monitor");

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ChatItem from './ui/ChatItem'
+import ChatItem from './ui/ContactItem'
 import LiveChatComponent from './LiveChatComponent';
 
 const TabChat = () => {

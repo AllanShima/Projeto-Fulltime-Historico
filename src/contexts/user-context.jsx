@@ -12,7 +12,8 @@ const userContext = (state, action) => {
   switch(action.type){                 
     case "LOGIN":
         const userObject = {...state, isLoggedIn: true, uid:action.payload.uid, first:action.payload.first, last:action.payload.last, usertype: action.payload.usertype}
-        console.log("Usuário logado: " + userObject.fullName);
+        const fullname = userObject.first + ' ' + userObject.last;
+        console.log("Usuário logado: " + fullname);
         return userObject;
     case "LOGOUT":
         console.log("Usuário atual desconectado.");

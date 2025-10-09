@@ -41,8 +41,8 @@ const Register = () => {
 
     const insertNewUser = async(userId) => {
         try {
-            const userNamePath = (firstName + "_" + lastName).toLowerCase();
-            const userDocRef = doc(db, "users", userNamePath);
+            //const userNamePath = (firstName + "_" + lastName).toLowerCase();
+            const userDocRef = doc(db, "users", userId);
             const docRef = setDoc(userDocRef, {
                 uid: userId,
                 first: firstName,
