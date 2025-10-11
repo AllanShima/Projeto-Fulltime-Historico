@@ -37,7 +37,7 @@ const LiveChatComponent = ({ monitoring=true }) => {
         // 3. Pegando o resultado a partir da query
         const collectionSnapshot = await getDocs(q);
 
-      if (!collectionSnapshot.empty) {
+        if (!collectionSnapshot.empty) {
             // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
 
             // 1. MAPEIA os DocumentSnapshots para um array de objetos JavaScript.
@@ -53,17 +53,15 @@ const LiveChatComponent = ({ monitoring=true }) => {
                     ? contact.usertype === "f/safe" 
                     : contact.usertype === "f/center";
             });
-
             return filteredContacts;
-
-      } else {
-          // O documento não existe.
-          console.log("Nenhum usuário encontrado!");
-          return null;
-      }
-        } catch (e) {
-            console.log("Erro Ocorrido (Possivelmente contato inexistente): " + e);
-        } 
+        } else {
+            // O documento não existe.
+            console.log("Nenhum usuário encontrado!");
+            return null;
+        }
+            } catch (e) {
+                console.log("Erro Ocorrido (Possivelmente contato inexistente): " + e);
+            } 
     };
 
     // Atualizar a lista de contatos
@@ -95,8 +93,8 @@ const LiveChatComponent = ({ monitoring=true }) => {
                 </div>
                 {/* Contatos */}
                 <div className='flex flex-col w-full h-full space-y-18 rounded-sm'>
-                    {newContacts.map(contact => (
-                        <button key={contact.id} onClick={() => setSelectedContact(contact)} className={`relative w-full h-fit bg-amber-500`}>
+                    {newContacts.map((contact, index) => (
+                        <button key={index} onClick={() => setSelectedContact(contact)} className={`relative w-full h-fit bg-amber-500`}>
                             <ContactItem contact={contact} selectedContact={selectedContact}/>
                         </button>
                     ))}

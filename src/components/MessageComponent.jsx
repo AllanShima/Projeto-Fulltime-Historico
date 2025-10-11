@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Message from './Message'
-import { addDoc, collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useUserContext } from '../contexts/user-context';
 
@@ -47,6 +47,9 @@ const MessageComponent = ({ selectedContact }) => {
                 ...doc.data()
             });
         });
+        
+        // console.log("Todas as mensagens SNAPSHOT 1: ");
+        // console.log(allMessages);
 
         // Process snapshot2
         snapshot2.forEach(doc => {
@@ -55,6 +58,9 @@ const MessageComponent = ({ selectedContact }) => {
                 ...doc.data()
             });
         });
+
+        // console.log("Todas as mensagens SNAPSHOT 2: ");
+        // console.log(allMessages);
 
         // 5. Sort the combined array by 'createdAt' in descending order
         // Note: The 'createdAt' property must be a proper Date object or a comparable value (like a Firebase Timestamp)
@@ -125,11 +131,36 @@ const MessageComponent = ({ selectedContact }) => {
         }
     }
 
+    // ----
+    // Fazer um update das mensagens toda vez que:
+
+    // Que a coleção do contato selecionado atualizar (escutar as mensagens que ele está enviando e atualizar p mim)
+
+    // 1. Defina a referência da coleção
+    const userMessagesCollection = (userState.first + "_" + userState.last).toLowerCase();
+    const senderChatCollectionRef = collection(db, "users", selectedContact.uid, "chats", userMessagesCollection, "messages");
+
+    // 2. Configure o ouvinte em tempo real
+    const unsubscribe = onSnapshot(senderChatCollectionRef, (snapshot) => {
+        // Este código é executado em tempo real a cada mudança!
+
+        console.log("A coleção de mensagens foi alterada!");
+        
+        updateMessages(selectedContact);
+    });
+
+    useEffect(() => {
+        // Executar toda vez que o contato selecionado mudar;
+        // parar de escutar
+        unsubscribe();
+    }, [selectedContact])
+
+    // Que o componente iniciar
     useEffect(() => {
         updateMessages(selectedContact)
             .then(messages => {
                 // Este bloco é executado quando a Promise resolve
-                console.log("Mensagens encontradas:", messages);
+                // console.log("Mensagens encontradas:", messages);
                 setMessages(messages);
                 // Você pode chamar um setState aqui, ex: setNewContacts(contatos);
             })
@@ -137,6 +168,9 @@ const MessageComponent = ({ selectedContact }) => {
                 // Trata qualquer erro não capturado pelo seu try/catch interno
                 console.error("Erro no update de mensagens:", error);
             });
+        return () => {
+            unsubscribe();
+        };
     }, [])
 
     return (
@@ -158,8 +192,8 @@ const MessageComponent = ({ selectedContact }) => {
                         </div>
                         <div className='flex flex-col w-full h-full py-4'>
                             <div className='flex flex-col w-full px-4 overflow-auto grow h-0'>
-                                {messages.map(message => (
-                                    <Message key={message.id} message={message}/>
+                                {messages.map((message, index) => (
+                                    <Message key={index} message={message} senderContact={selectedContact}/>
                                 ))}        
                             </div>
                             
