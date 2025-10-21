@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase'
+import { auth } from '../services/firebase'
 
 // O arquivo do useContext é criado para não ter que renderizar todos os componentes
 // sem necessidade dentro do provider, apenas os que o utilizam

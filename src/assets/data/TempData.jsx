@@ -122,34 +122,6 @@ const VideosRecorded = [
 const events = [
   { 
     id: "1", 
-    software_from: EventsConstants.SOFTWARES.F_SAFE,
-    title: "Assalto armado",
-    description: "Assalto armado no local",
-    type: EventsConstants.TYPES.EMERGENCY,
-    severity: EventsConstants.SEVERITIES.CRITICAL,
-    alert: EventsConstants.ALERTS.FORMS,
-    show_button: true,
-    device: "Eduarda Ferreira", 
-    camera: cameras[2], 
-    date: new Date(2024, 6, 15, 14, 20, 20),
-    video_available: true,
-    video_recorded: VideosRecorded[0]
-  },
-  { 
-    id: "2", 
-    software_from: EventsConstants.SOFTWARES.F_SAFE,
-    title: "Assalto armado",
-    description: "Assalto armado no local",
-    type: EventsConstants.TYPES.EMERGENCY,
-    severity: EventsConstants.SEVERITIES.CRITICAL,
-    device: "Paulo Sérgio", 
-    camera: cameras[0],
-    date: new Date(2024, 12, 15, 14, 20, 20),
-    video_available: true,
-    video_recorded: VideosRecorded[1]
-  },
-  { 
-    id: "3", 
     software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
@@ -162,7 +134,7 @@ const events = [
     video_recorded: VideosRecorded[2]
   },
   { 
-    id: "4", 
+    id: "2", 
     software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
@@ -245,7 +217,7 @@ const userEvents = [
     type: EventsConstants.TYPES.EMERGENCY,
     severity: EventsConstants.SEVERITIES.CRITICAL,
     alert: EventsConstants.ALERTS.REPORT,
-    show_button: true,
+    show_button: false,
     device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
@@ -260,7 +232,7 @@ const userEvents = [
     type: EventsConstants.TYPES.EMERGENCY,
     severity: EventsConstants.SEVERITIES.CRITICAL,
     alert: EventsConstants.ALERTS.ALERT,
-    show_button: true,
+    show_button: false,
     device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),

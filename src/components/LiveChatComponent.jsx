@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ContactItem from './ui/ContactItem';
 import Message from './Message';
 import { useUserContext } from '../contexts/user-context';
-import { db } from '../firebase';
+import { db } from '../services/firebase';
 import { addDoc, getDocs, query, collection, orderBy, limit, getDoc, doc } from 'firebase/firestore';
 import MessageComponent from './MessageComponent';
 // monitoring = true: pra mostrar os contatos de usuários somente

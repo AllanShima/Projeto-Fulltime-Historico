@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Message from './Message'
 import { addDoc, collection, getDocs, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../services/firebase';
 import { useUserContext } from '../contexts/user-context';
 
 const MessageComponent = ({ selectedContact }) => {

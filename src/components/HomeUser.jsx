@@ -1,6 +1,6 @@
 // Esse file vai conter os botões dos eventos
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import { FaFire } from "react-icons/fa6";
 import { FaHeartbeat } from "react-icons/fa";
@@ -53,7 +53,14 @@ const userAlerts = [
   },
 ];
 
-const HomeUser = () => {
+ 
+
+const HomeUser = ({ setShowModal, setSelectedAlert }) => {
+  const configureCurrentAlert = (alert) => {
+    setSelectedAlert(alert);
+    setShowModal(true)
+  }
+  
   return (
     <div className='p-6 w-full h-full'>
       <div className='flex p-4 w-full h-full items-center justify-center bg-gray-100 rounded-2xl shadow-lg'>
@@ -63,14 +70,16 @@ const HomeUser = () => {
             // key é crucial para a melhor performance e funcionamento do react.
             return (
               <li key={index} className='ml-auto mr-auto w-30 h-30 rounded-2xl shadow-md bg-gray-200'>
-                <div className='relative flex flex-col justify-center items-center w-full h-full'>
-                  <IconComponent className='w-10 h-10 mb-2'/>
-                  <span className='text-center font-bold text-xs'>{alert.title}</span>
-                  {/* Pra esconder com o hover */}
-                  <span className='absolute grid items-center justify-center w-full h-full rounded-2xl opacity-0 hover:opacity-90 hover:cursor-pointer bg-gray-300/90 transition duration-200'>
-                    <GoAlert className='w-13 h-13 text-red-500'/>
-                  </span>                  
-                </div>
+                <button onClick={() => configureCurrentAlert(alert)} className='w-full h-full hover:cursor-pointer'>
+                  <div className='relative flex flex-col justify-center items-center w-full h-full'>
+                    <IconComponent className='w-10 h-10 mb-2'/>
+                    <span className='text-center font-bold text-xs'>{alert.title}</span>
+                    {/* Pra esconder com o hover */}
+                    <span className='absolute grid items-center justify-center w-full h-full rounded-2xl opacity-0 hover:opacity-90 bg-gray-300/90 transition duration-200'>
+                      <GoAlert className='w-13 h-13 text-red-500'/>
+                    </span>                  
+                  </div>                  
+                </button>
               </li>              
             )
           })}

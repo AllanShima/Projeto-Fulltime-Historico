@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect, useState } from 'react'
-import { auth } from '../../firebase';
+import { auth } from '../../services/firebase';
 
 
 const Avatar = ({fullName=null, showName=false, profileUrl=null, customSize=null}) => {

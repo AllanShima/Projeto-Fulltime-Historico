@@ -4,8 +4,9 @@ import { IoIosChatboxes } from "react-icons/io";
 import EventCardUser from './ui/EventCardUser';
 import LiveChatComponent from './LiveChatComponent';
 
-const SidebarUser = ({ userEvents }) => {
+const SidebarUser = ({ userEvents, setNotificationButtonModal, setSelectedEvent }) => {
   const [activeTab, setActiveTab] = useState("notification");
+
   return (
     <div className='flex flex-col h-full left-0 bg-gray-100 border-r-1 text-gray-300'>
       <div className='flex items-center justify-center w-full h-20 border-b-1'>
@@ -29,7 +30,12 @@ const SidebarUser = ({ userEvents }) => {
             <div className='flex-1 w-full mt-4 justify-between overflow-y-auto'>
               <div className='w-full pr-4 space-y-3'>
                 {userEvents.map((event) => (
-                  <EventCardUser key={event.id} event={event}/>
+                  <EventCardUser 
+                    key={event.id} 
+                    event={event} 
+                    setNotificationButtonModal={setNotificationButtonModal}
+                    setSelectedEvent={setSelectedEvent}
+                  />
                 ))}          
               </div>           
             </div>

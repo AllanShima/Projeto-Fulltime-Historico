@@ -13,10 +13,6 @@ import { CiLocationOn } from "react-icons/ci";
 import { CiCalendar } from "react-icons/ci";
 import { BsCameraVideo } from "react-icons/bs";
 
-import SoftwareIcon from './SoftwareIcon';
-import ExportButton from './ExportButton';
-import Avatar from './Avatar';
-
 import getTimePassed from '../../assets/functions/GetTimePassed'; 
 import ViewButton from './ViewButton';
 
@@ -30,7 +26,7 @@ const typeSpecs = {
   "alert": ["bg-blue-100 text-blue-800", IoAlertCircleOutline],
 }
 
-const EventCardUser = ({ event }) => {
+const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) => {
   const [timePassed, setTimePassed] = useState('');
 
   useEffect(() => {
@@ -101,8 +97,8 @@ const EventCardUser = ({ event }) => {
             </span>
             <span className='flex flex-col text-xs w-fit h-full items-end justify-between'>
               {event.show_button ? (
-                <button>
-                  <ViewButton text="Visualizar"/>
+                <button onClick={() => {setNotificationButtonModal(true); setSelectedEvent(event)}}>
+                  <ViewButton text="Abrir"/>
                 </button>
               ) : null}
             </span>

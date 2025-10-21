@@ -4,17 +4,12 @@ import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
 import {cameras, events} from '../assets/data/TempData'
 
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase'
-import { useUserContext } from '../contexts/user-context'
-
 const WindowMonitor = () => {
 
   const [selectedCam, setSelectedCam] = useState("1");
 
   // Uma nova array que exclui a camera selecionada
   const [remainingCams, setRemainingCams] = useState(cameras.filter(cam => cam.id !== selectedCam))
-  const [user, loading, error] = useAuthState(auth);
   
   // Pra ter certeza de que user consegue carregar
 

@@ -9,10 +9,9 @@ import { FaUnlock } from "react-icons/fa"; // password
 import { FaLock } from "react-icons/fa"; // confirm password
 import { FaUserShield } from "react-icons/fa"; // fsafe
 
-import { auth, db } from "../firebase";
+import { auth } from "../services/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { firestoreSetNewUser } from '../services/api/FirebaseSetFunctions';
 
 const Register = () => {
 
@@ -39,24 +38,6 @@ const Register = () => {
 
     const [buttonSelected, setButtonSelected] = useState("f/center");
 
-    const insertNewUser = async(userId) => {
-        try {
-            //const userNamePath = (firstName + "_" + lastName).toLowerCase();
-            const userDocRef = doc(db, "users", userId);
-            const docRef = setDoc(userDocRef, {
-                uid: userId,
-                first: firstName,
-                last: lastName,
-                email: email,
-                usertype: buttonSelected,
-                pfpUrl: null,
-                createdAt: new Date()
-            });
-            console.log("Usuário inserido com o ID: ", docRef.id);
-        } catch (e) {
-            console.error("Erro ao adicionar o usuário: ", e);
-        }
-    }
     const register = e => {
         e.preventDefault()
 
@@ -71,7 +52,7 @@ const Register = () => {
                 const user = userCredential.user;
 
                 // Registrando no firestore o UID, fullName, type
-                insertNewUser(user.uid);
+                firestoreSetNewUser(user.uid, firstName, lastName, email, buttonSelected);
 
                 // O usuário é automaticamente logado depois da sua conta criada
                 if(buttonSelected === "f/center"){
@@ -95,12 +76,14 @@ const Register = () => {
         <div className='flex w-full h-full items-center justify-center bg-gray-50 font-regular'>
             <div className='grid w-fit h-full justify-center'>
                 {/* Fulltime Logo */}
-                <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
-                    <img src="/icon.png" alt="Fulltime logo" className='w-9 rounded-sm'/>
-                    <h1 className='mt-auto mb-auto text-red-600 font-bold text-xl'>
-                        FullCenter
-                    </h1>
-                </div>
+                <a href="/" className='flex'>
+                    <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
+                        <img src="/icon.png" alt="Fulltime logo" className='w-9 rounded-sm'/>
+                        <h1 className='mt-auto mb-auto text-red-600 font-bold text-xl'>
+                            FullCenter
+                        </h1>
+                    </div>                      
+                </a>
             
                 {/* Sign in box */}        
                 <div className='grid ml-auto mr-auto items-center w-120 h-fit bg-white shadow-2xl rounded-sm p-8 space-y-5 text-md'>

@@ -6,11 +6,11 @@ import SoftwareIcon from './ui/SoftwareIcon';
 import { IoMdPerson } from "react-icons/io"; // user
 import { FaUnlock } from "react-icons/fa"; // password
 
-import { auth, db } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { useUserContext } from '../contexts/user-context';
 import { where, query, getDocs, collection } from 'firebase/firestore';
+import { auth } from '../services/firebase';
 
 const Login = () => {
 
@@ -62,12 +62,14 @@ const Login = () => {
         <div className='flex w-full h-full items-center justify-center bg-gray-50 font-regular'>
             <div className='grid w-fit h-full justify-center'>
                 {/* Fulltime Logo */}
-                <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
-                    <a href='https://fulltime.com.br/' className='w-fit h-full flex flex-col'>
-                        <img src="https://isp-br.ops.fulltime.com.br/wp-content/themes/fulltimeisp4/images/icon.png" alt="Fulltime logo" className='w-15 ml-auto mr-auto rounded-sm text-white'/>
-                        <h1 className='ml-auto mr-auto font-bold text-2xl text-red-600'>Fulltime</h1>
-                    </a>
-                </div>                    
+                <a href="/" className='flex'>
+                    <div className='flex mr-auto ml-auto justify-center content-center mt-auto mb-auto w-1/2 space-x-2'>
+                        <img src="/icon.png" alt="Fulltime logo" className='w-9 rounded-sm'/>
+                        <h1 className='mt-auto mb-auto text-red-600 font-bold text-xl'>
+                            FullCenter
+                        </h1>
+                    </div>                      
+                </a>
                 
                 {/* Welcome title */}
                 <h1 className='h-fit mt-auto mb-auto mr-auto ml-auto text-4xl font-extrabold text-gray-800'>
@@ -102,7 +104,7 @@ const Login = () => {
                         </span>
                     </span> 
                     <button onClick={signIn}
-                    className='w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white'>
+                            className='w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white'>
                         Login
                     </button>
                     <Link className="underline text-blue-700" to={"/register"}>Não tem uma conta?</Link>
