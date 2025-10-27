@@ -76,10 +76,10 @@ const EventsConstants = {
         FULL_ARM: "FullArm",
     },
     SEVERITIES: {
-        LOW: "low",
-        MEDIUM: "medium",
-        HIGH: "high",
-        CRITICAL: "critical",
+        LOW: "baixo",
+        MEDIUM: "medio",
+        HIGH: "alto",
+        CRITICAL: "critico",
     },
     ALERTS: {
         MESSAGE: "message",
@@ -147,6 +147,24 @@ const events = [
     video_recorded: VideosRecorded[2]
   },
 ];
+
+const monitorNotifications = [
+  { 
+    id: "1", 
+    software_from: EventsConstants.SOFTWARES.FULL_CAM,
+    title: "Novo Evento Relatado, EMERGÊNCIA",
+    description: "Atualização da câmera 2 realizada com sucesso",
+    type: EventsConstants.TYPES.SYSTEM,
+    severity: EventsConstants.SEVERITIES.LOW,
+    device: "System", 
+    camera: cameras[2],
+    date: new Date(2024, 12, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[2]
+  },
+]
+
+// ------------------------------------------ User
 
 const userEvents = [
   { 
@@ -241,32 +259,5 @@ const userEvents = [
   }, 
 ]
 
-// Informações do usuário no firestore (esse é só temporário)
-const contacts = [
-  {
-    id: "1",
-    name: "Cleber",
-    last_name: "Josh",
-    role: "monitor",
-    profileUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f4/USAFA_Hosts_Elon_Musk_%28Image_1_of_17%29_%28cropped%29.jpg"
-    // phone_number: ""
-  },
-  {
-    id: "2",
-    name: "Gabriel",
-    last_name: "Claus",
-    role: "user",
-    profileUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIx4Rf0-jGr4y-LNHxN_jWlPsZj6dxmJQ9mw&s"
-    // phone_number: ""
-  },
-  {
-    id: "3",
-    name: "Carlos",
-    last_name: "Bulgarelli",
-    role: "user",
-    profileUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIx4Rf0-jGr4y-LNHxN_jWlPsZj6dxmJQ9mw&s"
-    // phone_number: ""
-  },
-]
 
-export {cameras, events, userEvents, contacts};
+export {cameras, events, userEvents, monitorNotifications};

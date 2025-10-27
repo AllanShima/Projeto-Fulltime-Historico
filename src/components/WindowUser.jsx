@@ -20,6 +20,7 @@ const typeSpecs = {
 }
 
 const WindowUser = () => {
+  const { userState, userDispatch } = useUserContext();
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
 
@@ -27,7 +28,7 @@ const WindowUser = () => {
   const [selectedEvent, setSelectedEvent] = useState({});
 
   const storeAlert = () => {
-    firestoreSetAlertSignal(selectedAlert);
+    firestoreSetAlertSignal(selectedAlert, userState);
     setShowAlertModal(false);
     window.alert("Alerta Enviado!");
   }

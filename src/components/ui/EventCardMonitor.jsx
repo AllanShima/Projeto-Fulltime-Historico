@@ -17,6 +17,7 @@ import ExportButton from './ExportButton';
 import Avatar from './Avatar';
 
 import getTimePassed from '../../assets/functions/GetTimePassed'; 
+import SeverityIndicator from './SeverityIndicator';
 
 const typeSpecs = {
   "emergency": ["bg-orange-100 text-orange-800", GoAlert],
@@ -25,7 +26,7 @@ const typeSpecs = {
   "access": ["bg-green-100 text-green-800", FaRegEye],
 }
 
-const EventCard = ({ event, simplified }) => {
+const EventCardMonitor = ({ event, simplified, setStateModal, stateModal }) => {
   const [timePassed, setTimePassed] = useState('');
 
   useEffect(() => {
@@ -114,9 +115,14 @@ const EventCard = ({ event, simplified }) => {
 
             </span>
             <span className='flex flex-col text-xs w-fit h-full items-end justify-between'>
-              <button>
-                <ExportButton text="Exportar"/>
-              </button>
+              <span className='flex'>
+                <span className='flex w-full h-full mr-3'>
+                  <SeverityIndicator severity={event.severity}/>
+                </span>
+                <button onClick={() => setStateModal(!stateModal)}>
+                  <ExportButton text="Exportar"/>
+                </button>
+              </span>
               <span className='w-6'>
                 {event.software_from === "F/Safe" ? <Avatar fullName={event.device}/> : <SoftwareIcon title={event.software_from} showTitle={false}/>}
               </span>
@@ -128,4 +134,4 @@ const EventCard = ({ event, simplified }) => {
   )
 }
 
-export default EventCard
+export default EventCardMonitor

@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
 // import { contacts } from '../assets/data/TempData' 
 import ContactItem from './ui/ContactItem';
-import Message from './Message';
-import { useUserContext } from '../contexts/user-context';
-import { db } from '../services/firebase';
-import { addDoc, getDocs, query, collection, orderBy, limit, getDoc, doc } from 'firebase/firestore';
 import MessageComponent from './MessageComponent';
+import { firestoreGetContacts } from '../services/api/FirebaseGetFunctions';
 // monitoring = true: pra mostrar os contatos de usuários somente
 // monitoring = false: pra mostrar os contatos somente de monitores
 
@@ -20,67 +17,33 @@ import MessageComponent from './MessageComponent';
 
 const LiveChatComponent = ({ monitoring=true }) => {
 
-    const { userState, userDispatch } = useUserContext();
-
     const [selectedContact, setSelectedContact] = useState({});
     const [newContacts, setNewContacts] = useState([{}]);
-
-    // Atualizar Lista de contatos(usuários)
-    const searchContacts = async() => {
-        try {
-        // const userCollection = (userState.first + userState.last).toLowerCase();
-        const chatCollectionRef = collection(db, "users");
-        
-        // 2. Pegando o resultado a partir da query
-        const q = query(chatCollectionRef);
-
-        // 3. Pegando o resultado a partir da query
-        const collectionSnapshot = await getDocs(q);
-
-        if (!collectionSnapshot.empty) {
-            // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
-
-            // 1. MAPEIA os DocumentSnapshots para um array de objetos JavaScript.
-            //    Aqui chamamos .data() em CADA doc.
-            const allContactsData = collectionSnapshot.docs.map(doc => ({
-                id: doc.id, // Inclui o ID do documento, se necessário
-                ...doc.data() // Pega os campos do documento
-            }));
-
-            const filteredContacts = allContactsData.filter(contact => {
-                // Note: Assumindo que o campo com o tipo de contato é 'usertype'
-                return monitoring 
-                    ? contact.usertype === "f/safe" 
-                    : contact.usertype === "f/center";
-            });
-            return filteredContacts;
-        } else {
-            // O documento não existe.
-            console.log("Nenhum usuário encontrado!");
-            return null;
-        }
-            } catch (e) {
-                console.log("Erro Ocorrido (Possivelmente contato inexistente): " + e);
-            } 
-    };
 
     // Atualizar a lista de contatos
     useEffect(() => {
         // Chamada de função assincrona
-        searchContacts()
-            .then(contatos => {
-                // Este bloco é executado quando a Promise resolve
-                console.log("Contatos Encontrados:", contatos);
-                setNewContacts(contatos);
-                // Você pode chamar um setState aqui, ex: setNewContacts(contatos);
-            })
-            .catch(error => {
-                // Trata qualquer erro não capturado pelo seu try/catch interno
+        // 1. Usar uma função interna async para melhor legibilidade
+        const fetchData = async () => {
+            try {
+                // 2. Chamar a função com o argumento necessário (Correção #1)
+                const contatos = await firestoreGetContacts(monitoring); 
+                
+                if (contatos) {
+                    console.log("Contatos Encontrados:", contatos);
+                    setNewContacts(contatos);
+                } else {
+                    console.log("Lista de contatos vazia.");
+                    setNewContacts([]); // Boa prática: definir para um array vazio em vez de null
+                }
+            } catch (error) {
                 console.error("Erro na procura de Contatos:", error);
-            });
+                setNewContacts([]); // Limpa a lista em caso de erro
+            }
+        };
+
+        fetchData();
     }, [])
-
-
 
     return (
         <div className='flex w-full h-full bg-gray-100'>
@@ -94,7 +57,7 @@ const LiveChatComponent = ({ monitoring=true }) => {
                 {/* Contatos */}
                 <div className='flex flex-col w-full h-full space-y-18 rounded-sm'>
                     {newContacts.map((contact, index) => (
-                        <button key={index} onClick={() => setSelectedContact(contact)} className={`relative w-full h-fit bg-amber-500`}>
+                        <button key={index} onClick={() => setSelectedContact(contact)} className={`relative w-full h-fit`}>
                             <ContactItem contact={contact} selectedContact={selectedContact}/>
                         </button>
                     ))}
@@ -112,8 +75,6 @@ const LiveChatComponent = ({ monitoring=true }) => {
                     </div>
                 )}
             </div>
-
-
         </div>
     )
 }

@@ -11,6 +11,9 @@ import { auth } from "../services/firebase";
 import { onAuthStateChanged } from 'firebase/auth';
 import ToggleSwitch from './ui/ToggleSwitch';
 import { firestoreGetNotifications } from '../services/api/FirebaseGetFunctions';
+import SettingsDropdown from './ui/SettingsDropdown';
+import NotificationsDropdown from './ui/NotificationsDropdown';
+import UserReport from './UserReport';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -24,11 +27,19 @@ const HeaderMonitor = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const MenuOptions = [{id: "LG", text: "(EN/PT-BR)"}, {id: "LD", text: "Mudar Ambientação (Light/Dark)"}];
   const [showSettingsDropdown, setSettingsShowDropdown] = useState(false);
+
   const [notificationShowDropdown, setNotificationShowDropdown]  = useState(false);
-  const [ modeSwitchState, setModeSwitchState ] = useState(false);
-  const [ langSwitchState, setLangSwitchState ] = useState(false);
+
+  const [modeSwitchState, setModeSwitchState] = useState(false);
+  const [langSwitchState, setLangSwitchState] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+    
+  const MenuOptions = [
+    {id: "AD", text: "Configurar Endereço", setState: setShowModal,  state: showModal}, 
+    {id: "LG", text: "(EN/PT-BR)", setState: setLangSwitchState,  state: langSwitchState}, 
+    {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState}
+  ];
 
   const Notifications = firestoreGetNotifications();
 
@@ -88,112 +99,68 @@ const HeaderMonitor = () => {
   }, [userState, navigate, auth]); // AGORA depende de userState
 
   return (
-    <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
-      {/* FullCenter logo */}
-      <div className='flex content-center mt-auto mb-auto w-40 space-x-2'>
-          <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
-          <h1 className='mt-auto mb-auto font-regular text-primary'>
-            FullCenter
-          </h1>
-      </div>
-      <span className='flex w-130 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
-        <Link to={"cameras"} className={`${tabClass}
-          ${location.pathname === "/monitor/cameras" ? tabOnClass : tabOffClass}`}>
-          <BsCameraVideo className='w-4'/>
-          <h4>Câmeras</h4>
-        </Link>
-        <Link to={"history"} className={`${tabClass} 
-          ${location.pathname === "/monitor/history" ? tabOnClass : tabOffClass}`}>
-          <CiViewTimeline className='w-4'/>
-          <h4>Histórico de Eventos</h4>
-        </Link>
-        <Link to={"chat"} className={`${tabClass} 
-          ${location.pathname === "/monitor/chat" ? tabOnClass : tabOffClass}`}>
-          <CiViewTimeline className='w-4'/>
-          <h4>Live Chat + GPS</h4>
-        </Link>
-      </span>
-      <div className='grid grid-flow-col justify-end w-full text-primary'>
-        <span className='grid grid-flow-col items-center self-end space-x-3'>
-            <span className='flex flex-col'>
-              <button onClick={() => setSettingsShowDropdown(!showSettingsDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
-                <CiSettings/>
-              </button>  
-              {showSettingsDropdown && (
-                <div className='fixed z-30 flex flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
-                  <ul>
-                    {MenuOptions.map((option, index) => (
-                      <li key={index}>
-                        <button 
-                        onClick={option.id === "LG" ? () => setLangSwitchState(!langSwitchState) : () => setModeSwitchState(!modeSwitchState)} 
-                          className='w-full p-2 outline-1 text-gray-200 hover:bg-white font-regular text-sm hover:cursor-pointer rounded-sm transition duration-400'>
-                          <span className='flex items-center justify-between text-primary'>
-                            {option.id === "LG" ? (
-                              // Se o index for igual ao de "'L'ight and 'D'ark"
-                              <span>
-                                <ToggleSwitch state={langSwitchState}/>
-                              </span>
-                            ) : (
-                              <span>
-                                <ToggleSwitch state={modeSwitchState}/>
-                              </span>
-                            )}
-                            <span className='w-fit px-4 mr-auto ml-auto'>
-                              {option.text}
-                            </span>
-                          </span>
-                        </button>                    
-                      </li>
-                    ))}
-                  </ul>
-                </div>              
-              )}       
-            </span>
-          {/* Notificações */}
-          <span className='flex flex-col'>
-            <button onClick={() => setNotificationShowDropdown(!notificationShowDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
-              <RiNotification3Line/>
-            </button>
-            {notificationShowDropdown && (
-              <div className='fixed z-30 flex flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
-                <ul>
-                  {Notifications.map((option, index) => (
-                    <li key={index}>
-                      <button 
-                      onClick={option.id === "LG" ? () => setLangSwitchState(!langSwitchState) : () => setModeSwitchState(!modeSwitchState)} 
-                        className='w-full p-2 outline-1 text-gray-200 hover:bg-white font-regular text-sm hover:cursor-pointer rounded-sm transition duration-400'>
-                        <span className='flex items-center justify-between text-primary'>
-                          {option.id === "LG" ? (
-                            // Se o index for igual ao de "'L'ight and 'D'ark"
-                            <span>
-                              <ToggleSwitch state={langSwitchState}/>
-                            </span>
-                          ) : (
-                            <span>
-                              <ToggleSwitch state={modeSwitchState}/>
-                            </span>
-                          )}
-                          <span className='w-fit px-4 mr-auto ml-auto'>
-                            {option.text}
-                          </span>
-                        </span>
-                      </button>                    
-                    </li>
-                  ))}
-                </ul>
-              </div>              
-            )}     
-          </span>
-  
-          <span className='flex'>
-            <Avatar fullName={fullname} showName={true}/>
-          </span>
-          <a onClick={handleLogout} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300 cursor-default'>
-              <RxExit/>
-          </a>
+    <>
+      {/* Modal pra inserir Endereço */}
+      {showModal && (
+        <UserReport/>
+      )}
+
+      <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
+        {/* FullCenter logo */}
+        <div className='flex content-center mt-auto mb-auto w-40 space-x-2'>
+            <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
+            <h1 className='mt-auto mb-auto font-regular text-primary'>
+              FullCenter
+            </h1>
+        </div>
+        <span className='flex w-150 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
+          <Link to={"cameras"} className={`${tabClass}
+            ${location.pathname === "/monitor/cameras" ? tabOnClass : tabOffClass}`}>
+            <BsCameraVideo className='w-4'/>
+            <h4>Câmeras</h4>
+          </Link>
+          <Link to={"history"} className={`${tabClass} 
+            ${location.pathname === "/monitor/history" ? tabOnClass : tabOffClass}`}>
+            <CiViewTimeline className='w-4'/>
+            <h4>Histórico de Eventos</h4>
+          </Link>
+          <Link to={"chat"} className={`${tabClass} 
+            ${location.pathname === "/monitor/chat" ? tabOnClass : tabOffClass}`}>
+            <CiViewTimeline className='w-4'/>
+            <h4>Live Chat + GPS</h4>
+          </Link>
         </span>
-      </div>
-    </div>
+        <div className='grid grid-flow-col justify-end w-full text-primary'>
+          <span className='grid grid-flow-col items-center self-end space-x-3'>
+              <span className='flex flex-col'>
+                <button onClick={() => setSettingsShowDropdown(!showSettingsDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+                  <CiSettings/>
+                </button>  
+                {showSettingsDropdown && (
+                  <SettingsDropdown MenuOptions={MenuOptions}/>
+                )}
+              </span>
+            {/* Notificações */}
+            <span className='flex flex-col'>
+              <button onClick={() => setNotificationShowDropdown(!notificationShowDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+                <RiNotification3Line/>
+              </button>
+              {notificationShowDropdown && (
+                <NotificationsDropdown dropdownState={notificationShowDropdown} Notifications={Notifications}/>
+              )}
+            </span>
+    
+            <span className='flex'>
+              <Avatar fullName={fullname} showName={true}/>
+            </span>
+            <a onClick={handleLogout} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300 cursor-default'>
+                <RxExit/>
+            </a>
+          </span>
+        </div>
+      </div>    
+    </>
+
   )
 }
 

@@ -4,31 +4,30 @@ import { auth } from '../../services/firebase';
 
 
 const Avatar = ({fullName=null, showName=false, profileUrl=null, customSize=null}) => {
+  let separatedName = [];
+  
+  // ✅ 1. Use uma string vazia como fallback para evitar que fullName seja nulo/undefined
+  const nameToUse = fullName || '';
 
-    let separatedName = [];
-    
-    // ✅ 1. Use uma string vazia como fallback para evitar que fullName seja nulo/undefined
-    const nameToUse = fullName || '';
+  // 2. Separa o nome
+  separatedName = nameToUse.split(" ");
+  
+  // 3. Acesso Seguro aos Nomes
+  // Pega o primeiro nome, ou 'U' se não houver
+  const firstName = separatedName[0] || 'U'; 
+  
+  // Pega o último elemento do array (o sobrenome), ou 'N' se só houver um nome
+  const lastName = separatedName.length > 1 
+                   ? separatedName[separatedName.length - 1] 
+                   : (separatedName[0].length > 1 ? separatedName[0] : 'N'); // Garantir que não seja só a primeira letra
 
-    // 2. Separa o nome
-    separatedName = nameToUse.split(" ");
-    
-    // 3. Acesso Seguro aos Nomes
-    // Pega o primeiro nome, ou 'U' se não houver
-    const firstName = separatedName[0] || 'U'; 
-    
-    // Pega o último elemento do array (o sobrenome), ou 'N' se só houver um nome
-    const lastName = separatedName.length > 1 
-                     ? separatedName[separatedName.length - 1] 
-                     : (separatedName[0].length > 1 ? separatedName[0] : 'N'); // Garantir que não seja só a primeira letra
+  // 4. Cria a abreviação de forma segura
+  const firstInitial = firstName[0] || '';
+  const lastInitial = (lastName && lastName !== firstName) ? lastName[0] : '';
+  
+  const abbreviation = (firstInitial + lastInitial).toUpperCase();
 
-    // 4. Cria a abreviação de forma segura
-    const firstInitial = firstName[0] || '';
-    const lastInitial = (lastName && lastName !== firstName) ? lastName[0] : '';
-    
-    const abbreviation = (firstInitial + lastInitial).toUpperCase();
-
-    const customSizeStyle = customSize !== null ? {width: `${customSize}px`, height: `${customSize}px`} : {};
+  const customSizeStyle = customSize !== null ? {width: `${customSize}px`, height: `${customSize}px`} : {};
 
   return (
     <div className='grid grid-flow-col content-center justify-center items-center text-primary font-regular'>
