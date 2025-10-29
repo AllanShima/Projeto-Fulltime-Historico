@@ -22,7 +22,7 @@ const SettingsDropdown = ({ MenuOptions }) => {
                     <ToggleSwitch state={option.state}/>
                   </span>
                 )}
-                <span className='w-fit mr-auto ml-auto'>
+                <span className='w-fit px-2 mr-auto ml-auto'>
                   {option.text}
                 </span>
               </span>

@@ -113,7 +113,7 @@ const HeaderMonitor = () => {
               FullCenter
             </h1>
         </div>
-        <span className='flex w-150 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
+        <span className='flex w-180 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
           <Link to={"cameras"} className={`${tabClass}
             ${location.pathname === "/monitor/cameras" ? tabOnClass : tabOffClass}`}>
             <BsCameraVideo className='w-4'/>

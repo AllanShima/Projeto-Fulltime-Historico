@@ -42,19 +42,24 @@ const MessageComponent = ({ selectedContact }) => {
     });
 
     const setMessagesFunction = () => {
-        firebaseSetMessages(selectedContact, textareaValue, userState);
-        setTextAreaValue("");
-        firebaseGetMessages(selectedContact)
-            .then(messages => {
-                // Este bloco é executado quando a Promise resolve
-                console.log("Resultado final:", messages);
-                setMessages(messages);
-                // Você pode chamar um setState aqui, ex: setNewContacts(contatos);
-            })
-            .catch(error => {
-                // Trata qualquer erro não capturado pelo seu try/catch interno
-                console.error("Erro na chamada:", error);
-            });
+        // Envia somente se tiver alguma coisa
+        if(textareaValue != ""){
+            firebaseSetMessages(selectedContact, textareaValue, userState);
+            setTextAreaValue("");
+            firebaseGetMessages(selectedContact)
+                .then(messages => {
+                    // Este bloco é executado quando a Promise resolve
+                    console.log("Resultado final:", messages);
+                    setMessages(messages);
+                    // Você pode chamar um setState aqui, ex: setNewContacts(contatos);
+                })
+                .catch(error => {
+                    // Trata qualquer erro não capturado pelo seu try/catch interno
+                    console.error("Erro na chamada:", error);
+                });            
+        } else {
+            window.alert("Não há mensagem...");
+        }
     }
 
     useEffect(() => {

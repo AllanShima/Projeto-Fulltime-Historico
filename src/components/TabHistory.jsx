@@ -32,6 +32,9 @@ const TabHistory = () => {
         "Critico"
     ]
 
+    const hoverStyle1 = "bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:cursor-pointer transition duration-200";
+    const hoverStyle2 = "bg-linear-to-t from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 hover:cursor-pointer transition duration-200";
+
     const [currentType, setCurrentType] = useState(types[0]);
     const [currentProp, setCurrentProp] = useState(severities[0]);  
 
@@ -45,13 +48,31 @@ const TabHistory = () => {
         setShowTypeDropdown(false);
     }
 
+    const downloadAllReports = () => {
+        setShowExportAllModal(false);
+        window.alert("baixando relatórios...");
+    }
+
     return (
         <>
             {showExportModal && (
                 <PdfViewer/>
             )}
             {showExportAllModal && (
-                <PdfViewer/>
+                <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+                    <div className='grid content-between w-120 h-40 p-5 bg-white rounded-2xl font-regular'>
+                        <h1 className='w-full text-center'>Tem certeza?</h1>
+                        <p className='text-center text-sm text-gray-600'>Baixar todos os relatórios</p>
+                        <div className='flex justify-between px-10 w-full h-10'>
+                        <button onClick={downloadAllReports} className={`w-40 h-full rounded-lg text-white ${hoverStyle1}`}>
+                            Baixar
+                        </button>
+                        <button onClick={() => setShowExportAllModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
+                            Cancelar
+                        </button>
+                        </div>
+                    </div>
+                </div>
             )}
             
             <div>
