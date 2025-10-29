@@ -12,7 +12,7 @@ const TabChat = () => {
 
             {/* Google maps  */}
             <div className='w-1/2 bg-amber-900'>
-                <h1>frsrfs</h1>
+                <GoogleMapsComponent/>
             </div>
         </div>
     )

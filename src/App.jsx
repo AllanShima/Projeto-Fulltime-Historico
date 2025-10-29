@@ -1,4 +1,4 @@
-import WindowMonitor from './components/WindowMonitor'
+import TabCamera from './components/TabCamera'
 import { createBrowserRouter, Outlet, redirect, RouterProvider } from 'react-router-dom'
 import NotFoundPage from './components/NotFoundPage'
 import TabHistory from './components/TabHistory'
@@ -60,7 +60,7 @@ function App() {
       children: [
         {
           path: 'cameras',
-          element: <WindowMonitor/>
+          element: <TabCamera/>
         },
         {
           path: 'history',

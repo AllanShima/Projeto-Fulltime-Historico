@@ -4,7 +4,7 @@ import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
 import {cameras, events} from '../assets/data/TempData'
 
-const WindowMonitor = () => {
+const TabCamera = () => {
 
   const [selectedCam, setSelectedCam] = useState("1");
 
@@ -20,8 +20,7 @@ const WindowMonitor = () => {
         <HomeCam cameras={cameras} selectedCam={selectedCam} remainingCams={remainingCams}/>
       </div>    
     </>
-
   )
 }
 
-export default WindowMonitor
+export default TabCamera

@@ -61,6 +61,10 @@ Site implantado: https://fulltime-historico.web.app
     O objeto db do Firebase v9 não tem o método .collection(). Em vez disso, você deve usar as funções collection() e addDoc().
 - firebase emulators:start
 - Trocando o modo do Firestore para Teste;
+- (Não foi necessário usar o emulator);
+- Instalando o Google Maps para react 'npm install @vis.gl/react-google-maps' via git bash
+    - React Google Maps, é uma biblioteca que contém hooks e components do gmaps p react que facilita
+
 
 ---
 ### Notes:

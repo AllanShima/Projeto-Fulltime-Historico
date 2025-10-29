@@ -167,7 +167,6 @@ const TabHistory = () => {
                 </div>
             </div>
         </>
-
     )
 }
 

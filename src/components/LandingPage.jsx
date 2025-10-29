@@ -61,11 +61,10 @@ const LandingPage = () => {
       </div>
       <div className='w-full h-fit'>
         <h1>Landing Page body</h1>
-
         {/* Botão p entrar na plataforma */}
-        <a href="/register">
-          <div className='flex justify-center p-5 rounded-md w-fit h-fit ml-auto mr-auto text-white bg-red-500 shadow-lg'>
-            <h1 className='font-bold'>
+        <a href="/register" className='flex w-fit h-fit ml-auto mr-auto'>
+          <div className='flex w-full h-fit justify-center p-5 rounded-2xl text-white bg-red-500 shadow-lg'>
+            <h1 className='flex font-bold'>
               Cadastrar um Novo Usuário
             </h1>
           </div>          
