@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ChatItem from './ui/ContactItem'
 import LiveChatComponent from './LiveChatComponent';
+import GoogleMapsComponent from './GoogleMapsComponent';
 
 const TabChat = () => {
     return (

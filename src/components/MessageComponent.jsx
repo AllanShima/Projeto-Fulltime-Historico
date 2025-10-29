@@ -27,7 +27,7 @@ const MessageComponent = ({ selectedContact }) => {
     const unsubscribe = onSnapshot(senderChatCollectionRef, (snapshot) => {
         // Este código é executado em tempo real a cada mudança!
 
-        console.log("A coleção de mensagens foi alterada!");
+        console.log("A coleção de mensagens foi alterada/atualizada!");
         
         firebaseGetMessages(selectedContact, userState)
             .then(messages => {
@@ -86,8 +86,8 @@ const MessageComponent = ({ selectedContact }) => {
         };
     }, [])
 
-    // Toda vez que as mensagens atualiza, ele scrolla pra baixo automaticamente
     useEffect(() => {
+        // Toda vez que as mensagens atualiza, ele scrolla pra baixo automaticamente
         // Só executa se o ref estiver conectado a algum elemento
         if (messagesEndRef.current) {
             // Seta a posição do scroll pela a altura total do conteudo
