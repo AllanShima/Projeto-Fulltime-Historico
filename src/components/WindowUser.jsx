@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import SidebarUser from './SidebarUser'
-import HomeUser from './HomeUser'
+import AlertOptions from './AlertOptions'
 import {userEvents} from '../assets/data/TempData'
 import { useUserContext } from '../contexts/user-context'
-import { db } from '../services/firebase'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
-import { firestoreSetAlertSignal } from '../services/api/FirebaseSetFunctions'
+import { firestoreSetAlertOnByUid, firestoreSetAlertSignal } from '../services/api/FirebaseSetFunctions'
+import AwaitingResponseModal from './AwaitingResponseModal'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../services/firebase'
+import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions'
 
 // selectedAlert object;
   // {
@@ -21,16 +24,25 @@ const typeSpecs = {
 
 const WindowUser = () => {
   const { userState, userDispatch } = useUserContext();
+  // Tela de carregamento
+  const [showAwaitModal, setShowAwaitModal] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
+
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
 
-  const [selectedAlert, setSelectedAlert] = useState({});
+  const [selectedAlert, setSelectedAlert] = useState(null);
+
   const [selectedEvent, setSelectedEvent] = useState({});
 
-  const storeAlert = () => {
-    firestoreSetAlertSignal(selectedAlert, userState);
+  const SetAlertMode = () => {
     setShowAlertModal(false);
-    window.alert("Alerta Enviado!");
+    firestoreSetAlertOnByUid(selectedAlert, userState, userDispatch);
+    setShowAwaitModal(true);
+  }
+
+  const ResetAlertMode = () => {
+    firestoreDeleteAlertOnByUid(userState, userDispatch);
+    setShowAwaitModal(false);
   }
 
   const storeReport = () => {
@@ -38,6 +50,15 @@ const WindowUser = () => {
     setNotificationButtonModal(false);
     window.alert("Formulário cadastrado com sucesso! O relatório está sendo preparado...");
   }
+  // Setando o alerta mesmo depois de reiniciar a pagina
+  useEffect(() => {
+    console.log(userState.alertOn);
+    if (userState.uid && userState.alertOn != null) {
+      // A lógica de reidratação do alerta só roda APÓS o login ser confirmado
+      setSelectedAlert(userState.alertOn);
+      setShowAwaitModal(true);
+    }
+  }, [userState.alertOn]); // <-- CHAVE AQUI: Roda SOMENTE quando o UID for definido (usuário logado)
 
   // Acessa a chave 'alert' de forma segura
   const type = selectedEvent?.alert; 
@@ -53,19 +74,23 @@ const WindowUser = () => {
   const hoverStyle2 = "bg-linear-to-t from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 hover:cursor-pointer transition duration-200";
   return (
     <>
+      {userState.alertOn && (
+          <AwaitingResponseModal selectedAlert={userState.alertOn}/>
+      )}
+
       {showAlertModal && (
         <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
           <div className='grid content-between w-120 h-50 p-5 bg-white rounded-2xl font-regular'>
             <h2 className='text-center font-bold'>
               Tem certeza que deseja enviar o alerta de
               <span className="text-red-600 underline p-1.5">
-                  {selectedAlert.title}
+                {userState.alertOn}
               </span>
               e CHAMAR AS AUTORIDADES? 
             </h2>
             <p className='text-center text-sm text-gray-600'>Não será possível reverter essa ação!</p>
             <div className='flex justify-between px-10 w-full h-10'>
-              <button onClick={() => storeAlert} className={`w-40 h-full rounded-lg text-white ${hoverStyle1}`}>
+              <button onClick={SetAlertMode} className={`w-40 h-full rounded-lg text-white ${hoverStyle1}`}>
                 SIM!
               </button>
               <button onClick={() => setShowAlertModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
@@ -107,7 +132,7 @@ const WindowUser = () => {
               </div>
 
               <div className='flex justify-between px-10 w-full h-10'>
-                <button onClick={storeAlertSignal} className={`w-40 h-full bg-gradient-to-r bg-red-500 to-90% rounded-lg text-white ${hoverStyle2}`}>
+                <button onClick={storeReport} className={`w-40 h-full bg-gradient-to-r bg-red-500 to-90% rounded-lg text-white ${hoverStyle2}`}>
                   Enviar
                 </button>
                 <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
@@ -124,7 +149,7 @@ const WindowUser = () => {
         </div>
         
         <div className='w-1/2 h-full'>
-          <HomeUser setShowModal={setShowAlertModal} setSelectedAlert={setSelectedAlert}/>
+          <AlertOptions setSelectedAlert={setSelectedAlert} setShowModal={setShowAlertModal} isLoading={showAwaitModal}/>
         </div>
         
       </div>    

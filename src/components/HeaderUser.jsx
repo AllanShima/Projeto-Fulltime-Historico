@@ -10,14 +10,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { FaMapMarkedAlt } from "react-icons/fa";
 import ToggleSwitch from './ui/ToggleSwitch';
 import SettingsDropdown from './ui/SettingsDropdown';
-import UserReport from './UserReport';
+import UserReport from './AddressModalComponent';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
   
   const [ fullname, setFullname ] = useState("Null Null");
 
-  const [ showDropdown, setShowDropdown ] = useState(false);
+  const [ showSettingsDropdown, setShowSettingsDropdown ] = useState(false);
 
   const [ modeSwitchState, setModeSwitchState ] = useState(false);
   const [ langSwitchState, setLangSwitchState ] = useState(false);
@@ -99,10 +99,12 @@ const HeaderMonitor = () => {
           <span className='grid grid-flow-col items-center self-end space-x-3'>
 
             <span className='flex flex-col'>
-              <button onClick={() => setShowDropdown(!showDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+              <button onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
                 <CiSettings/>
               </button>  
-              <SettingsDropdown dropdownState={showDropdown} MenuOptions={MenuOptions}/>
+              {showSettingsDropdown && (
+                <SettingsDropdown MenuOptions={MenuOptions}/>
+              )}
             </span>
 
             <span className='flex'>

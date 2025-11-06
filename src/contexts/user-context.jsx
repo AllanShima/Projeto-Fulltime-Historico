@@ -7,17 +7,39 @@ import { auth } from '../services/firebase'
 
 // This value is used by components when they try to access the context, but no corresponding <Context.Provider> is found in the component tree above them.
 export const UserContext = createContext();
-
+let userObject;
 const userContext = (state, action) => {
   switch(action.type){                 
     case "LOGIN":
-        const userObject = {...state, isLoggedIn: true, uid:action.payload.uid, first:action.payload.first, last:action.payload.last, usertype: action.payload.usertype}
+        userObject = {...state, isLoggedIn: true, uid:action.payload.uid, first:action.payload.first, last:action.payload.last, usertype: action.payload.usertype, alertOn:action.payload.alertOn}
         const fullname = userObject.first + ' ' + userObject.last;
+
         console.log("Usuário logado: " + fullname);
+
+        let alertTypeTitle = null; // Renamed to avoid confusion with a function or object
+
+        if (userObject.alertOn && userObject.alertOn.title) { // Check if userObject.alertOn and its title exist
+            alertTypeTitle = userObject.alertOn.title;
+        }
+
+        if (alertTypeTitle){
+            const alertType = userObject.alertOn.title;
+            console.log("Estado do alerta: " + alertType);
+        } else console.log("Nenhum alerta ativado...");
+
+        return userObject;
+    case "SET_ALERT":
+        userObject = {...state, alertOn:action.payload.alertOn}
+        console.log("Alerta acionado e setado: " + userObject.alertOn)
+        return userObject;
+    case "RESET_ALERT":
+        console.log("Alerta desativado: " + userObject.alertOn)
+        userObject = {...state, alertOn:null}
         return userObject;
     case "LOGOUT":
         console.log("Usuário atual desconectado.");
-        return {...state, isLoggedIn: false, uid:null, first:null, last:null, usertype:null }
+        userObject = {...state, isLoggedIn: false, uid:null, first:null, last:null, usertype:null}
+        return userObject;
     default:
         console.log("Returning state for unknown reason");
         return state;
@@ -26,7 +48,7 @@ const userContext = (state, action) => {
 
 export const UserStateProvider = ({ children }) => {
     // Procurar no firestore e inserir no valor padrão
-    const [userState, userDispatch] = useReducer(userContext, { isLoggedIn:false, uid:null, first:null, last:null, usertype:null })
+    const [userState, userDispatch] = useReducer(userContext, { isLoggedIn:false, uid:null, first:null, last:null, usertype:null, alertOn:null })
     return (
         <UserContext value={{userState, userDispatch}}>
             {children}

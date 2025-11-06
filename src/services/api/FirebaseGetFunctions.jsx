@@ -9,7 +9,7 @@ export const firestoreGetUserById = async (uid) => {
   // Caminho: users/ [o valor do uid]
   // 2. Busque o documento
   const documentSnapshot = await getDoc(userDocRef);
-  if (!documentSnapshot.empty) {
+  if (documentSnapshot.exists()) {
       // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
       const userData = documentSnapshot.data();
       // Retorna o objeto de dados do documento.
@@ -19,6 +19,27 @@ export const firestoreGetUserById = async (uid) => {
       console.log("Nenhum usuário encontrado com este UID!");
       return null;
   }
+};
+
+// Pegar o alerta ativo, (se tiver) de acordo com o id do usuário
+export const firestoreGetAlertOnByUid = async (uid) => {
+    const documentId = "current_alert";
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const alertDocRef = doc(db, "users", uid, "alert_on", documentId); 
+    // Caminho: users/uid/alert_on/ [o valor do uid]
+    // 2. Busque o documento
+    const documentSnapshot = await getDoc(alertDocRef);
+    if (documentSnapshot.exists()) {
+        // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
+        const alertData = documentSnapshot.data();
+        // Retorna o objeto de dados do documento.
+        console.log("alertData: " + alertData);
+        return alertData;
+    } else {
+        // O documento não existe.
+        console.log("Nenhum alerta encontrado com este UID!");
+        return null;
+    }
 };
 
 export const firestoreGetNotifications = async () => {

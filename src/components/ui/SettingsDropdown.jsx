@@ -8,8 +8,7 @@ const SettingsDropdown = ({ MenuOptions }) => {
       <ul>
         {MenuOptions.map((option, index) => (
           <li key={index}>
-            <button 
-            onClick={() => option.setState(!option.state)} 
+            <button onClick={() => option.setState(!option.state)} 
               className='w-full p-2 outline-1 text-gray-200 hover:bg-white font-regular text-sm hover:cursor-pointer rounded-sm transition duration-400'>
               <span className='flex items-center justify-between text-primary'>
                 {option.id === "AD" ? (

@@ -53,14 +53,15 @@ const userAlerts = [
   },
 ];
 
- 
-
-const HomeUser = ({ setShowModal, setSelectedAlert }) => {
-  const configureCurrentAlert = (alert) => {
-    setSelectedAlert(alert);
-    setShowModal(true)
+const AlertOptions = ({ setSelectedAlert, setShowModal, isLoading}) => {
+  const setAlert = (alert) => {
+    if (!isLoading){
+      setShowModal(true); 
+      setSelectedAlert(alert);      
+    } else{
+      window.alert("Alerta em andamento!")
+    }
   }
-  
   return (
     <div className='p-6 w-full h-full'>
       <div className='flex p-4 w-full h-full items-center justify-center bg-gray-100 rounded-2xl shadow-lg'>
@@ -70,7 +71,7 @@ const HomeUser = ({ setShowModal, setSelectedAlert }) => {
             // key é crucial para a melhor performance e funcionamento do react.
             return (
               <li key={index} className='ml-auto mr-auto w-30 h-30 rounded-2xl shadow-md bg-gray-200'>
-                <button onClick={() => configureCurrentAlert(alert)} className='w-full h-full hover:cursor-pointer'>
+                <button onClick={() => setAlert(alert)} className='w-full h-full hover:cursor-pointer'>
                   <div className='relative flex flex-col justify-center items-center w-full h-full'>
                     <IconComponent className='w-10 h-10 mb-2'/>
                     <span className='text-center font-bold text-xs'>{alert.title}</span>
@@ -89,4 +90,4 @@ const HomeUser = ({ setShowModal, setSelectedAlert }) => {
   )
 }
 
-export default HomeUser
+export default AlertOptions

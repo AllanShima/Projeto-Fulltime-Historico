@@ -56,7 +56,7 @@ const TabHistory = () => {
     return (
         <>
             {showExportModal && (
-                <PdfViewer/>
+                <PdfViewer setShowModal={setShowExportModal}/>
             )}
             {showExportAllModal && (
                 <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
@@ -116,7 +116,7 @@ const TabHistory = () => {
                                             <ul className='p-0.5'>
                                                 {types.map(type => (
                                                     <li>
-                                                        <button onClick={() => SelectedType(type)} className='w-full p-2 hover:bg-gray-300 rounded-md'>
+                                                        <button onClick={() => SelectedType(type)} className='w-full p-2 hover:bg-gray-300 transition rounded-md'>
                                                             <span className='flex items-center justify-between'>
                                                                 <h3 className='text-left text-md font-regular'>{type}</h3>  
                                                                 <span className={`ml-3 text-md ${type == currentType ? "text-gray-500" : "text-white/0"}`}>
@@ -142,7 +142,7 @@ const TabHistory = () => {
                                             <ul className='w-full h-full space-y-0.5'>
                                                 {severities.map(severity => (
                                                     <li>
-                                                        <button onClick={() => SelectedProp(severity)} className='w-full p-2 hover:bg-gray-300 rounded-md'>
+                                                        <button onClick={() => SelectedProp(severity)} className='w-full p-2 hover:bg-gray-300 transition rounded-md'>
                                                             <span className='flex items-center justify-between'>
                                                                 <h3 className='text-left text-md font-regular'>{severity}</h3>  
                                                                 <span className={`ml-3 text-md ${severity == currentProp ? "text-gray-500" : "text-white/0"}`}>

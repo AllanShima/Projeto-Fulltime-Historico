@@ -13,7 +13,7 @@ import ToggleSwitch from './ui/ToggleSwitch';
 import { firestoreGetNotifications } from '../services/api/FirebaseGetFunctions';
 import SettingsDropdown from './ui/SettingsDropdown';
 import NotificationsDropdown from './ui/NotificationsDropdown';
-import UserReport from './UserReport';
+import AddressModalComponent from './AddressModalComponent';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -33,10 +33,10 @@ const HeaderMonitor = () => {
 
   const [modeSwitchState, setModeSwitchState] = useState(false);
   const [langSwitchState, setLangSwitchState] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-    
+  const [showAddressModal, setShowAddressModal] = useState(false);
+      
   const MenuOptions = [
-    {id: "AD", text: "Configurar Endereço", setState: setShowModal,  state: showModal}, 
+    {id: "AD", text: "Configurar Endereço", setState: setShowAddressModal,  state: showAddressModal}, 
     {id: "LG", text: "(EN/PT-BR)", setState: setLangSwitchState,  state: langSwitchState}, 
     {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState}
   ];
@@ -101,8 +101,8 @@ const HeaderMonitor = () => {
   return (
     <>
       {/* Modal pra inserir Endereço */}
-      {showModal && (
-        <UserReport/>
+      {showAddressModal && (
+        <AddressModalComponent setModalState={setShowAddressModal}/>
       )}
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
@@ -127,7 +127,7 @@ const HeaderMonitor = () => {
           <Link to={"chat"} className={`${tabClass} 
             ${location.pathname === "/monitor/chat" ? tabOnClass : tabOffClass}`}>
             <CiViewTimeline className='w-4'/>
-            <h4>Live Chat + GPS</h4>
+            <h4>Live Chat + Maps</h4>
           </Link>
         </span>
         <div className='grid grid-flow-col justify-end w-full text-primary'>
@@ -149,7 +149,6 @@ const HeaderMonitor = () => {
                 <NotificationsDropdown dropdownState={notificationShowDropdown} Notifications={Notifications}/>
               )}
             </span>
-    
             <span className='flex'>
               <Avatar fullName={fullname} showName={true}/>
             </span>

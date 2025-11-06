@@ -13,7 +13,7 @@ import TabChat from './components/TabChat'
 import { useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import Loading from './components/Loading'
-import { firestoreGetUserById } from './services/api/FirebaseGetFunctions'
+import { firestoreGetAlertOnByUid, firestoreGetUserById } from './services/api/FirebaseGetFunctions'
 import { auth } from './services/firebase'
 
 function App() {
@@ -27,14 +27,11 @@ function App() {
       if (user){
         // Buscando o usuário registrado no firestore
         const userData = await firestoreGetUserById(user.uid);
+        const currentAlert = await firestoreGetAlertOnByUid(user.uid);
+        // console.log("Logando...Tipo de alerta ligado: " + currentAlert);
         // Armazenando o usuário logado no data layer
         //const fullName = userData.first + " " + userData.last;
-        await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, first: userData.first, last: userData.last, usertype: userData.usertype}});
-        if(userData.usertype === "monitor"){
-          //console.log("é monitor");
-        } else{
-          //console.log("é usuário");
-        }
+        await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, first: userData.first, last: userData.last, usertype: userData.usertype, alertOn: currentAlert}});
       } else {
         userDispatch({ type: "LOGOUT" })
       }
