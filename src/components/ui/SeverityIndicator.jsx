@@ -2,14 +2,14 @@ import React from 'react'
 
 const SeverityIndicator = ({severity}) => {
     const sevSpecs = {
-      "baixo": ["bg-green-100 text-green-800"],
-      "medio": ["bg-yellow-200 text-yellow-800"],
-      "alto": ["bg-orange-100 text-orange-800"],
-      "critico": ["bg-red-100 text-red-800"]
+      "low": ["bg-green-100 text-green-800", "Baixo"],
+      "medium": ["bg-yellow-200 text-yellow-800", "Medio"],
+      "high": ["bg-orange-100 text-orange-800", "Alto"],
+      "critical": ["bg-red-100 text-red-800", "Critico"]
     }
-    const style = sevSpecs[severity];
+    const style = sevSpecs[severity][0];
 
-    const text = severity[0].toUpperCase() + severity.slice(1);
+    const text = sevSpecs[severity][1];
 
     return (
         <div className={`flex items-center px-2 w-fit rounded-xl ${style}`}>

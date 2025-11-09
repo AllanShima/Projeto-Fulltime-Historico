@@ -1,54 +1,47 @@
 // totalTimeRecorded = tempo total de gravação da câmera
-// Cameras não precisa armazenar no banco
 const cameras = [
-  { 
-    id: "1", 
-    name: "Câmera 1", 
-    imageUrl: "https://images.unsplash.com/photo-1646521790482-a76619a564db?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Entrada Principal",
-    status: "online", 
-    totalTimeRecorded: "17:08:59"
-  },
-  { 
-    id: "2", 
-    name: "Câmera 2", 
-    imageUrl: "https://images.unsplash.com/photo-1716703435417-f8687d87516c?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Andar do Escritório", 
-    status: "online", 
-    totalTimeRecorded: "12:08:59" 
-  },
-  { 
-    id: "3", 
-    name: "Câmera 3", 
-    imageUrl: "https://images.unsplash.com/photo-1590938076771-dfe17af4d484?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Estacionamento", 
-    status: "online", 
-    totalTimeRecorded: "17:25:59" 
-  },
-  { 
-    id: "4", 
-    name: "Câmera 4", 
-    imageUrl: "https://images.unsplash.com/photo-1647451969544-2e0db88a150b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Saída de Incêndio", 
-    status: "offline", 
-    totalTimeRecorded: "12:08:59" 
-  },
-  { 
-    id: "5", 
-    name: "Câmera 5", 
-    imageUrl: "https://plus.unsplash.com/premium_photo-1676320103087-4aec0a09088f?q=80&w=1228&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Recepção", 
-    status: "online", 
-    totalTimeRecorded: "12:08:59" 
-  },
-  { 
-    id: "6", 
-    name: "Câmera 6", 
-    imageUrl: "https://images.unsplash.com/photo-1506399558188-acca6f8cbf41?q=80&w=1273&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-    location: "Sala do Servidor", 
-    status: "online", 
-    totalTimeRecorded: "19:08:59" 
-  },
+    {
+        id: "1",
+        name: "Câmera",
+        location: "Entrada Principal",
+        status: "online",
+        position: "top-left"
+    },
+    {
+        id: "2",
+        name: "Câmera 2",
+        location: "Andar do Escritório",
+        status: "online",
+        position: "top-right"
+    },
+    {
+        id: "3",
+        name: "Câmera 3",
+        location: "Estacionamento",
+        status: "online",
+        position: "bottom-left"
+    },
+    {
+        id: "4",
+        name: "Câmera 4",
+        location: "Saída de Incêndio",
+        status: "offline",
+        position: "bottom-right"
+    },
+    {
+        id: "5",
+        name: "Câmera 5",
+        location: "Recepção",
+        status: "online",
+        position: "center"
+    },
+    {
+        id: "6",
+        name: "Câmera 6",
+        location: "Sala do Servidor",
+        status: "online",
+        position: "top-left"
+    },
 ];
 
 // // emergency pode ser eventos pelo f/safe ou alarmes ativados pelo FullArm
@@ -76,10 +69,10 @@ const EventsConstants = {
         FULL_ARM: "FullArm",
     },
     SEVERITIES: {
-        LOW: "baixo",
-        MEDIUM: "medio",
-        HIGH: "alto",
-        CRITICAL: "critico",
+        LOW: "low",
+        MEDIUM: "medium",
+        HIGH: "high",
+        CRITICAL: "critical",
     },
     ALERTS: {
         MESSAGE: "message",
@@ -122,6 +115,34 @@ const VideosRecorded = [
 const events = [
   { 
     id: "1", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Assalto armado",
+    description: "Assalto armado no local",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    alert: EventsConstants.ALERTS.FORMS,
+    show_button: true,
+    device: "Eduarda Ferreira", 
+    camera: cameras[2], 
+    date: new Date(2024, 6, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[0]
+  },
+  { 
+    id: "2", 
+    software_from: EventsConstants.SOFTWARES.F_SAFE,
+    title: "Assalto armado",
+    description: "Assalto armado no local",
+    type: EventsConstants.TYPES.EMERGENCY,
+    severity: EventsConstants.SEVERITIES.CRITICAL,
+    device: "Paulo Sérgio", 
+    camera: cameras[0],
+    date: new Date(2024, 12, 15, 14, 20, 20),
+    video_available: true,
+    video_recorded: VideosRecorded[1]
+  },
+  { 
+    id: "3", 
     software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
@@ -134,7 +155,7 @@ const events = [
     video_recorded: VideosRecorded[2]
   },
   { 
-    id: "2", 
+    id: "4", 
     software_from: EventsConstants.SOFTWARES.FULL_CAM,
     title: "Atualização da câmera",
     description: "Atualização da câmera 2 realizada com sucesso",
@@ -147,24 +168,6 @@ const events = [
     video_recorded: VideosRecorded[2]
   },
 ];
-
-const monitorNotifications = [
-  { 
-    id: "1", 
-    software_from: EventsConstants.SOFTWARES.FULL_CAM,
-    title: "Novo Evento Relatado, EMERGÊNCIA",
-    description: "Atualização da câmera 2 realizada com sucesso",
-    type: EventsConstants.TYPES.SYSTEM,
-    severity: EventsConstants.SEVERITIES.LOW,
-    device: "System", 
-    camera: cameras[2],
-    date: new Date(2024, 12, 15, 14, 20, 20),
-    video_available: true,
-    video_recorded: VideosRecorded[2]
-  },
-]
-
-// ------------------------------------------ User
 
 const userEvents = [
   { 
@@ -235,7 +238,7 @@ const userEvents = [
     type: EventsConstants.TYPES.EMERGENCY,
     severity: EventsConstants.SEVERITIES.CRITICAL,
     alert: EventsConstants.ALERTS.REPORT,
-    show_button: false,
+    show_button: true,
     device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
@@ -250,7 +253,7 @@ const userEvents = [
     type: EventsConstants.TYPES.EMERGENCY,
     severity: EventsConstants.SEVERITIES.CRITICAL,
     alert: EventsConstants.ALERTS.ALERT,
-    show_button: false,
+    show_button: true,
     device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
@@ -259,5 +262,4 @@ const userEvents = [
   }, 
 ]
 
-
-export {cameras, events, userEvents, monitorNotifications};
+export {cameras, events, userEvents};

@@ -42,42 +42,92 @@ export const firestoreGetAlertOnByUid = async (uid) => {
     }
 };
 
-export const firestoreGetNotifications = async () => {
+export const firestoreGetEvents = async (userState) => {
+    try {
+        // Coleção contendo todos os eventos do usuário
+        let chatCollectionRef;
+        if (userState.usertype == "f/center") {
+            chatCollectionRef = collection(db, "users", userState.uid, "events");
+        } else {
+            // Se o usuário for um monitor f/center: Pegar todos os eventos do monitor (pra todos os monitores são iguais)
+            chatCollectionRef = collection(db, "monitor_events")
+        }
 
+        // 2. Pegando o resultado a partir da query
+        const q = query(chatCollectionRef);
+
+        // 3. Pegando todos os documentos da coleção
+        const collectionSnapshot = await getDocs(q);
+
+        if (!collectionSnapshot.empty) {
+            // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
+            // 1. MAPEIA os DocumentSnapshots para um array de objetos JavaScript.
+            //    Aqui chamamos .data() em CADA doc.
+            const eventsData = collectionSnapshot.docs.map(doc => ({
+                id: doc.id,
+                // Certifique-se de converter o Timestamp do Firestore para Date do JS
+                ...doc.data(),
+                // createdAt: doc.data().createdAt.toDate() // <- Conversão para Date
+            }));
+            
+            // --- 🚀 ORDENAÇÃO DECRESCENTE AQUI ---
+            eventsData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            // Se b.createdAt for maior (mais recente) que a.createdAt, retorna um valor positivo,
+            // o que coloca 'b' antes de 'a' (ordem decrescente).
+            
+            return eventsData;
+        } else {
+            // O documento não existe.
+            console.log("Nenhum evento encontrado! Retornando vazio");
+            const vazio = [];
+            return vazio;
+        }
+    } catch (e) {
+        console.log("Erro Ocorrido: " + e);
+    } 
+}
+
+// Não remover: ele está conectado a uma variavel
+export const firestoreGetNotifications = async () => {
+    try {
+
+    } catch (e) {
+        console.log("Erro Ocorrido: " + e);
+    }
 }
 
 export const firestoreGetContacts = async(userType) => {
-  try {
-  // const userCollection = (userState.first + userState.last).toLowerCase();
-  const chatCollectionRef = collection(db, "users");
-  
-  // 2. Pegando o resultado a partir da query
-  const q = query(chatCollectionRef);
-  // 3. Pegando o resultado a partir da query
-  const collectionSnapshot = await getDocs(q);
-  if (!collectionSnapshot.empty) {
-      // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
-      // 1. MAPEIA os DocumentSnapshots para um array de objetos JavaScript.
-      //    Aqui chamamos .data() em CADA doc.
-      const allContactsData = collectionSnapshot.docs.map(doc => ({
-          id: doc.id, // Inclui o ID do documento, se necessário
-          ...doc.data() // Pega os campos do documento
-      }));
-      const filteredContacts = allContactsData.filter(contact => {
-          // Note: Assumindo que o campo com o tipo de contato é 'usertype'
-          return userType 
-              ? contact.usertype === "f/safe" 
-              : contact.usertype === "f/center";
-      });
-      return filteredContacts;
-  } else {
-      // O documento não existe.
-      console.log("Nenhum usuário encontrado!");
-      return null;
-  }
-      } catch (e) {
-          console.log("Erro Ocorrido (Possivelmente contato inexistente): " + e);
-      } 
+    try {
+        // const userCollection = (userState.first + userState.last).toLowerCase();
+        const chatCollectionRef = collection(db, "users");
+        
+        // 2. Pegando o resultado a partir da query
+        const q = query(chatCollectionRef);
+        // 3. Pegando o resultado a partir da query
+        const collectionSnapshot = await getDocs(q);
+        if (!collectionSnapshot.empty) {
+            // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
+            // 1. MAPEIA os DocumentSnapshots para um array de objetos JavaScript.
+            //    Aqui chamamos .data() em CADA doc.
+            const allContactsData = collectionSnapshot.docs.map(doc => ({
+                id: doc.id, // Inclui o ID do documento, se necessário
+                ...doc.data() // Pega os campos do documento
+            }));
+            const filteredContacts = allContactsData.filter(contact => {
+                // Note: Assumindo que o campo com o tipo de contato é 'usertype'
+                return userType 
+                ? contact.usertype === "f/safe" 
+                : contact.usertype === "f/center";
+            });
+            return filteredContacts;
+        } else {
+            // O documento não existe.
+            console.log("Nenhum usuário encontrado!");
+            return null;
+        }
+    } catch (e) {
+        console.log("Erro Ocorrido: " + e);
+    } 
 };
 
 export const firebaseGetMessages = async(selectedContact, userState) => {

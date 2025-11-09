@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { RiNotification3Line } from "react-icons/ri";
 import { IoIosChatboxes } from "react-icons/io";
-import EventCardUser from './ui/EventCardUser';
 import LiveChatComponent from './LiveChatComponent';
+import UserNotificationComponent from './UserNotificationComponent';
 
-const SidebarUser = ({ userEvents, setNotificationButtonModal, setSelectedEvent }) => {
+const SidebarUser = ({ setNotificationButtonModal, setSelectedEvent }) => {
   const [activeTab, setActiveTab] = useState("notification");
 
   return (
@@ -23,24 +23,7 @@ const SidebarUser = ({ userEvents, setNotificationButtonModal, setSelectedEvent 
       </div>
       <div className='flex flex-col flex-1 w-full h-full'>
         {activeTab == "notification" ? (
-          <div className='flex flex-col pl-4 pt-4 max-h-135 w-full'>
-            <span className='justify-center text-primary'>
-              <h1>Lista de Notificações ({userEvents.length})</h1>
-            </span>   
-            <div className='flex-1 w-full mt-4 justify-between overflow-y-auto'>
-              <div className='w-full pr-4 space-y-3'>
-                {userEvents.map((event) => (
-                  <EventCardUser 
-                    key={event.id} 
-                    event={event} 
-                    setNotificationButtonModal={setNotificationButtonModal}
-                    setSelectedEvent={setSelectedEvent}
-                  />
-                ))}          
-              </div>           
-            </div>
-
-          </div>
+          <UserNotificationComponent setNotificationButtonModal={setNotificationButtonModal} setSelectedEvent={setSelectedEvent}/>
         ) : (
           <div className='h-full w-full bg-amber-400'>
             <LiveChatComponent monitoring={false}/>

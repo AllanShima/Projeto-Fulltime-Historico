@@ -1,5 +1,3 @@
-// Arquivo por Emanuelly
-
 import React from 'react'
 import CameraScreen from './CameraScreen';
 

@@ -17,9 +17,7 @@ import { firestoreGetAlertOnByUid, firestoreGetUserById } from './services/api/F
 import { auth } from './services/firebase'
 
 function App() {
-
   const { userState, userDispatch } = useUserContext();
-
   // Armazenar o usuário logado ou não no data layer
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {

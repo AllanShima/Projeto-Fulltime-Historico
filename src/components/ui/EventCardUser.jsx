@@ -28,7 +28,6 @@ const typeSpecs = {
 
 const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) => {
   const [timePassed, setTimePassed] = useState('');
-
   useEffect(() => {
     // Essa função vai ser executada a cada segundo
     const updateTime = () => {
@@ -48,16 +47,26 @@ const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) 
     return () => clearInterval(intervalId);
   }, [event.date]);
 
+  // 1. Define um tipo
+  const type = event?.alert;
+
   // message, help, forms, report, camera, alert
-  const type = event.alert;
-  const colorClass = typeSpecs[type][0];
+  // 2. Define uma especificação padrão (fallback) caso o 'type' seja inválido/nulo
+  const fallbackSpec = ["bg-gray-400 text-white", IoAlertCircleOutline]; 
+  
+  // Pega o array de especificação, usando o fallback se o tipo não for encontrado
+  const typeSpec = typeSpecs[type] || fallbackSpec; 
 
-  const EventIconComponent = typeSpecs[type][1];
+  // 3. Acesso Seguro ao array de 2 elementos
+  const colorClass = typeSpec[0];
+  const EventIconComponent = typeSpec[1];
 
-  if(!colorClass || !EventIconComponent) {
-    console.error(`Tipo não foi passado corretamente: ${type}`);
-    return null;
+  // O console.error ainda é útil, mas agora ele não crasha o app
+  if (!typeSpec) {
+      console.error(`Tipo não foi passado corretamente: ${type}`);
+      return null;
   }
+
 
   return (
     <div className='font-regular flex w-full h-fit rounded-xl bg-white border-1 border-gray-300'>
@@ -74,7 +83,7 @@ const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) 
                 <span className='flex w-full justify-between text-md '>
                   <span className='flex w-full items-center space-x-1'>
                     <CiCalendar className='w-4 h-4'/>
-                    <h3>{event.date.toString()}</h3>   
+                    <h3>{event.date?.toString()}</h3>   
                     <li className='ml-5'><h3>{timePassed}</h3></li>                           
                   </span>
                 </span>
@@ -82,11 +91,11 @@ const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) 
                   <span className='flex space-x-2'>
                     <span className='flex items-center space-x-1'>
                       <BsCameraVideo className='w-4 h-4'/>
-                      <h3>{event.camera.name}</h3>                              
+                      <h3>{event.camera?.name}</h3>                              
                     </span>
                     <span className='flex items-center space-x-1'>
                       <CiLocationOn className='w-4 h-4'/>
-                      <h3>{event.camera.location}</h3>                              
+                      <h3>{event.camera?.location}</h3>                              
                     </span>                          
                   </span>
               

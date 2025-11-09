@@ -1,5 +1,3 @@
-// Arquivo por Emanuelly
-
 import React, { useState, useEffect } from 'react'
 import CameraStatusUi from './ui/CameraStatusUi';
 import CameraDataElements from './ui/CameraDataElements';
@@ -38,7 +36,8 @@ const CameraScreen = ({ camera }) => {
                      overflow: 'hidden',
                      zIndex: 0
                  }}>
-                <LocalCamera />
+                {console.log(camera)}
+                <LocalCamera viewArea={camera.position} />
 
                 <div className="flex absolute inset-0 p-3 justify-between w-full h-full z-10">
                     <div className="h-full">

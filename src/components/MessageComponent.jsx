@@ -27,7 +27,7 @@ const MessageComponent = ({ selectedContact }) => {
     const unsubscribe = onSnapshot(senderChatCollectionRef, (snapshot) => {
         // Este código é executado em tempo real a cada mudança!
 
-        console.log("A coleção de mensagens foi alterada/atualizada!");
+        console.log("Ouvinte de mensagens em andamento!");
         
         firebaseGetMessages(selectedContact, userState)
             .then(messages => {

@@ -11,51 +11,45 @@ const HomeMonitor = ({ currentTab }) => {
   const cameras = [
     { 
       id: "1", 
-      name: "Câmera 1", 
-      imageUrl: "https://images.unsplash.com/photo-1646521790482-a76619a564db?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Entrada Principal", 
+      name: "Câmera",
+      location: "Entrada Principal",
       status: "online", 
-      totalTimeRecorded: "17:08:59" 
+      position: "top-left"
     },
     { 
       id: "2", 
       name: "Câmera 2", 
-      imageUrl: "https://images.unsplash.com/photo-1716703435417-f8687d87516c?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Andar do Escritório", 
+      location: "Andar do Escritório",
       status: "online", 
-      totalTimeRecorded: "12:08:59" 
+      position: "top-right"
     },
     { 
       id: "3", 
       name: "Câmera 3", 
-      imageUrl: "https://images.unsplash.com/photo-1590938076771-dfe17af4d484?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Estacionamento", 
+      location: "Estacionamento",
       status: "online", 
-      totalTimeRecorded: "17:25:59" 
+      position: "bottom-left"
     },
     { 
       id: "4", 
       name: "Câmera 4", 
-      imageUrl: "https://images.unsplash.com/photo-1647451969544-2e0db88a150b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Saída de Incêndio", 
+      location: "Saída de Incêndio",
       status: "offline", 
-      totalTimeRecorded: "12:08:59" 
+      position: "bottom-right"
     },
     { 
       id: "5", 
       name: "Câmera 5", 
-      imageUrl: "https://plus.unsplash.com/premium_photo-1676320103087-4aec0a09088f?q=80&w=1228&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Recepção", 
+      location: "Recepção",
       status: "online", 
-      totalTimeRecorded: "12:08:59" 
+      position: "center"
     },
     { 
       id: "6", 
       name: "Câmera 6", 
-      imageUrl: "https://images.unsplash.com/photo-1506399558188-acca6f8cbf41?q=80&w=1273&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", 
-      location: "Sala do Servidor", 
+      location: "Sala do Servidor",
       status: "online", 
-      totalTimeRecorded: "19:08:59" 
+      position: "center-top"
     },
   ];
 

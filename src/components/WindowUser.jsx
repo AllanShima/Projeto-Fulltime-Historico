@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import SidebarUser from './SidebarUser'
 import AlertOptions from './AlertOptions'
-import {userEvents} from '../assets/data/TempData'
 import { useUserContext } from '../contexts/user-context'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
 import { firestoreSetAlertOnByUid, firestoreSetAlertSignal } from '../services/api/FirebaseSetFunctions'
@@ -50,9 +49,9 @@ const WindowUser = () => {
     setNotificationButtonModal(false);
     window.alert("Formulário cadastrado com sucesso! O relatório está sendo preparado...");
   }
+
   // Setando o alerta mesmo depois de reiniciar a pagina
   useEffect(() => {
-    console.log(userState.alertOn);
     if (userState.uid && userState.alertOn != null) {
       // A lógica de reidratação do alerta só roda APÓS o login ser confirmado
       setSelectedAlert(userState.alertOn);
@@ -145,7 +144,7 @@ const WindowUser = () => {
       )}
       <div className='flex flex-1 w-full h-full'>
         <div className='w-1/2 h-full'>
-          <SidebarUser userEvents={userEvents} setNotificationButtonModal={setNotificationButtonModal} setSelectedEvent={setSelectedEvent}/>
+          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setSelectedEvent={setSelectedEvent}/>
         </div>
         
         <div className='w-1/2 h-full'>

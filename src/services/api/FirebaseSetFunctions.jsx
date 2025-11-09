@@ -15,8 +15,47 @@ export const firestoreSetAlertSignal = async(alert, userState) => {
     const chatCollectionRef = collection(db, "users", userState.uid, "alerts_sent");
  
     const docRef = await addDoc(chatCollectionRef, {
-        title: alert.title,
-        createdAt: new Date()
+      title: alert.title,
+      createdAt: new Date()
+    });
+    // id é o id do nome do documento inserido no banco, n o id do doc em si
+    console.log("Alerta Inserida com o ID: ", docRef.id);
+  } catch (e) {
+    console.error("Erro ao adicionar o alerta: ", e);
+  }
+}
+
+// Guardando as respostas do sinal de alerta
+export const firestoreSetEvent = async(event, userState) => {
+  try {
+    // se por algum motivo não existe algum alerta selecionado
+    if (!event){
+      throw new Error("Sem alerta selecionado!");
+    }
+    // if (userState.usertype == "f/safe") {
+
+    // }
+    // Defining the ID of the message
+    // 1. Define the reference to the subcollection
+    const chatCollectionRef = collection(db, "users", userState.uid, "events");
+
+    // Informações do Evento:
+
+    // software_from: EventsConstants.SOFTWARES.F_SAFE,
+    // title: "Mensagem Nova",
+    // description: "Nova mensagem do Operador disponível no Live Chat",
+    // type: EventsConstants.TYPES.EMERGENCY,
+    // severity: EventsConstants.SEVERITIES.CRITICAL,
+    // alert: EventsConstants.ALERTS.MESSAGE,
+    // show_button: false,
+    // device: "Eduarda Ferreira", 
+    // camera: null, 
+    // date: new Date(2024, 6, 15, 14, 20, 20),
+    // video_available: false,
+    // video_recorded: null
+    const docRef = await addDoc(chatCollectionRef, {
+      event_data: event,
+      createdAt: new Date()
     });
     // id é o id do nome do documento inserido no banco, n o id do doc em si
     console.log("Alerta Inserida com o ID: ", docRef.id);
@@ -41,8 +80,8 @@ export const firestoreSetAlertOnByUid = async(alert, userState, userDispatch) =>
     const docRef = doc(db, "users", userState.uid, "alert_on", documentId);
  
     await setDoc(docRef, {
-        title: alert.title,
-        createdAt: new Date()
+      title: alert.title,
+      createdAt: new Date()
     });
     // id é o id do nome do documento inserido no banco, n o id do doc em si
     console.log("Current Alert inserido no db...");
