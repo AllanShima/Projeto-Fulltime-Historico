@@ -5,7 +5,7 @@ import GoogleMapsComponent from './GoogleMapsComponent';
 
 const TabChat = () => {
     return (
-        <div className='flex w-full h-full'>
+        <div className='flex flex-1 w-full h-full'>
             {/* Sidebar */}
             <div className='w-1/2'>
                 <LiveChatComponent monitoring={true}/>
