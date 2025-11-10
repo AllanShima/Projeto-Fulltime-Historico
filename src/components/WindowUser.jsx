@@ -5,8 +5,6 @@ import { useUserContext } from '../contexts/user-context'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
 import { firestoreSetAlertOnByUid, firestoreSetAlertSignal } from '../services/api/FirebaseSetFunctions'
 import AwaitingResponseModal from './AwaitingResponseModal'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../services/firebase'
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions'
 
 // selectedAlert object;

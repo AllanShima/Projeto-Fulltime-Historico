@@ -16,6 +16,8 @@ const TabHistory = () => {
     const [showPropDropdown, setShowPropDropdown] = useState(false);
     const [showTypeDropdown, setShowTypeDropdown] = useState(false);
 
+    const [selectedEvent, setSelectedEvent] = useState(null);
+
     const types = [
         "Todos os Tipos",
         "Movimento",
@@ -56,7 +58,7 @@ const TabHistory = () => {
     return (
         <div className='flex flex-1 w-full bg-amber-600'>
             {showExportModal && (
-                <PdfViewer setShowModal={setShowExportModal}/>
+                <PdfViewer setShowModal={setShowExportModal} selectedEvent={selectedEvent}/>
             )}
             {showExportAllModal && (
                 <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
@@ -161,7 +163,14 @@ const TabHistory = () => {
                     </div>
                     <div className='space-y-3 mt-3 overflow-y-scroll max-h-115 p-5'>
                         {events.map(e => (
-                            <EventCardMonitor key={e.id} event={e} simplified={false} setStateModal={setShowExportModal} stateModal={showExportModal}/>
+                            <EventCardMonitor 
+                            key={e.id} 
+                            event={e} 
+                            simplified={false} 
+                            setStateModal={setShowExportModal} 
+                            stateModal={showExportModal}
+                            setSelectedEvent={setSelectedEvent} 
+                            />                           
                         ))}                
                     </div>
                 </div>

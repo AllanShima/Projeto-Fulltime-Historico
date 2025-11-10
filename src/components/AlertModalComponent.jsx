@@ -1,12 +1,6 @@
 import React from 'react'
 
-const AddressModalComponent = ({setModalState}) => {
-
-  const ConfigurarEndereco = () => {
-    window.alert("Configurando novo endereco");
-    setModalState(false);
-  }
-
+const AlertModalComponent = ({setModalState}) => {
   const hoverStyle1 = "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition"
 
   return (
@@ -26,4 +20,4 @@ const AddressModalComponent = ({setModalState}) => {
   )
 }
 
-export default AddressModalComponent
+export default AlertModalComponent

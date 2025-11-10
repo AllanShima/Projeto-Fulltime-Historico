@@ -26,8 +26,14 @@ const typeSpecs = {
   "access": ["bg-green-100 text-green-800", FaRegEye],
 }
 
-const EventCardMonitor = ({ event, simplified, setStateModal, stateModal }) => {
+const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSelectedEvent }) => {
   const [timePassed, setTimePassed] = useState('');
+
+  const setStates = () => {
+    
+    setSelectedEvent(event);
+    setStateModal(!stateModal);
+  }
 
   useEffect(() => {
     // Essa função vai ser executada a cada segundo
@@ -119,7 +125,7 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal }) => {
                 <span className='flex w-full h-full mr-3'>
                   <SeverityIndicator severity={event.severity}/>
                 </span>
-                <button onClick={() => setStateModal(!stateModal)}>
+                <button onClick={setStates}>
                   <ExportButton text="Exportar"/>
                 </button>
               </span>

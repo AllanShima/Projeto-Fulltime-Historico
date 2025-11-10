@@ -14,6 +14,7 @@ import { firestoreGetNotifications } from '../services/api/FirebaseGetFunctions'
 import SettingsDropdown from './ui/SettingsDropdown';
 import NotificationsDropdown from './ui/NotificationsDropdown';
 import AddressModalComponent from './AddressModalComponent';
+import AlertModalComponent from './AlertModalComponent';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -34,6 +35,8 @@ const HeaderMonitor = () => {
   const [modeSwitchState, setModeSwitchState] = useState(false);
   const [langSwitchState, setLangSwitchState] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
+
+  const [showUserAlertModal, setShowUserAlertModal] = useState(false);
       
   const MenuOptions = [
     {id: "AD", text: "Configurar Endereço", setState: setShowAddressModal,  state: showAddressModal}, 
@@ -98,11 +101,63 @@ const HeaderMonitor = () => {
       }
   }, [userState, navigate, auth]); // AGORA depende de userState
 
+  // ------------------------------------------------------------------
+
+  // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
+  const [userEvents, setUserEvents] = useState([]);
+  const userId = userState?.uid;
+
+  useEffect(() => {
+      // Verifica se o UID está pronto para evitar erros de leitura
+      if (!userId) {
+          console.warn("UID do usuário não disponível para iniciar o listener.");
+          return; 
+      }
+
+      const userEventCollectionRef = collection(db, "users", userId, "events");
+
+      // 1. Defina a Query (ex: ordenar por data)
+      const q = query(userEventCollectionRef, orderBy("createdAt", "desc"));
+
+      // 2. INICIA O OUVINTE em tempo real
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+          console.log("Ouvinte de eventos em andamento! Dados atualizados recebidos.");
+
+          // 3. MAPEIA os novos dados contidos no SNAPSHOT do ouvinte.
+          const newEvents = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+          }));
+
+          // 4. ATUALIZA O ESTADO COM OS DADOS DO OUVINTE
+          setUserEvents(newEvents); 
+      }, (error) => {
+          // Trata erros que possam ocorrer com a conexão (permissão, rede)
+          console.error("Erro no listener do Firestore:", error);
+          // Opcional: setUserEvents([]) em caso de erro grave.
+      });
+
+      // 5. CLEANUP CRUCIAL: Retorna a função de unsubscribe.
+      // O React chama esta função quando o componente for desmontado,
+      // garantindo que a conexão seja fechada.
+      return () => {
+          console.log("Listener de eventos cancelado (unsubscribe).");
+          unsubscribe();
+      };
+
+      // Roda novamente se o userId mudar
+  }, [userId]);
+
   return (
     <>
       {/* Modal pra inserir Endereço */}
       {showAddressModal && (
         <AddressModalComponent setModalState={setShowAddressModal}/>
+      )}
+
+      {/* Modal de alerta de usuário em perigo */}
+      {showUserAlertModal && (
+        <AlertModalComponent setModalState={setShowUserAlertModal}/>
       )}
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
