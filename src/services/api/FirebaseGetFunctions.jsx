@@ -1,4 +1,4 @@
-import { where, collection, query, doc, getDocs, getDoc, orderBy } from 'firebase/firestore';
+import { where, collection, query, doc, getDocs, getDoc, orderBy, collectionGroup } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useUserContext } from '../../contexts/user-context';
 
@@ -20,6 +20,41 @@ export const firestoreGetUserById = async (uid) => {
       return null;
   }
 };
+
+// Pega todos os alertas ativos, (se tiver) dos usuários f/safe
+export const firestoreGetAllCurrentAlerts = async () => {
+    const targetCollectionId = "alert_on"; // O nome da subcoleção
+    const documentId = "current_alert"; // O nome do documento que você quer dentro dessa subcoleção
+
+    // 1. Crie a referência para a Coleção de Grupo 'alert_on'
+    const alertOnGroupRef = collectionGroup(db, targetCollectionId); 
+
+    // *Opção mais direta se 'current_alert' é o único documento na subcoleção, ou se você for filtrar no cliente:*
+    const q = query(alertOnGroupRef);
+
+    // Se você tiver certeza que só quer o 'current_alert' em cada subcoleção
+    const snapshot = await getDocs(q);
+
+    const allCurrentAlerts = [];
+
+    // 3. Itere sobre os documentos e filtre pelo ID, se necessário
+    snapshot.forEach(doc => {
+        // Se a Collection Group Query trouxer outros documentos dentro de 'alert_on',
+        // você pode filtrar eles aqui:
+        if (doc.id === documentId) {
+            allCurrentAlerts.push({
+                // O caminho completo do documento seria 'users/{userId}/alert_on/current_alert'
+                id: doc.id,
+                userId: doc.ref.parent.parent.id, // Pega o ID do documento 'users'
+                ...doc.data()
+            });
+        }
+        // Se você não tiver outros documentos na subcoleção, pode simplificar a linha acima.
+    });
+    return allCurrentAlerts;
+};
+
+// -----
 
 // Pegar o alerta ativo, (se tiver) de acordo com o id do usuário
 export const firestoreGetAlertOnByUid = async (uid) => {

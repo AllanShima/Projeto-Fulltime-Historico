@@ -54,6 +54,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
                     // Após o vídeo carregar, inicie o desenho contínuo
                     startContinuousDrawing();
                 }
+                console.log("Stream OK, Tracks ativas:", stream.getVideoTracks().map(t => t.readyState));
             })
             .catch(err => {
                 console.error("Erro ao acessar câmera:", err);

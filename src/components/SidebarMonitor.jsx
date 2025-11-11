@@ -30,8 +30,8 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
               <h1>Camera List ({cameras.filter(c => c.status == "online").length} online)</h1>
             </span>   
             <div className='flex-1 space-y-3 mt-3 w-full overflow-y-auto'>
-              {cameras.map(camera => (
-                <button key={camera.id} onClick={() => {
+              {cameras.map((camera, index) => (
+                <button key={index} onClick={() => {
                     setSelectedCam(camera.id)
                     setRemainingCams(cameras.filter(cams => cams.id !== camera.id))
                   }} className='w-full pr-4'>

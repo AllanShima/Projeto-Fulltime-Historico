@@ -36,7 +36,7 @@ const CameraScreen = ({ camera }) => {
                      overflow: 'hidden',
                      zIndex: 0
                  }}>
-                {console.log(camera)}
+                {/* {console.log(camera)} */}
                 <LocalCamera viewArea={camera.position} />
 
                 <div className="flex absolute inset-0 p-3 justify-between w-full h-full z-10">

@@ -7,7 +7,7 @@ import { BsCameraVideo } from "react-icons/bs";
 import { RiNotification3Line } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../contexts/user-context';
-import { auth } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { onAuthStateChanged } from 'firebase/auth';
 import ToggleSwitch from './ui/ToggleSwitch';
 import { firestoreGetNotifications } from '../services/api/FirebaseGetFunctions';
@@ -15,6 +15,7 @@ import SettingsDropdown from './ui/SettingsDropdown';
 import NotificationsDropdown from './ui/NotificationsDropdown';
 import AddressModalComponent from './AddressModalComponent';
 import AlertModalComponent from './AlertModalComponent';
+import { collectionGroup, onSnapshot, query } from 'firebase/firestore';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -44,8 +45,6 @@ const HeaderMonitor = () => {
     {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState}
   ];
 
-  const Notifications = firestoreGetNotifications();
-
   const handleLogout = () => {
     // Atualizando o user no data layer
     // userDispatch({type: "LOGOUT"})
@@ -74,7 +73,6 @@ const HeaderMonitor = () => {
               navigate('/login'); 
           }
       });
-
       return () => unsubscribe();
   }, [auth, navigate]); // Depende apenas de 'auth' e 'navigate'
 
@@ -83,70 +81,62 @@ const HeaderMonitor = () => {
   // Este useEffect cuida do redirecionamento após o userState ser carregado
   useEffect(() => {
       if (userState && userState.usertype) {
-          if (userState.usertype === "f/safe") {
-              console.log("Usuário f/safe, navegando p local correto.");
-              navigate('/user/home');
-          } else if (userState.usertype === "f/center") {
-              console.log("Caminho correto para f/center, mantendo a janela.");
-              navigate('/monitor/cameras');
-          }
-          
-          // Setando o nome completo para o icone Avatar
-          setFullname(userState.first + " " + userState.last);
+        if (userState.usertype === "f/safe") {
+            console.log("Usuário f/safe, navegando p local correto.");
+            navigate('/user/home');
+        } else if (userState.usertype === "f/center") {
+            console.log("Caminho correto para f/center, mantendo a janela.");
+            navigate('/monitor/cameras');
+        }
+        
+        // Setando o nome completo para o icone Avatar
+        setFullname(userState.first + " " + userState.last);
 
       } else if (auth.currentUser) {
-          // Se o Firebase diz que está logado (auth.currentUser existe),
-          // mas o userState ainda não foi carregado, não faz nada (espera).
-          console.log("Aguardando dados do Firestore...");
+        // Se o Firebase diz que está logado (auth.currentUser existe),
+        // mas o userState ainda não foi carregado, não faz nada (espera).
+        console.log("Aguardando dados do Firestore...");
       }
   }, [userState, navigate, auth]); // AGORA depende de userState
 
-  // ------------------------------------------------------------------
+  // // ------------------------------------------------------------------
 
-  // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
-  const [userEvents, setUserEvents] = useState([]);
-  const userId = userState?.uid;
+  // // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
+  const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-      // Verifica se o UID está pronto para evitar erros de leitura
-      if (!userId) {
-          console.warn("UID do usuário não disponível para iniciar o listener.");
-          return; 
-      }
+  useEffect(() => {   
+    const targetCollectionId = "alert_on";
+    const documentId = "current_alert";
 
-      const userEventCollectionRef = collection(db, "users", userId, "events");
+    // 1. Crie a referência para a Coleção de Grupo 'alert_on'
+    const alertOnGroupRef = collectionGroup(db, targetCollectionId); 
+    const qAlerts = query(alertOnGroupRef);
 
-      // 1. Defina a Query (ex: ordenar por data)
-      const q = query(userEventCollectionRef, orderBy("createdAt", "desc"));
-
-      // 2. INICIA O OUVINTE em tempo real
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-          console.log("Ouvinte de eventos em andamento! Dados atualizados recebidos.");
-
-          // 3. MAPEIA os novos dados contidos no SNAPSHOT do ouvinte.
-          const newEvents = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-          }));
-
-          // 4. ATUALIZA O ESTADO COM OS DADOS DO OUVINTE
-          setUserEvents(newEvents); 
-      }, (error) => {
-          // Trata erros que possam ocorrer com a conexão (permissão, rede)
-          console.error("Erro no listener do Firestore:", error);
-          // Opcional: setUserEvents([]) em caso de erro grave.
-      });
-
-      // 5. CLEANUP CRUCIAL: Retorna a função de unsubscribe.
-      // O React chama esta função quando o componente for desmontado,
-      // garantindo que a conexão seja fechada.
-      return () => {
-          console.log("Listener de eventos cancelado (unsubscribe).");
-          unsubscribe();
-      };
-
-      // Roda novamente se o userId mudar
-  }, [userId]);
+    // 2. INICIA O OUVINTE em tempo real
+    const unsubscribeAlerts = onSnapshot(qAlerts, (snapshot) => {
+        console.log("Ouvinte de Alert_On em andamento!");
+        // 3. Mapeia e filtra pelo ID 'current_alert'
+        const newAlerts = snapshot.docs
+            .filter(doc => doc.id === documentId) // Filtra para pegar apenas o documento certo
+            .map(doc => ({
+                id: doc.id,
+                userId: doc.ref.parent.parent.id, // Pega o UID do usuário pai
+                ...doc.data()
+            }));
+        if (newAlerts.length >= 1) {
+          console.log(newAlerts);
+          setNotifications(newAlerts); 
+          setShowUserAlertModal(true);
+        }
+    }, (error) => {
+        console.error("Erro no listener de Alertas de Grupo:", error);
+    });
+    // 4. CLEANUP CRUCIAL para o segundo listener
+    return () => {
+      console.log("Listener de Alertas de Grupo cancelado.");
+      unsubscribeAlerts();
+    };
+  }, []);
 
   return (
     <>
@@ -156,9 +146,9 @@ const HeaderMonitor = () => {
       )}
 
       {/* Modal de alerta de usuário em perigo */}
-      {showUserAlertModal && (
-        <AlertModalComponent setModalState={setShowUserAlertModal}/>
-      )}
+      {/* {showUserAlertModal && (
+        <AlertModalComponent setModalState={setShowUserAlertModal} currentAlerts={currentAlerts}/>
+      )} */}
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
         {/* FullCenter logo */}
@@ -201,7 +191,7 @@ const HeaderMonitor = () => {
                 <RiNotification3Line/>
               </button>
               {notificationShowDropdown && (
-                <NotificationsDropdown dropdownState={notificationShowDropdown} Notifications={Notifications}/>
+                <NotificationsDropdown dropdownState={notificationShowDropdown} notifications={notifications}/>
               )}
             </span>
             <span className='flex'>
