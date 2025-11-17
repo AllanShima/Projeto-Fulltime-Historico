@@ -6,7 +6,7 @@ import { firestoreGetEvents } from '../services/api/FirebaseGetFunctions'
 import { db } from '../services/firebase'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 
-const UserNotificationComponent = ({setNotificationButtonModal, setSelectedEvent}) => {
+const UserNotificationComponent = ({setNotificationButtonModal, setCurrentEvent}) => {
     const { userState, userDispatch } = useUserContext();
     const [userEvents, setUserEvents] = useState([]);
     const userId = userState?.uid;
@@ -65,7 +65,7 @@ const UserNotificationComponent = ({setNotificationButtonModal, setSelectedEvent
                         key={event.id} 
                         event={event} 
                         setNotificationButtonModal={setNotificationButtonModal}
-                        setSelectedEvent={setSelectedEvent}
+                        setCurrentEvent={setCurrentEvent}
                     />
                     ))}          
                 </div>           

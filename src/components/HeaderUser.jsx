@@ -10,7 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { FaMapMarkedAlt } from "react-icons/fa";
 import ToggleSwitch from './ui/ToggleSwitch';
 import SettingsDropdown from './ui/SettingsDropdown';
-import UserReport from './AddressModalComponent';
+import AddressModalComponent from './AddressModalComponent';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -21,14 +21,14 @@ const HeaderMonitor = () => {
 
   const [ modeSwitchState, setModeSwitchState ] = useState(false);
   const [ langSwitchState, setLangSwitchState ] = useState(false);
-  const [ showModal, setShowModal ] = useState(false);
+  const [ showPfpDropdown, setShowPfpDropdown ] = useState(false);
 
   const navigate = useNavigate();
 
   const MenuOptions = [
-    {id: "AD", text: "Configurar Endereço", setState: setShowModal,  state: showModal}, 
+    {id: "PFP", text: "Mudar Imagem de Perfil", setState: setShowPfpDropdown,  state: showPfpDropdown}, 
     {id: "LG", text: "(EN/PT-BR)", setState: setLangSwitchState,  state: langSwitchState}, 
-    {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState}
+    {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState},
   ];
 
   const handleLogout = () => {
@@ -83,10 +83,6 @@ const HeaderMonitor = () => {
 
   return (
     <>
-      {showModal && (
-        <UserReport/>
-      )}
-
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
         {/* FullCenter logo */}
         <div className='flex content-center mt-auto mb-auto w-23 space-x-4'>

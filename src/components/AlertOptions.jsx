@@ -53,11 +53,11 @@ const userAlerts = [
   },
 ];
 
-const AlertOptions = ({ setSelectedAlert, setShowModal, isLoading}) => {
+const AlertOptions = ({ setSelectedAlertType, setShowModal, isLoading}) => {
   const setAlert = (alert) => {
     if (!isLoading){
       setShowModal(true); 
-      setSelectedAlert(alert);      
+      setSelectedAlertType(alert.title);      
     } else{
       window.alert("Alerta em andamento!")
     }

@@ -26,7 +26,7 @@ const typeSpecs = {
   "alert": ["bg-blue-100 text-blue-800", IoAlertCircleOutline],
 }
 
-const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) => {
+const EventCardUser = ({ event, setNotificationButtonModal, setCurrentEvent }) => {
   const [timePassed, setTimePassed] = useState('');
   useEffect(() => {
     // Essa função vai ser executada a cada segundo
@@ -106,7 +106,7 @@ const EventCardUser = ({ event, setNotificationButtonModal, setSelectedEvent }) 
             </span>
             <span className='flex flex-col text-xs w-fit h-full items-end justify-between'>
               {event.show_button ? (
-                <button onClick={() => {setNotificationButtonModal(true); setSelectedEvent(event)}}>
+                <button onClick={() => {setNotificationButtonModal(true); setCurrentEvent(event)}}>
                   <ViewButton text="Abrir"/>
                 </button>
               ) : null}

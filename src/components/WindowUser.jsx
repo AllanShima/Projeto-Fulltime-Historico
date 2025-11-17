@@ -3,9 +3,12 @@ import SidebarUser from './SidebarUser'
 import AlertOptions from './AlertOptions'
 import { useUserContext } from '../contexts/user-context'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
-import { firestoreSetAlertOnByUid, firestoreSetAlertSignal } from '../services/api/FirebaseSetFunctions'
+import { firestoreSetAlertOnByUid } from '../services/api/FirebaseSetFunctions'
 import AwaitingResponseModal from './AwaitingResponseModal'
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions'
+import { getDeviceLocation } from '../services/GetGeocode'
+import { useMapsLibrary } from '@vis.gl/react-google-maps'
+import UserSetAddressModal from './UserSetAddressModal'
 
 // selectedAlert object;
   // {
@@ -24,21 +27,61 @@ const WindowUser = () => {
   // Tela de carregamento
   const [showAwaitModal, setShowAwaitModal] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
+  const [showManualAddressModal, setShowManualAddressModal] = useState(false);
 
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
 
+  const [selectedAlertType, setSelectedAlertType] = useState(null); // Apenas o nome do alerta para inserir no banco
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const [currentEvent, setCurrentEvent] = useState({});
 
-  const [selectedEvent, setSelectedEvent] = useState({});
+  const geocodingLibrary = useMapsLibrary('geocoding'); // Carrega a biblioteca de geocoding
+  const [address, setAddress] = useState('');
+  const [coords, setCoords] = useState('');
 
   const SetAlertMode = () => {
     setShowAlertModal(false);
-    firestoreSetAlertOnByUid(selectedAlert, userState, userDispatch);
-    setShowAwaitModal(true);
+    
+    if (!geocodingLibrary) {
+      window.alert("Aguarde o carregamento do mapa antes de enviar o alerta.");
+      return;
+    }
+    console.log("1. SetAlertMode iniciado. Chamando getDeviceLocation...");
+
+    // Define a função de tratamento de falha de precisão
+    const handleFailure = () => {
+      setShowAwaitModal(false); // Fecha o modal de espera
+      setShowManualAddressModal(true);
+    };
+
+    // Define a função de callback
+    const handleLocationFound = (newAddress, newCoords) => {
+      
+      // 1. Atualiza os estados (address e coords) para a próxima renderização
+      setAddress(newAddress);
+      setCoords(newCoords);
+
+      setShowAwaitModal(true); // Exibe o modal de espera imediatamente
+
+      // 2. ✅ Chama o Firebase SOMENTE QUANDO O ENDEREÇO ESTIVER PRONTO
+      // Usamos o newAddress, pois o estado 'address' ainda não foi atualizado
+      firestoreSetAlertOnByUid(selectedAlertType, userState, userDispatch, newAddress);
+      
+      // window.alert(`Alerta enviado com endereço: ${newAddress}`); // Verifique o valor
+    };
+
+    // Chamamos a função, passando o callback
+    getDeviceLocation({
+      geocodingLibrary: geocodingLibrary, // A variável que contém a biblioteca (do hook)
+      callback: handleLocationFound,
+      onFailure: handleFailure
+    });
+    setSelectedAlert(userState.alertOn);
   }
 
   const ResetAlertMode = () => {
     firestoreDeleteAlertOnByUid(userState, userDispatch);
+    firestoreSetMonitorEvent(selectedAlert)
     setShowAwaitModal(false);
   }
 
@@ -55,10 +98,10 @@ const WindowUser = () => {
       setSelectedAlert(userState.alertOn);
       setShowAwaitModal(true);
     }
-  }, [userState.alertOn]); // <-- CHAVE AQUI: Roda SOMENTE quando o UID for definido (usuário logado)
+  }, [userState.alertOn]); // <-- CHAVE AQUI: Roda SOMENTE quando o alertOn for definido (usuário logado e alerta ligado)
 
   // Acessa a chave 'alert' de forma segura
-  const type = selectedEvent?.alert; 
+  const type = currentEvent?.alert; 
   
   // Calcula as variáveis de estilo e ícone DERIVADAS
   const typeSpec = typeSpecs[type] || []; // Fallback para array vazio ou um padrão
@@ -71,8 +114,12 @@ const WindowUser = () => {
   const hoverStyle2 = "bg-linear-to-t from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 hover:cursor-pointer transition duration-200";
   return (
     <>
-      {userState.alertOn && (
-          <AwaitingResponseModal selectedAlert={userState.alertOn}/>
+      {userState.alertOn && selectedAlert != null && (
+        <AwaitingResponseModal selectedAlert={userState.alertOn}/>
+      )}
+
+      {showManualAddressModal && (
+        <UserSetAddressModal setAddress={setAddress} address={address} setShowAwaitModal={setShowAwaitModal}/>
       )}
 
       {showAlertModal && (
@@ -81,7 +128,7 @@ const WindowUser = () => {
             <h2 className='text-center font-bold'>
               Tem certeza que deseja enviar o alerta de
               <span className="text-red-600 underline p-1.5">
-                {userState.alertOn}
+                {selectedAlertType}
               </span>
               e CHAMAR AS AUTORIDADES? 
             </h2>
@@ -100,7 +147,7 @@ const WindowUser = () => {
       {notificationButtonModal && (
         <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
 
-          {selectedEvent.alert === "help" || selectedEvent.alert === "camera" ? (
+          {currentEvent.alert === "help" || currentEvent.alert === "camera" ? (
             <div className='grid content-between w-fit h-fit space-y-5 p-5 bg-white rounded-2xl font-regular'>
               <span className={`flex w-50 h-full rounded-lg justify-center items-center text-xl ${colorStyle}`}>
                 <EventIconComponent/>
@@ -109,7 +156,7 @@ const WindowUser = () => {
                 {typeText}
               </h2>
               <div className='flex justify-between space-x-5 px-10 w-full h-10'>
-                <button onClick={storeAlertSignal} className={`w-40 h-full rounded-lg text-white ${hoverStyle2}`}>
+                <button className={`w-40 h-full rounded-lg text-white ${hoverStyle2}`}>
                   Sim
                 </button>
                 <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
@@ -142,11 +189,11 @@ const WindowUser = () => {
       )}
       <div className='flex flex-1 w-full h-full'>
         <div className='w-1/2 h-full'>
-          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setSelectedEvent={setSelectedEvent}/>
+          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setCurrentEvent={setCurrentEvent}/>
         </div>
         
         <div className='w-1/2 h-full'>
-          <AlertOptions setSelectedAlert={setSelectedAlert} setShowModal={setShowAlertModal} isLoading={showAwaitModal}/>
+          <AlertOptions setSelectedAlertType={setSelectedAlertType} setShowModal={setShowAlertModal} isLoading={showAwaitModal}/>
         </div>
         
       </div>    

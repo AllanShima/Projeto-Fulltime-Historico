@@ -14,8 +14,11 @@ import { firestoreGetNotifications } from '../services/api/FirebaseGetFunctions'
 import SettingsDropdown from './ui/SettingsDropdown';
 import NotificationsDropdown from './ui/NotificationsDropdown';
 import AddressModalComponent from './AddressModalComponent';
-import AlertModalComponent from './AlertModalComponent';
-import { collectionGroup, onSnapshot, query } from 'firebase/firestore';
+import { collection, collectionGroup, onSnapshot, query } from 'firebase/firestore';
+import NewNotification from './ui/NewNotification';
+import ResponseModalComponent from './NotificationResponse';
+import NotificationResponse from './NotificationResponse';
+import NotificationDetails from './NotificationDetails';
 
 const HeaderMonitor = () => {
   const { userState, userDispatch } = useUserContext();
@@ -29,21 +32,70 @@ const HeaderMonitor = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [showSettingsDropdown, setSettingsShowDropdown] = useState(false);
-
-  const [notificationShowDropdown, setNotificationShowDropdown]  = useState(false);
-
   const [modeSwitchState, setModeSwitchState] = useState(false);
   const [langSwitchState, setLangSwitchState] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showPfpDropdown, setShowPfpDropdown] = useState(false);
+  const [showVideoSettingsDropdown, setShowVideoSettingsDropdown] = useState(false);
 
-  const [showUserAlertModal, setShowUserAlertModal] = useState(false);
+  const [videoAmountInSeconds, setVideoAmountInSeconds] = useState('');
+  const [pfpUrlText, setPfpUrlText] = useState('');
+
+  const [isVideoInputFocused, setIsVideoInputFocused] = useState(false);
+  const [isPfpInputFocused, setIsPfpInputFocused] = useState(false);
+
+  
+  const ConfigureVideoAmount = () => {
+    window.alert("Configurando...");
+    setVideoAmountInSeconds('');
+  }
+
+  const ConfigureNewPfp = () => {
+    window.alert("Atualizando...");
+    setPfpUrlText('');
+  }
       
   const MenuOptions = [
-    {id: "AD", text: "Configurar Endereço", setState: setShowAddressModal,  state: showAddressModal}, 
-    {id: "LG", text: "(EN/PT-BR)", setState: setLangSwitchState,  state: langSwitchState}, 
-    {id: "LD", text: "Mudar Ambientação (Light/Dark)", setState: setModeSwitchState,  state: modeSwitchState}
+    {
+      id: "LG", 
+      text: "(EN/PT-BR)", 
+      setState: setLangSwitchState,  
+      state: langSwitchState
+    }, 
+    {
+      id: "LD", 
+      text: "Mudar ambientação (Light/Dark)", 
+      setState: setModeSwitchState,  
+      state: modeSwitchState
+    },
+    {
+      id: "VS", 
+      text: "Alterar a duração dos vídeos", 
+      setState: setShowVideoSettingsDropdown, 
+      state: showVideoSettingsDropdown, 
+      input: videoAmountInSeconds, 
+      setInput: setVideoAmountInSeconds, 
+      isFocused: isVideoInputFocused, 
+      setIsFocused: setIsVideoInputFocused,
+      placeholder: "Duração em segundos",
+      function: ConfigureVideoAmount
+    },
+    {
+      id: "PFP", 
+      text: "Mudar imagem de perfil", 
+      setState: setShowPfpDropdown,  
+      state: showPfpDropdown, 
+      input: pfpUrlText,
+      setInput: setPfpUrlText, 
+      isFocused: isPfpInputFocused, 
+      setIsFocused: setIsPfpInputFocused,
+      placeholder: "url/da/imagem",
+      function: ConfigureNewPfp
+    }, 
   ];
+
+
+  const [showResponseModal, setShowResponseModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const handleLogout = () => {
     // Atualizando o user no data layer
@@ -53,6 +105,21 @@ const HeaderMonitor = () => {
     // dispatch é feito no app.jsx
     navigate('/login');
   }
+
+  const [showSettingsDropdown, setSettingsShowDropdown] = useState(false);
+  const [notificationShowDropdown, setNotificationShowDropdown]  = useState(false);
+
+  // Função que você vai usar no botão de notificação
+  const toggleNotificationDropdown = () => {
+    setNotificationShowDropdown(!notificationShowDropdown);
+    setSettingsShowDropdown(false); 
+  };
+
+  // Função que você usaria no botão do outro dropdown
+  const toggleSettingsDropdown = () => {
+    setSettingsShowDropdown(!showSettingsDropdown);
+    setNotificationShowDropdown(false); 
+  };
 
   useEffect(() => {
     navigate('/monitor/cameras')
@@ -104,51 +171,57 @@ const HeaderMonitor = () => {
   // // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {   
-    const targetCollectionId = "alert_on";
-    const documentId = "current_alert";
+  // Assume 'db' is your initialized Firestore instance
 
-    // 1. Crie a referência para a Coleção de Grupo 'alert_on'
-    const alertOnGroupRef = collectionGroup(db, targetCollectionId); 
-    const qAlerts = query(alertOnGroupRef);
+  useEffect(() => {
+      // 1. Crie a referência para a Coleção 'current_alerts'
+      // Apenas uma referência de coleção simples, não um collectionGroup
+      const alertsCollectionRef = collection(db, "current_alerts"); 
+      const qAlerts = query(alertsCollectionRef); // A query para a coleção inteira
 
-    // 2. INICIA O OUVINTE em tempo real
-    const unsubscribeAlerts = onSnapshot(qAlerts, (snapshot) => {
-        console.log("Ouvinte de Alert_On em andamento!");
-        // 3. Mapeia e filtra pelo ID 'current_alert'
-        const newAlerts = snapshot.docs
-            .filter(doc => doc.id === documentId) // Filtra para pegar apenas o documento certo
-            .map(doc => ({
-                id: doc.id,
-                userId: doc.ref.parent.parent.id, // Pega o UID do usuário pai
-                ...doc.data()
-            }));
-        if (newAlerts.length >= 1) {
-          console.log(newAlerts);
-          setNotifications(newAlerts); 
-          setShowUserAlertModal(true);
-        }
-    }, (error) => {
-        console.error("Erro no listener de Alertas de Grupo:", error);
-    });
-    // 4. CLEANUP CRUCIAL para o segundo listener
-    return () => {
-      console.log("Listener de Alertas de Grupo cancelado.");
-      unsubscribeAlerts();
-    };
-  }, []);
+      // 2. INICIA O OUVINTE em tempo real
+      const unsubscribeAlerts = onSnapshot(qAlerts, (snapshot) => {
+          console.log("Ouvinte de Current_Alerts em andamento!");
+          
+          // 3. Mapeia todos os documentos na coleção
+          const newAlerts = snapshot.docs.map(doc => ({
+              id: doc.id,
+              // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
+              // Os dados do alerta já devem estar em doc.data()
+              ...doc.data()
+          }));
+          
+          // Use a lógica de verificação de dados
+          if (newAlerts.length >= 1) {
+              console.log(newAlerts);
+              setNotifications(newAlerts);
+              // Substitua as linhas comentadas pelas suas funções de estado (setNotifications, setShowUserAlertModal)
+          } else {
+              // Opcional: Adicionar lógica se todos os alertas forem removidos
+              setNotifications([]);
+          }
+      }, (error) => {
+          console.error("Erro no listener de Alertas:", error);
+      });
+
+      // 4. CLEANUP CRUCIAL para o listener
+      return () => {
+          console.log("Listener de Current_Alerts cancelado.");
+          unsubscribeAlerts();
+      };
+  }, [/* Adicione dependências relevantes aqui, se houver */]);
 
   return (
     <>
-      {/* Modal pra inserir Endereço */}
-      {showAddressModal && (
-        <AddressModalComponent setModalState={setShowAddressModal}/>
+      {/* Modal de resposta da notificação */}
+      {showResponseModal && (
+        <NotificationResponse setModalState={setShowResponseModal}/>
       )}
 
-      {/* Modal de alerta de usuário em perigo */}
-      {/* {showUserAlertModal && (
-        <AlertModalComponent setModalState={setShowUserAlertModal} currentAlerts={currentAlerts}/>
-      )} */}
+      {/* Modal de detalhes da notificação */}
+      {showDetailsModal && (
+        <NotificationDetails setModalState={setShowDetailsModal}/>
+      )}
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
         {/* FullCenter logo */}
@@ -178,7 +251,7 @@ const HeaderMonitor = () => {
         <div className='grid grid-flow-col justify-end w-full text-primary'>
           <span className='grid grid-flow-col items-center self-end space-x-3'>
               <span className='flex flex-col'>
-                <button onClick={() => setSettingsShowDropdown(!showSettingsDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+                <button onClick={toggleSettingsDropdown} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
                   <CiSettings/>
                 </button>  
                 {showSettingsDropdown && (
@@ -186,19 +259,32 @@ const HeaderMonitor = () => {
                 )}
               </span>
             {/* Notificações */}
-            <span className='flex flex-col'>
-              <button onClick={() => setNotificationShowDropdown(!notificationShowDropdown)} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
+            <div className='flex flex-col'>
+              <button onClick={toggleNotificationDropdown} className='flex py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
                 <RiNotification3Line/>
+                {(notifications.length >= 1) && (
+                  <span className='absolute top-5 ml-2'>
+                    <NewNotification amount={notifications.length}/>
+                  </span>                  
+                )}
               </button>
-              {notificationShowDropdown && (
-                <NotificationsDropdown dropdownState={notificationShowDropdown} notifications={notifications}/>
-              )}
-            </span>
+              <span className='flex'>
+                {notificationShowDropdown && (
+                  <NotificationsDropdown 
+                  dropdownState={notificationShowDropdown} 
+                  notifications={notifications}
+                  setShowResponseModal={setShowResponseModal}
+                  setShowDetailsModal={setShowDetailsModal}
+                  />
+                )}                
+              </span>
+
+            </div>
             <span className='flex'>
               <Avatar fullName={fullname} showName={true}/>
             </span>
             <a onClick={handleLogout} className='py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300 cursor-default'>
-                <RxExit/>
+              <RxExit/>
             </a>
           </span>
         </div>

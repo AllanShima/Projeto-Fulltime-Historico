@@ -9,15 +9,10 @@ export const firestoreDeleteAlertOnByUid = async (userState, userDispatch) => {
         }
         userDispatch({type: "RESET_ALERT"});
 
-        // 2. Defina a referência COMPLETA do documento a ser apagado
-        const documentId = "current_alert";
-        const docRef = doc(
-            db, 
-            "users", 
-            userState.uid, 
-            "alert_on", 
-            documentId // <-- O ID do documento a ser apagado
-        );
+        const documentId = userState.uid;
+
+        // Caminho correto: "current_alerts" / [userState.uid]
+        const docRef = doc(db, "current_alerts", documentId);
 
         // 3. Use deleteDoc para apagar o documento
         await deleteDoc(docRef);

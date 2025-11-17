@@ -8,4 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-})
+// SOLUÇÃO: Força o Vite a pré-otimizar o pacote
+  optimizeDeps: {
+    include: [
+      '@vis.gl/react-google-maps', 
+      // Se tiver outras libs que dão problemas de export, coloque-as aqui
+    ],
+  },
+});

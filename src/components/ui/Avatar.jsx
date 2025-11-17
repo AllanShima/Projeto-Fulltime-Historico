@@ -40,12 +40,12 @@ const Avatar = ({fullName=null, showName=false, profileUrl=null, customSize=null
           ...customSizeStyle
         }} className={`grid content-center justify-center w-8 h-8 rounded-full bg-gray-200`}/>
       ) : (
-        <div style={{ ...customSizeStyle }} className={`grid content-center justify-center w-10 h-10 rounded-full bg-gray-200`}>
+        <div style={{ ...customSizeStyle }} className={`grid content-center justify-center w-10 h-10 rounded-full bg-gray-200 font-light`}>
           {abbreviation}
         </div>        
       )}
 
-      {showName===true ? <span className='pl-1'>{fullName}</span> : null}
+      {showName===true ? <span className='pl-1 font-light'>{fullName}</span> : null}
     </div>
   )
 }

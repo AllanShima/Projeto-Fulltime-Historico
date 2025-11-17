@@ -3,9 +3,9 @@ import { db } from '../firebase';
 import { useUserContext } from '../../contexts/user-context';
 
 // Pegar usuário de acordo com o ID
-export const firestoreGetUserById = async (uid) => {
+export const firestoreGetUserById = async (user_id) => {
   // 1. Crie a referência DIRETA ao documento usando o UID
-  const userDocRef = doc(db, "users", uid); 
+  const userDocRef = doc(db, "users", user_id); 
   // Caminho: users/ [o valor do uid]
   // 2. Busque o documento
   const documentSnapshot = await getDoc(userDocRef);
@@ -21,47 +21,70 @@ export const firestoreGetUserById = async (uid) => {
   }
 };
 
-// Pega todos os alertas ativos, (se tiver) dos usuários f/safe
+// Pegar localização do usuário
+// export const firestoreGetLocationByUid = async (userState) => {
+//   // 1. Crie a referência DIRETA ao documento usando o UID
+//   const userDocRef = doc(db, "users", userState.uid); 
+//   // Caminho: users/ [o valor do uid]
+//   // 2. Busque o documento
+//   const documentSnapshot = await getDoc(userDocRef);
+//   if (documentSnapshot.exists()) {
+//     // Pega o primeiro documento do array de resultados (como o UID é único, é o que queremos)
+//     const userData = documentSnapshot.data();
+//     if (userData.location) {
+//         console.log("Localização encontrada:", userData.location);
+//         // Aqui você pode retornar SOMENTE a localização se quiser,
+//         // ou fazer qualquer outra operação com ela.
+//         return userData.location;
+//     } else {
+//         console.log("A variável 'location' não existe neste documento.");
+//         // Se "location" não existir, retorna os dados completos (ou null, o que preferir)
+//         return null; 
+//     }
+//   } else {
+//       // O documento não existe.
+//       console.log("Nenhum usuário encontrado com este UID!");
+//       return null;
+//   }
+// };
+
+
+// Pega todos os alertas ativos (todos os documentos na coleção "current_alerts")
 export const firestoreGetAllCurrentAlerts = async () => {
-    const targetCollectionId = "alert_on"; // O nome da subcoleção
-    const documentId = "current_alert"; // O nome do documento que você quer dentro dessa subcoleção
 
-    // 1. Crie a referência para a Coleção de Grupo 'alert_on'
-    const alertOnGroupRef = collectionGroup(db, targetCollectionId); 
+    // 1. Crie a referência DIRETA à coleção "current_alerts" (Nível Superior)
+    const alertsCollectionRef = collection(db, "current_alerts");
+    const q = query(alertsCollectionRef);
 
-    // *Opção mais direta se 'current_alert' é o único documento na subcoleção, ou se você for filtrar no cliente:*
-    const q = query(alertOnGroupRef);
+    try {
+        // 2. Busque o snapshot de todos os documentos na coleção
+        const snapshot = await getDocs(q);
 
-    // Se você tiver certeza que só quer o 'current_alert' em cada subcoleção
-    const snapshot = await getDocs(q);
+        // 3. Mapeie todos os documentos, extraindo o ID e os dados
+        const allCurrentAlerts = snapshot.docs.map(doc => ({
+            // O ID do documento (que pode ser o UID do usuário)
+            id: doc.id, 
+            // Os dados do alerta
+            ...doc.data()
+        }));
 
-    const allCurrentAlerts = [];
+        console.log(`Alertas encontrados: ${allCurrentAlerts.length}`);
+        return allCurrentAlerts;
 
-    // 3. Itere sobre os documentos e filtre pelo ID, se necessário
-    snapshot.forEach(doc => {
-        // Se a Collection Group Query trouxer outros documentos dentro de 'alert_on',
-        // você pode filtrar eles aqui:
-        if (doc.id === documentId) {
-            allCurrentAlerts.push({
-                // O caminho completo do documento seria 'users/{userId}/alert_on/current_alert'
-                id: doc.id,
-                userId: doc.ref.parent.parent.id, // Pega o ID do documento 'users'
-                ...doc.data()
-            });
-        }
-        // Se você não tiver outros documentos na subcoleção, pode simplificar a linha acima.
-    });
-    return allCurrentAlerts;
+    } catch (error) {
+        console.error("Erro ao obter todos os alertas: ", error);
+        return [];
+    }
 };
 
 // -----
 
 // Pegar o alerta ativo, (se tiver) de acordo com o id do usuário
-export const firestoreGetAlertOnByUid = async (uid) => {
-    const documentId = "current_alert";
+export const firestoreGetAlertOnByUid = async (user_id) => {
+    const documentId = user_id;
     // 1. Crie a referência DIRETA ao documento usando o UID
-    const alertDocRef = doc(db, "users", uid, "alert_on", documentId); 
-    // Caminho: users/uid/alert_on/ [o valor do uid]
+    const alertDocRef = doc(db, "current_alerts", documentId); 
+    // Caminho: current_alerts/[o valor do uid]
     // 2. Busque o documento
     const documentSnapshot = await getDoc(alertDocRef);
     if (documentSnapshot.exists()) {
@@ -113,9 +136,8 @@ export const firestoreGetEvents = async (userState) => {
             return eventsData;
         } else {
             // O documento não existe.
-            console.log("Nenhum evento encontrado! Retornando vazio");
-            const vazio = [];
-            return vazio;
+            console.log("Nenhum evento encontrado! Retornando lista vazia...");
+            return [];
         }
     } catch (e) {
         console.log("Erro Ocorrido: " + e);

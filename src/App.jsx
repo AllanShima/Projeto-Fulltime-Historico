@@ -15,6 +15,10 @@ import { onAuthStateChanged } from 'firebase/auth'
 import Loading from './components/Loading'
 import { firestoreGetAlertOnByUid, firestoreGetUserById } from './services/api/FirebaseGetFunctions'
 import { auth } from './services/firebase'
+import { APIProvider } from '@vis.gl/react-google-maps';
+
+// Certifique-se de que sua chave de API esteja configurada aqui
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 function App() {
   const { userState, userDispatch } = useUserContext();
@@ -23,13 +27,21 @@ function App() {
     onAuthStateChanged(auth, async (user) => {
       // se estiver logado
       if (user){
-        // Buscando o usuário registrado no firestore
+        console.log(user.uid);
+        // OBS: NÃO PODE PASSAR USERSTATE PORQUE ELE AINDA NÃO FOI CONFIGURADO PRR
         const userData = await firestoreGetUserById(user.uid);
         const currentAlert = await firestoreGetAlertOnByUid(user.uid);
-        // console.log("Logando...Tipo de alerta ligado: " + currentAlert);
+        //const userLocation = await firestoreGetLocationByUid(userState);
         // Armazenando o usuário logado no data layer
-        //const fullName = userData.first + " " + userData.last;
-        await userDispatch({ type: "LOGIN", payload: {uid: userData.uid, first: userData.first, last: userData.last, usertype: userData.usertype, alertOn: currentAlert}});
+        await userDispatch({ type: "LOGIN", payload: 
+          {
+            uid: userData.uid, 
+            first: userData.first ?? "",         // Adiciona fallback para string vazia
+            last: userData.last ?? "",           // Adiciona fallback para string vazia
+            usertype: userData.usertype ?? "",   // Adiciona fallback para string vazia
+            alertOn: currentAlert,
+            location: userData.location ?? null  // Mantém null, se for um objeto complexo, ou usa ""
+          }});
       } else {
         userDispatch({ type: "LOGOUT" })
       }
@@ -116,9 +128,12 @@ function App() {
   // ])
 
   return (
-    <div className='w-screen h-screen flex flex-col bg-white'>
-      <RouterProvider router={mainRouter}/>
-    </div>      
+    // O componente APIProvider é CRUCIAL
+    <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={['marker', 'geometry']}>
+      <div className='w-screen h-screen flex flex-col bg-white'>
+        <RouterProvider router={mainRouter}/>
+      </div>      
+    </APIProvider>
   )
 }
 

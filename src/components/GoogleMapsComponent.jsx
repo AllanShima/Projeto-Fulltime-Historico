@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import {APIProvider, Map, useApiIsLoaded} from '@vis.gl/react-google-maps';
+import {
+    APIProvider, 
+    Map, 
+    useApiIsLoaded
+} from '@vis.gl/react-google-maps';
 
 // A sintaxe para importar algo do .env é diferente dependendo do template em que o projeto foi criado:
 
@@ -62,7 +66,7 @@ const GeocodeComponent = () => {
 const GoogleMapsComponent = () => {
 
     return (
-        <APIProvider apiKey={API_KEY}>
+        <APIProvider apiKey={API_KEY} libraries={['marker', 'geometry']}>
             <div className='w-full h-full'>
                 <GeocodeComponent/>           
             </div>

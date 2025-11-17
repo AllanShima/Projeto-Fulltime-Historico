@@ -123,7 +123,7 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
             <span className='flex flex-col text-xs w-fit h-full items-end justify-between'>
               <span className='flex'>
                 <span className='flex w-full h-full mr-3'>
-                  <SeverityIndicator severity={event.severity}/>
+                  <SeverityIndicator severity={event.severity} layout2={false}/>
                 </span>
                 <button onClick={setStates}>
                   <ExportButton text="Exportar"/>

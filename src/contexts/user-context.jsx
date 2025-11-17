@@ -11,7 +11,16 @@ let userObject;
 const userContext = (state, action) => {
   switch(action.type){                 
     case "LOGIN":
-        userObject = {...state, isLoggedIn: true, uid:action.payload.uid, first:action.payload.first, last:action.payload.last, usertype: action.payload.usertype, alertOn:action.payload.alertOn}
+        userObject = {
+            ...state, 
+            isLoggedIn: true, 
+            uid: action.payload.uid, 
+            first: action.payload.first, 
+            last: action.payload.last, 
+            usertype: action.payload.usertype, 
+            alertOn: action.payload.alertOn,
+            location: action.payload.location
+        }
         const fullname = userObject.first + ' ' + userObject.last;
 
         console.log("Usuário logado: " + fullname);
@@ -26,19 +35,36 @@ const userContext = (state, action) => {
             const alertType = userObject.alertOn.title;
             console.log("Estado do alerta: " + alertType);
         } else console.log("Nenhum alerta ativado...");
-
         return userObject;
+
     case "SET_ALERT":
         userObject = {...state, alertOn:action.payload.alertOn}
-        console.log("Alerta acionado e setado: " + userObject.alertOn)
+        console.log("Alerta acionado e setado no context: " + userObject.alertOn)
         return userObject;
+
     case "RESET_ALERT":
         console.log("Alerta desativado: " + userObject.alertOn)
         userObject = {...state, alertOn:null}
         return userObject;
+
+    case "SET_LOCATION":
+        userObject = {...state, location:action.payload.location}
+        console.log("Localização setada no context acionado e setado: " + userObject.location)
+        return userObject;
+
     case "LOGOUT":
         console.log("Usuário atual desconectado.");
-        userObject = {...state, isLoggedIn: false, uid:null, first:null, last:null, usertype:null}
+        userObject = 
+        {
+            ...state, 
+            isLoggedIn: false, 
+            uid: null, 
+            first: null, 
+            last: null, 
+            usertype:null, 
+            alertOn: null, 
+            location: null
+        }
         return userObject;
     default:
         console.log("Returning state for unknown reason");
@@ -48,7 +74,16 @@ const userContext = (state, action) => {
 
 export const UserStateProvider = ({ children }) => {
     // Procurar no firestore e inserir no valor padrão
-    const [userState, userDispatch] = useReducer(userContext, { isLoggedIn:false, uid:null, first:null, last:null, usertype:null, alertOn:null })
+    const [userState, userDispatch] = useReducer(userContext, 
+        { 
+            isLoggedIn:false, 
+            uid: null, 
+            first: null, 
+            last: null, 
+            usertype: null, 
+            alertOn: null,
+            location: null
+        })
     return (
         <UserContext value={{userState, userDispatch}}>
             {children}

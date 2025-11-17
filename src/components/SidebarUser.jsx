@@ -4,7 +4,7 @@ import { IoIosChatboxes } from "react-icons/io";
 import LiveChatComponent from './LiveChatComponent';
 import UserNotificationComponent from './UserNotificationComponent';
 
-const SidebarUser = ({ setNotificationButtonModal, setSelectedEvent }) => {
+const SidebarUser = ({ setNotificationButtonModal, setCurrentEvent }) => {
   const [activeTab, setActiveTab] = useState("notification");
 
   return (
@@ -23,7 +23,7 @@ const SidebarUser = ({ setNotificationButtonModal, setSelectedEvent }) => {
       </div>
       <div className='flex flex-col flex-1 w-full h-full'>
         {activeTab == "notification" ? (
-          <UserNotificationComponent setNotificationButtonModal={setNotificationButtonModal} setSelectedEvent={setSelectedEvent}/>
+          <UserNotificationComponent setNotificationButtonModal={setNotificationButtonModal} setCurrentEvent={setCurrentEvent}/>
         ) : (
           <div className='h-full w-full bg-amber-400'>
             <LiveChatComponent monitoring={false}/>
