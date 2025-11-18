@@ -9,6 +9,8 @@ import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunct
 import { getDeviceLocation } from '../services/GetGeocode'
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import UserSetAddressModal from './UserSetAddressModal'
+import { db } from '../services/firebase'
+import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 
 // selectedAlert object;
   // {
@@ -110,6 +112,47 @@ const WindowUser = () => {
   const EventIconComponent = typeSpec[1]; // O componente Ícone (que pode ser undefined)
   const typeText = typeSpec[2];
 
+  const alertUid = userState.uid;
+
+
+  useEffect(() => {
+      if (!alertUid) return; 
+
+      // 2. Crie a referência DIRETA ao documento.
+      const alertDocRef = doc(db, "current_alerts", alertUid); 
+      // NOTA: Se o nome da sua coleção for "current_events" (baseado em erros anteriores),
+      // use doc(db, "current_events", alertUid);
+
+      // 3. INICIA O OUVINTE em tempo real, passando a referência do documento
+      const unsubscribeAlert = onSnapshot(alertDocRef, (docSnapshot) => {
+          
+          console.log(`Ouvinte para o Alerta ${alertUid} em andamento!`);
+          
+          // Verifique se o documento existe antes de tentar ler os dados
+          if (docSnapshot.exists()) {
+              const alertData = docSnapshot.data();
+              
+              // 4. Verifique a mudança na variável 'visualized'
+              if (alertData && alertData.visualized === true) {
+                  console.log("O campo 'visualized' mudou para true! O alerta foi visualizado.");
+                  // ** ADICIONE SUA LÓGICA DE ESTADO AQUI **
+                  // Ex: setAlertVisualized(true);
+              }
+          } else {
+              console.log("Alerta não encontrado ou foi excluído (Documento não existe).");
+          }
+      }, (error) => {
+          console.error("Erro no listener de Alerta específico:", error);
+      });
+
+      // 5. CLEANUP CRUCIAL
+      return () => {
+          console.log(`Listener para o Alerta ${alertUid} cancelado.`);
+          unsubscribeAlert();
+      };
+  // 6. Adicione o UID do alerta como dependência
+  }, [alertUid]);
+
   const hoverStyle1 = "bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:cursor-pointer transition duration-200";
   const hoverStyle2 = "bg-linear-to-t from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 hover:cursor-pointer transition duration-200";
   return (
@@ -119,7 +162,13 @@ const WindowUser = () => {
       )}
 
       {showManualAddressModal && (
-        <UserSetAddressModal setAddress={setAddress} address={address} setShowAwaitModal={setShowAwaitModal}/>
+        <UserSetAddressModal 
+        setAddress={setAddress} 
+        address={address} 
+        setShowAwaitModal={setShowAwaitModal} 
+        selectedAlertType={selectedAlertType}
+        setThisModal={setShowManualAddressModal}
+        />
       )}
 
       {showAlertModal && (

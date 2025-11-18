@@ -7,15 +7,16 @@ import { FaPersonRays } from "react-icons/fa6"; // F/Detect
 import { BsFillHouseExclamationFill } from "react-icons/bs"; // FullArm
 
 const icons = {
-  "FullCond": FaBuildingShield,
-  "FullCam": BiSolidCctv,
-  "F/Safe": FaUserShield,
-  "F/Detect": FaPersonRays,
-  "FullArm": BsFillHouseExclamationFill
+  "fullcond": FaBuildingShield,
+  "fullcam": BiSolidCctv,
+  "f/safe": FaUserShield,
+  "f/setect": FaPersonRays,
+  "fullarm": BsFillHouseExclamationFill
 }
 
 const SoftwareIcon = ({ title, showTitle=false }) => {
-  const IconComponent = icons[title];
+  const lower = title.toLowerCase();
+  const IconComponent = icons[lower];
 
   if (!IconComponent && title !== "FullCenter"){
     console.error(`There is no corresponding icon from the title passed down: ${title}`);

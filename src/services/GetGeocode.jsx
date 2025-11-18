@@ -35,13 +35,10 @@ const reverseGeocode = (lat, lng, geocodingLibrary, callback) => {
 
 export const getDeviceLocation = ({geocodingLibrary, callback, onFailure}) => {
     // 1. Verifica se o navegador suporta a API de geolocalização
-    if (navigator.geolocation) {
-        window.alert("Por favor, confirme o uso da sua localização.");
-        
+    if (navigator.geolocation) {        
         // Solicita a posição atual
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                console.log("Cheogu ate aqui")
                 // Sucesso: Chama a função que inverte o Geocoding
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
@@ -67,6 +64,9 @@ export const getDeviceLocation = ({geocodingLibrary, callback, onFailure}) => {
                 // Erro: Usuário negou ou houve falha
                 console.error("Erro na Geolocalização:", error);
                 window.alert("Não foi possível obter a localização do dispositivo. Por favor, digite o endereço manualmente.");
+                if (onFailure) { 
+                    onFailure();
+                }
             },
             {
                 // Opções de alta precisão

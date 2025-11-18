@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import SeverityIndicator from './ui/SeverityIndicator'
 import RecordingIndicator from './ui/RecordingIndicator';
 
-const NotificationCard = ({notification, setShowResponseModal, setShowDetailsModal}) => {
+const NotificationCard = ({notification, setSelectedNotification, setShowResponseModal, setShowDetailsModal}) => {
   const titleOpt = {
     "INCÊNDIO": "Incêndio Detectado",
     "ALAGAMENTO": "Alagamento Detectado",
@@ -27,6 +27,16 @@ const NotificationCard = ({notification, setShowResponseModal, setShowDetailsMod
   const [lowerDropdown, setLowerDropdown] = useState(false);
 
   const hoverStyle1 = "bg-linear-to-t from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 transition"
+
+  const Response = () => {
+    setSelectedNotification(notification);
+    setShowResponseModal(true);
+  }
+
+  const Details = () => {
+    setSelectedNotification(notification);
+    setShowDetailsModal(true);
+  }
 
   return (
     <span className='flex flex-col'>
@@ -62,14 +72,14 @@ const NotificationCard = ({notification, setShowResponseModal, setShowDetailsMod
           </ul>
           <div className='flex w-full h-7 mt-4 text-sm'>
             <button 
-            onClick={() => setShowResponseModal(true)}
+            onClick={Response}
             className={`w-1/2 h-full rounded-md text-white cursor-pointer ${hoverStyle1}`}>
               <p className='text-white'>
-                Responder
+                Resolver
               </p>
             </button>
             <button 
-            onClick={() => setShowDetailsModal(true)}
+            onClick={Details}
             className='w-1/2 h-full ml-3 bg-white outline-1 text-gray-300 rounded-md hover:bg-gray-100 transition'>
               <p className='text-primary'>
                 Detalhes

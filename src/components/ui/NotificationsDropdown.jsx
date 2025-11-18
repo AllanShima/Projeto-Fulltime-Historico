@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
 import NotificationCard from '../NotificationCard'
 
-const NotificationsDropdown = ({ notifications, setShowResponseModal, setShowDetailsModal }) => {
-  console.log(notifications);
+const NotificationsDropdown = ({ notifications, setSelectedNotification, setShowResponseModal, setShowDetailsModal }) => {
   return (
     <div className='fixed z-10 flex flex-col mt-2 mr-20 w-70 h-fit bg-white rounded-lg shadow-md outline-1 text-gray-300'>
       {notifications.length >= 1 ? (
@@ -11,6 +10,7 @@ const NotificationsDropdown = ({ notifications, setShowResponseModal, setShowDet
             <li key={index}>
               <NotificationCard 
               notification={notification} 
+              setSelectedNotification={setSelectedNotification}
               setShowResponseModal={setShowResponseModal} 
               setShowDetailsModal={setShowDetailsModal}
               />   

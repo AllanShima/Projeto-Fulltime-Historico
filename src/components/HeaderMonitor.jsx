@@ -16,7 +16,6 @@ import NotificationsDropdown from './ui/NotificationsDropdown';
 import AddressModalComponent from './AddressModalComponent';
 import { collection, collectionGroup, onSnapshot, query } from 'firebase/firestore';
 import NewNotification from './ui/NewNotification';
-import ResponseModalComponent from './NotificationResponse';
 import NotificationResponse from './NotificationResponse';
 import NotificationDetails from './NotificationDetails';
 
@@ -43,7 +42,6 @@ const HeaderMonitor = () => {
   const [isVideoInputFocused, setIsVideoInputFocused] = useState(false);
   const [isPfpInputFocused, setIsPfpInputFocused] = useState(false);
 
-  
   const ConfigureVideoAmount = () => {
     window.alert("Configurando...");
     setVideoAmountInSeconds('');
@@ -170,6 +168,8 @@ const HeaderMonitor = () => {
 
   // // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
   const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState([]);
+  let notificationsAmount;
 
   // Assume 'db' is your initialized Firestore instance
 
@@ -189,12 +189,14 @@ const HeaderMonitor = () => {
               // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
               // Os dados do alerta já devem estar em doc.data()
               ...doc.data()
-          }));
-          
+          })).filter(event => event.status == "active");
+           
           // Use a lógica de verificação de dados
           if (newAlerts.length >= 1) {
               console.log(newAlerts);
               setNotifications(newAlerts);
+              notificationsAmount = notifications.filter(notification => notification.visualized == false).length;
+
               // Substitua as linhas comentadas pelas suas funções de estado (setNotifications, setShowUserAlertModal)
           } else {
               // Opcional: Adicionar lógica se todos os alertas forem removidos
@@ -209,18 +211,18 @@ const HeaderMonitor = () => {
           console.log("Listener de Current_Alerts cancelado.");
           unsubscribeAlerts();
       };
-  }, [/* Adicione dependências relevantes aqui, se houver */]);
+  }, []);
 
   return (
     <>
       {/* Modal de resposta da notificação */}
       {showResponseModal && (
-        <NotificationResponse setModalState={setShowResponseModal}/>
+        <NotificationResponse setModalState={setShowResponseModal} selectedNotification={selectedNotification}/>
       )}
 
       {/* Modal de detalhes da notificação */}
       {showDetailsModal && (
-        <NotificationDetails setModalState={setShowDetailsModal}/>
+        <NotificationDetails setModalState={setShowDetailsModal} selectedNotification={selectedNotification}/>
       )}
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
@@ -262,17 +264,17 @@ const HeaderMonitor = () => {
             <div className='flex flex-col'>
               <button onClick={toggleNotificationDropdown} className='flex py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
                 <RiNotification3Line/>
-                {(notifications.length >= 1) && (
+                {notificationsAmount >= 1 && (
                   <span className='absolute top-5 ml-2'>
-                    <NewNotification amount={notifications.length}/>
+                    <NewNotification amount={notificationsAmount}/>
                   </span>                  
                 )}
               </button>
               <span className='flex'>
                 {notificationShowDropdown && (
                   <NotificationsDropdown 
-                  dropdownState={notificationShowDropdown} 
                   notifications={notifications}
+                  setSelectedNotification={setSelectedNotification}
                   setShowResponseModal={setShowResponseModal}
                   setShowDetailsModal={setShowDetailsModal}
                   />
