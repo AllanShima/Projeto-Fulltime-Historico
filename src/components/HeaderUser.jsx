@@ -12,7 +12,7 @@ import ToggleSwitch from './ui/ToggleSwitch';
 import SettingsDropdown from './ui/SettingsDropdown';
 import AddressModalComponent from './AddressModalComponent';
 
-const HeaderMonitor = () => {
+const HeaderUser = () => {
   const { userState, userDispatch } = useUserContext();
   
   const [ fullname, setFullname ] = useState("Null Null");
@@ -83,7 +83,7 @@ const HeaderMonitor = () => {
 
   return (
     <>
-      <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-15 border-b-1 text-gray-300'>
+      <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
         {/* FullCenter logo */}
         <div className='flex content-center mt-auto mb-auto w-23 space-x-4'>
             <SoftwareIcon title="F/Safe" showTitle={true}/>
@@ -116,4 +116,4 @@ const HeaderMonitor = () => {
   )
 }
 
-export default HeaderMonitor
+export default HeaderUser

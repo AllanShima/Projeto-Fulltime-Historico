@@ -27,6 +27,13 @@ const typeSpecs = {
 }
 
 const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSelectedEvent }) => {
+
+  // ⭐️ 1. GUARDA CONDICIONAL AQUI
+  if (!event) {
+    // Retorna nulo ou um componente de loading/placeholder se o evento não estiver carregado
+    return null; 
+  }
+
   const [timePassed, setTimePassed] = useState('');
 
   const setStates = () => {
@@ -35,35 +42,52 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
     setStateModal(!stateModal);
   }
 
-  useEffect(() => {
-    // Essa função vai ser executada a cada segundo
-    const updateTime = () => {
-      // Assuming event.date is a valid Date object or can be parsed
-      const eventDate = new Date(event.date);
-      const timeString = getTimePassed(eventDate);
-      setTimePassed(`${timeString} atrás`);
-    };
 
-    // Call updateTime immediately when the component mounts
-    updateTime();
+  useEffect(() => {
+    const updateTime = () => {
+      let rawDate = event.date;
 
-    // Set up an interval to update the time every 10 seconds for better performance
-    const intervalId = setInterval(updateTime, 10000);
+      // ⭐️ TRATAMENTO PARA TIMESTAMP DO FIRESTORE (seconds)
+      if (rawDate && typeof rawDate === 'object' && rawDate.seconds) {
+          rawDate = rawDate.seconds * 1000;
+      }
 
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, [event.date]);
+      // Converte o valor final (milissegundos ou string ISO) para Date
+      const eventDate = new Date(rawDate); 
+      
+      const timeString = getTimePassed(eventDate);
+      setTimePassed(`${timeString} atrás`);
+    };
+
+    updateTime();
+
+    const intervalId = setInterval(updateTime, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [event.date]); // Mantenha a dependência
 
   // "emergency", "system", "motion", "access"
-  const type = event.type;
-  const colorClass = typeSpecs[type][0];
+  const type = event?.style;
 
-  const EventIconComponent = typeSpecs[type][1];
+  const colorClass = typeSpecs[type]?.[0];
+  const EventIconComponent = typeSpecs[type]?.[1];
 
   if(!colorClass || !EventIconComponent) {
     console.error(`Tipo não foi passado corretamente: ${type}`);
     return null;
   }
+
+  // ⭐️ NOVA LÓGICA DE TRATAMENTO DE DATA (Para ser usada no retorno)
+  let rawDate = event.date;
+  if (rawDate && typeof rawDate === 'object' && rawDate.seconds) {
+      rawDate = rawDate.seconds * 1000;
+  }
+  const eventDate = new Date(rawDate); // eventDate é agora um objeto Date
+
+  // ⭐️ STRING DE DATA FORMATADA (Dia, Mês, Ano)
+  const formattedDate = eventDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  // ⭐️ STRING DE HORA FORMATADA (Hora e Minuto)
+  const formattedTime = eventDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className='font-regular flex w-full h-fit rounded-xl bg-white border-1 border-gray-300'>
@@ -77,9 +101,9 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
             <span className='text-sm space-y-1'>
               <h1>{event.title}</h1>
               <div className='text-xs text-gray-800 space-y-1'>
-                <span className='flex  items-center space-x-1'>
-                  <CiLocationOn/>
-                  <h3>{event.camera.location}</h3>                              
+                <span className='flex w-50 items-center space-x-1'>
+                  <span><CiLocationOn/></span>
+                  <h3>{event.location}</h3>                              
                 </span>
                 <h3>{timePassed}</h3>              
               </div>
@@ -97,26 +121,32 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
                 <span className='flex w-full justify-between text-md'>
                   <span className='flex items-center space-x-1'>
                     <CiCalendar className='w-4 h-4'/>
-                    <h3>{event.date.toString()}</h3>   
+                    <h3>{formattedDate}</h3>   
                     <li className='ml-5'><h3>{timePassed}</h3></li>                           
                   </span>
                   <span className='flex items-center space-x-1'>
                     <CiLocationOn className='w-4 h-4'/>
-                    <h3>{event.camera.location}</h3>                              
+                    <h3>{event.location}</h3>                              
                   </span>
                   <span className='flex items-center space-x-1'>
                     <BsCameraVideo className='w-4 h-4'/>
-                    <h3>{event.camera.name}</h3>                              
+                    <h3>{event.camera}</h3>                              
                   </span>
                 </span>
  
-                {event.video_available === true ? 
-                (
-                  <span className='flex w-1/4 pl-4 justify-between text-gray-500'>
-                    <li><h3>Video Disponível</h3></li>
-                    <h3>Tamanho: {event.video_recorded.size}</h3>  
-                  </span>                    
-                ) : null}
+
+                <span className='flex w-1/4 pl-4 justify-between text-gray-500'>
+                  {event.video_available ? (
+                    <li>
+                      <h3>Video Disponível</h3>
+                      <h3>Tamanho: {event?.video_recorded}</h3>  
+                    </li>
+                  ) : (
+                    <li>
+                      <h3>Video não disponível</h3>
+                    </li>
+                  )}
+                </span>                    
               </div>
 
             </span>

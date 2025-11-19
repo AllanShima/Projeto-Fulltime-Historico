@@ -164,53 +164,47 @@ const HeaderMonitor = () => {
       }
   }, [userState, navigate, auth]); // AGORA depende de userState
 
-  // // ------------------------------------------------------------------
+  // ------------------------------------------------------------------
 
-  // // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
   const [notifications, setNotifications] = useState([]);
-  const [selectedNotification, setSelectedNotification] = useState([]);
-  let notificationsAmount;
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [events, setEvents] = useState([]);
 
-  // Assume 'db' is your initialized Firestore instance
-
+  // Este useEffect cuida da atualização recorrente das notificações e eventos recebidos pelo usuário f/safe
   useEffect(() => {
-      // 1. Crie a referência para a Coleção 'current_alerts'
-      // Apenas uma referência de coleção simples, não um collectionGroup
-      const alertsCollectionRef = collection(db, "current_alerts"); 
-      const qAlerts = query(alertsCollectionRef); // A query para a coleção inteira
+    // 1. Crie a referência para a Coleção 'current_alerts'
+    const alertsCollectionRef = collection(db, "current_alerts"); 
+    const qAlerts = query(alertsCollectionRef); // A query para a coleção inteira
 
-      // 2. INICIA O OUVINTE em tempo real
-      const unsubscribeAlerts = onSnapshot(qAlerts, (snapshot) => {
-          console.log("Ouvinte de Current_Alerts em andamento!");
-          
-          // 3. Mapeia todos os documentos na coleção
-          const newAlerts = snapshot.docs.map(doc => ({
-              id: doc.id,
-              // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
-              // Os dados do alerta já devem estar em doc.data()
-              ...doc.data()
-          })).filter(event => event.status == "active");
-           
-          // Use a lógica de verificação de dados
-          if (newAlerts.length >= 1) {
-              console.log(newAlerts);
-              setNotifications(newAlerts);
-              notificationsAmount = notifications.filter(notification => notification.visualized == false).length;
+    // - INICIA O OUVINTE DE "current_alerts"
+    const unsubscribeAlerts = onSnapshot(qAlerts, (snapshot) => {
+      console.log("Ouvinte de Current_Alerts em andamento!");
+      
+      // 3. Mapeia todos os documentos na coleção
+      const newAlerts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
+        // Os dados do alerta já devem estar em doc.data()
+        ...doc.data()
+      })).filter(event => event.status == "active");
+       
+      // Use a lógica de verificação de dados
+      if (newAlerts.length >= 1) {
+        setNotifications(newAlerts);
+        // Substitua as linhas comentadas pelas suas funções de estado (setNotifications, setShowUserAlertModal)
+      } else {
+        // Opcional: Adicionar lógica se todos os alertas forem removidos
+        setNotifications([]);
+      }
+    }, (error) => {
+      console.error("Erro no listener de Alertas:", error);
+    });
 
-              // Substitua as linhas comentadas pelas suas funções de estado (setNotifications, setShowUserAlertModal)
-          } else {
-              // Opcional: Adicionar lógica se todos os alertas forem removidos
-              setNotifications([]);
-          }
-      }, (error) => {
-          console.error("Erro no listener de Alertas:", error);
-      });
-
-      // 4. CLEANUP CRUCIAL para o listener
-      return () => {
-          console.log("Listener de Current_Alerts cancelado.");
-          unsubscribeAlerts();
-      };
+    // 4. CLEANUP CRUCIAL para o listener
+    return () => {
+      console.log("Listener de current_Alerts cancelado.");
+      unsubscribeAlerts();
+    };
   }, []);
 
   return (
@@ -264,9 +258,9 @@ const HeaderMonitor = () => {
             <div className='flex flex-col'>
               <button onClick={toggleNotificationDropdown} className='flex py-2 px-2.5 rounded-lg hover:bg-gray-200 transition duration-300'>
                 <RiNotification3Line/>
-                {notificationsAmount >= 1 && (
+                {notifications.filter(notification => notification.visualized == false).length >= 1 && (
                   <span className='absolute top-5 ml-2'>
-                    <NewNotification amount={notificationsAmount}/>
+                    <NewNotification notifications={notifications}/>
                   </span>                  
                 )}
               </button>
@@ -292,8 +286,6 @@ const HeaderMonitor = () => {
         </div>
       </div>    
     </>
-
   )
 }
-
 export default HeaderMonitor

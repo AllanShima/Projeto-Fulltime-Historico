@@ -34,8 +34,10 @@ const WindowUser = () => {
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
 
   const [selectedAlertType, setSelectedAlertType] = useState(null); // Apenas o nome do alerta para inserir no banco
-  const [selectedAlert, setSelectedAlert] = useState(null);
-  const [currentEvent, setCurrentEvent] = useState({});
+  const [selectedAlert, setSelectedAlert] = useState(null); // Alerta enviado
+  const [alertVisualized, setAlertVisualized] = useState(false);
+
+  const [currentEvent, setCurrentEvent] = useState({}); // Evento das notificações
 
   const geocodingLibrary = useMapsLibrary('geocoding'); // Carrega a biblioteca de geocoding
   const [address, setAddress] = useState('');
@@ -81,10 +83,17 @@ const WindowUser = () => {
     setSelectedAlert(userState.alertOn);
   }
 
-  const ResetAlertMode = () => {
-    firestoreDeleteAlertOnByUid(userState, userDispatch);
-    firestoreSetMonitorEvent(selectedAlert)
+  const ResetAlertMode = async() => {
+    await userDispatch({ type: "RESET_ALERT"});
+    window.alert("Alerta dispensado pelo monitor...");
     setShowAwaitModal(false);
+    setSelectedAlert(null);
+  }
+
+  const AlertWasVisualized = () => {
+    window.alert("Alerta visualizado! Ajuda está a caminho...");
+    setAlertVisualized(true);
+    console.log("O campo 'visualized' mudou para true! O alerta foi visualizado.");
   }
 
   const storeReport = () => {
@@ -92,15 +101,6 @@ const WindowUser = () => {
     setNotificationButtonModal(false);
     window.alert("Formulário cadastrado com sucesso! O relatório está sendo preparado...");
   }
-
-  // Setando o alerta mesmo depois de reiniciar a pagina
-  useEffect(() => {
-    if (userState.uid && userState.alertOn != null) {
-      // A lógica de reidratação do alerta só roda APÓS o login ser confirmado
-      setSelectedAlert(userState.alertOn);
-      setShowAwaitModal(true);
-    }
-  }, [userState.alertOn]); // <-- CHAVE AQUI: Roda SOMENTE quando o alertOn for definido (usuário logado e alerta ligado)
 
   // Acessa a chave 'alert' de forma segura
   const type = currentEvent?.alert; 
@@ -112,53 +112,65 @@ const WindowUser = () => {
   const EventIconComponent = typeSpec[1]; // O componente Ícone (que pode ser undefined)
   const typeText = typeSpec[2];
 
-  const alertUid = userState.uid;
-
-
   useEffect(() => {
-      if (!alertUid) return; 
+      // 1. REIDRATAÇÃO DO ESTADO LOCAL E CONDIÇÃO DE GUARDA PRINCIPAL
+      // Esta lógica garante que o listener só será criado/mantido se houver um alerta ativo.
+      // Setando o alerta mesmo depois de reiniciar a pagina
+      if (userState.uid && userState.alertOn != null) {
+          // A. Reidratação do estado local:
+          setSelectedAlert(userState.alertOn);
+          setShowAwaitModal(true);
 
-      // 2. Crie a referência DIRETA ao documento.
-      const alertDocRef = doc(db, "current_alerts", alertUid); 
-      // NOTA: Se o nome da sua coleção for "current_events" (baseado em erros anteriores),
-      // use doc(db, "current_events", alertUid);
-
-      // 3. INICIA O OUVINTE em tempo real, passando a referência do documento
-      const unsubscribeAlert = onSnapshot(alertDocRef, (docSnapshot) => {
+          // B. Configuração do Listener do Firestore
+          const alertUid = userState.uid;
+          const alertDocRef = doc(db, "current_alerts", alertUid); 
           
-          console.log(`Ouvinte para o Alerta ${alertUid} em andamento!`);
-          
-          // Verifique se o documento existe antes de tentar ler os dados
-          if (docSnapshot.exists()) {
-              const alertData = docSnapshot.data();
+          const unsubscribeAlert = onSnapshot(alertDocRef, (docSnapshot) => {
+              console.log(`Ouvinte para o Alerta ${alertUid} em andamento!`);
               
-              // 4. Verifique a mudança na variável 'visualized'
-              if (alertData && alertData.visualized === true) {
-                  console.log("O campo 'visualized' mudou para true! O alerta foi visualizado.");
-                  // ** ADICIONE SUA LÓGICA DE ESTADO AQUI **
-                  // Ex: setAlertVisualized(true);
-              }
-          } else {
-              console.log("Alerta não encontrado ou foi excluído (Documento não existe).");
-          }
-      }, (error) => {
-          console.error("Erro no listener de Alerta específico:", error);
-      });
+              if (docSnapshot.exists()) {
+                const alertData = docSnapshot.data();
 
-      // 5. CLEANUP CRUCIAL
-      return () => {
-          console.log(`Listener para o Alerta ${alertUid} cancelado.`);
-          unsubscribeAlert();
-      };
-  // 6. Adicione o UID do alerta como dependência
-  }, [alertUid]);
+                if (alertData.visualized === true) {
+                  AlertWasVisualized();
+                }
+
+                if (alertData.status === "inactive") {
+                  ResetAlertMode();
+                }
+              } else {
+                console.log("Alerta não encontrado ou foi excluído.");
+                // Se o documento for excluído no Firestore, você também deve redefinir:
+                // ResetAlertMode(); 
+              }
+          }, (error) => {
+              console.error("Erro no listener de Alerta específico:", error);
+          });
+
+          // 2. CLEANUP: Roda quando o componente desmonta OU quando userState.alertOn MUDAR.
+          return () => {
+              console.log(`Listener para o Alerta ${alertUid} cancelado.`);
+              unsubscribeAlert();
+          };
+      }
+
+      // 3. CLEANUP SECUNDÁRIO: Se userState.alertOn for null, garante que o alerta seja resetado localmente
+      // Este retorno ocorre se a condição 'if' acima não for satisfeita.
+      else if (selectedAlert != null) {
+          // Garantir que o estado local seja limpo se o estado global não tiver alerta
+          setSelectedAlert(null);
+          setShowAwaitModal(false);
+      }
+
+      // 4. Dependência: O useEffect re-roda sempre que o estado do alerta global muda.
+  }, [userState.alertOn, userState.uid, setSelectedAlert, setShowAwaitModal, AlertWasVisualized, ResetAlertMode, db]);
 
   const hoverStyle1 = "bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:cursor-pointer transition duration-200";
   const hoverStyle2 = "bg-linear-to-t from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 hover:cursor-pointer transition duration-200";
   return (
     <>
-      {userState.alertOn && selectedAlert != null && (
-        <AwaitingResponseModal selectedAlert={userState.alertOn}/>
+      {userState.alertOn && selectedAlert != null && showAwaitModal && (
+        <AwaitingResponseModal selectedAlert={userState.alertOn} alertVisualized={alertVisualized}/>
       )}
 
       {showManualAddressModal && (

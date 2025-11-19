@@ -97,10 +97,16 @@ const MessageComponent = ({ selectedContact }) => {
 
     return (
         <div className='flex flex-col border-b-1 text-gray-300 w-full h-full'>
-            <div className='flex items-center w-full h-12 border-b-1 text-gray-300'>
-                <h1 className='w-fit h-fit text-lg font-bold ml-auto mr-auto text-primary'>
-                    {selectedContact.first + " " + selectedContact.last}
-                </h1>      
+            <div className='flex items-center justify-center w-full h-12 border-b-1 text-gray-300'>
+                <span className='flex'>
+                    <h1 className='w-fit h-fit text-lg font-bold ml-auto mr-auto text-primary'>
+                        {selectedContact.first + " " + selectedContact.last}
+                    </h1>      
+                    <h1 className='w-fit h-fit ml-1 text-gray-600'>
+                        - ({selectedContact.phone_number})
+                    </h1>                    
+                </span>
+
             </div>
             <div className='flex flex-col w-full h-full'>
                 {messages.length !== 0 ? (

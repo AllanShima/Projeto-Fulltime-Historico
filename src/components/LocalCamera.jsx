@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+import { useUserContext } from "../contexts/user-context";
 // Ícones substituídos por SVGs inline para evitar erros de dependência.
 
 // Ícone de Ponto Vermelho (Indicador de Gravação)
@@ -24,6 +25,8 @@ const DownloadIcon = ({ className = 'w-3 h-3' }) => (
 
 
 const LocalCamera = ({ viewArea = "center" }) => {
+
+    const { userState, userDispatch } = useUserContext();
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -160,7 +163,6 @@ const LocalCamera = ({ viewArea = "center" }) => {
         return () => clearInterval(interval);
     }, [gravando]);
 
-
     const areaStyles = {
         "top-left": { objectPosition: "left top", transform: "scale(2)" },
         "top-right": { objectPosition: "right top", transform: "scale(2)" },
@@ -169,6 +171,17 @@ const LocalCamera = ({ viewArea = "center" }) => {
         "center": { objectPosition: "center center", transform: "scale(2)" },
         "center-top": { objectPosition: "center top", transform: "scale(2)" },
     };
+
+    const [activeAlert, setActiveAlert] = useState(false);
+
+    useEffect(() => {
+        console.log(userState.can_record);
+        if(userState.can_record) {
+            setActiveAlert(true);
+        } else{
+            setActiveAlert(false);
+        }
+    }, [userState.can_record])
 
     return (
         <div className="relative w-full h-full rounded-xl shadow-lg bg-gray-900 overflow-hidden">
@@ -190,31 +203,36 @@ const LocalCamera = ({ viewArea = "center" }) => {
 
             {/* UI e Botões */}
             
-            {gravando ?
-                <span className="absolute bottom-4 left-4 bg-red-700 text-white font-bold px-3 py-1 rounded-full shadow-xl flex items-center space-x-2 z-50 animate-pulse">
-                    <RecordingIndicator className='w-4 h-4'/>
-                    <span>Gravando: {10 - currentTime}s</span>
-                </span>
-                :
-                <div className="absolute bottom-4 left-4 z-50 flex space-x-2">
-                    <button
-                        onClick={record10Seconds}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-200 flex items-center space-x-2"
-                        disabled={!streamRef.current}
-                    >
-                        <RecordButtonIcon className='w-3 h-3'/> <span>Gravar 10s</span>
-                    </button>
-                    {downloadUrl && (
-                        <a 
-                            href={downloadUrl}
-                            download={`gravacao-${Date.now()}.webm`}
-                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-200 flex items-center space-x-2"
-                        >
-                            <DownloadIcon className='w-3 h-3'/> <span>Baixar Vídeo</span>
-                        </a>
-                    )}
-                </div>
-            }
+            {activeAlert && (
+                <>
+                    {gravando ?
+                        <span className="absolute bottom-4 left-4 bg-red-700/30 text-white font-bold px-3 py-1 rounded-full shadow-xl flex items-center space-x-2 z-50 animate-pulse mb-8">
+                            <RecordingIndicator className='w-4 h-4'/>
+                            <span>Gravando: {10 - currentTime}s</span>
+                        </span>
+                        :
+                        <div className="absolute bottom-4 left-4 z-50 flex space-x-2">
+                            <button
+                                onClick={record10Seconds}
+                                className="bg-red-600/30 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition duration-200 flex items-center mb-8"
+                                disabled={!streamRef.current || !userState.can_record}
+                            >
+                                <RecordButtonIcon className='w-3 h-3'/> <span>Gravar 10s</span>
+                            </button>
+                            {downloadUrl && (
+                                <a 
+                                    href={downloadUrl}
+                                    download={`gravacao-${Date.now()}.webm`}
+                                    className="bg-green-500/30 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-200 flex items-center space-x-2 mb-8"
+                                >
+                                    <DownloadIcon className='w-3 h-3'/> <span>Baixar Vídeo</span>
+                                </a>
+                            )}
+                        </div>
+                    }                      
+                </>
+            )}
+
         </div>
     );
 };

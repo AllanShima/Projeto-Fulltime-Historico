@@ -19,18 +19,15 @@ const UserSetAddressModal = ({setAddress, address, setShowAwaitModal, selectedAl
         <h2 className='text-left font-bold'>
           Insira o seu endereço atual manualmente:
         </h2>
-        <p className='text-left text-sm text-gray-600 pb-5'>
+        <p className='text-left text-sm text-gray-600 pb-3'>
             A precisão da localização do dispositivo foi de vários metros
         </p>
-        <hr className='text-gray-400 pb-5'/>
+        <hr className='text-gray-400 pb-3'/>
         <span className='flex'>
             <span className={`
                     flex items-center w-full h-10 outline-2 outline-gray-300 focus:shadow-lg transition duration-100 rounded-xs 
                     ${isAdressFocused === true ? ("outline-2 outline-gray-600") : ("")}`
                 }>
-                <span className='flex w-12 h-full items-center justify-center outline-r-1 text-gray-300'>
-                   <PiAddressBookFill className='text-gray-900/90 w-5'/>
-                </span>
                 <input className={`w-full pl-4 focus:outline-none`} onFocus={() => setIsAddressFocused(true)} onBlur={() => setIsAddressFocused(false)} 
                 type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder='e.g.Av. Paulista, 1578, São Paulo, Brasil' />                            
             </span>

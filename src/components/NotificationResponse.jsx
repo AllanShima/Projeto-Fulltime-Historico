@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BiSolidCameraOff } from "react-icons/bi";
 import { FiMapPin } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa";
@@ -6,37 +6,100 @@ import { FiActivity } from "react-icons/fi";
 import { FiAlertTriangle } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid } from '../services/api/FirebaseUpdateFunctions';
+import { useUserContext } from '../contexts/user-context';
+import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions';
+import { firestoreSetMonitorEvent } from '../services/api/FirebaseSetFunctions';
+import { sendAlertEmail } from '../assets/functions/SendEmail';
 
 const UserResponseProtocolText = {
   "f/safe": {
+    // Se for um alerta emergencial
     "alert" : [
       "Contate com o Usuário por Chat ou telefone pra confirmar a situação",
       "Determine se é um alerta falso ou não",
       "Confirme a sua localização exata",
       "Chame as autoridades se necessário",
-      "Se necessário chame as autoridades",
       "Clique no botão 'Ajuda à Caminho!' para avisar o usuário",
+      "Opcionalmente: Descubra a câmera mais perto do incidente, e clique em gravar",
+      "Auxilie presencialmente ou procure algum profissional"
+    ],
+    "help": [
+      "Contate com o Usuário por Chat ou telefone pra confirmar a situação",
+      "Determine se é um alerta falso ou não",
+      "Confirme a sua localização exata",
+      "Clique no botão 'Ajuda à Caminho!' para avisar o usuário",
+      "Opcionalmente: Descubra a câmera mais perto do incidente, e clique em GRAVAR",
       "Auxilie presencialmente ou procure algum profissional"
     ]
   }
 }
 
 const NotificationResponse = ({setModalState, selectedNotification}) => {
+
+  const { userState, userDispatch } = useUserContext();
+
   const notificationId = selectedNotification.id;
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [changeButton, setChangeButton] = useState(false);
 
-  const sendResponse = () => {
-    firestoreUpdateCurrentEventVisualizedByUid(notificationId, true);
+  const protocols = UserResponseProtocolText?.[selectedNotification?.software_from]?.[selectedNotification?.alert];
+
+  const sendResponse = async() => {
     setIsButtonDisabled(true);
+    await userDispatch({ type: "SET_CAN_RECORD"});
+    await firestoreUpdateCurrentEventVisualizedByUid(notificationId, true);
+    setIsButtonDisabled(false);
+    setChangeButton(true)
   }
 
-  const dismissAlert = () => {
-    firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
+  const endAlert = async() => {
+    setIsButtonDisabled(true);
+
+    const emailContent = {
+      destinatario: userState.email,
+      assunto: `Alerta Finalizado: ${selectedNotification.device}`,
+      html: `<p>O evento ${selectedNotification.device} foi gerado automaticamente pelo sistema e já pode ser baixado.</p>`,
+    };
+
+    try {
+        // 1. Envia o e-mail através do seu endpoint de API seguro
+        // await sendAlertEmail(emailContent);
+        
+        // 2. Continua com as operações de Firestore
+        await userDispatch({ type: "RESET_CAN_RECORD" });
+        await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
+        await firestoreSetMonitorEvent(selectedNotification); 
+        await firestoreDeleteAlertOnByUid(notificationId);
+        
+        setModalState(false);
+
+    } catch (error) {
+        console.error("Falha na operação completa de 'endAlert', e-mail pode ter falhado.", error);
+        // Implemente uma UI para notificar o usuário sobre a falha do e-mail.
+    } finally {
+        setIsButtonDisabled(false);
+    }
+  }
+
+  const dismissAlert = async() => {
+    await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
+    await firestoreDeleteAlertOnByUid(notificationId) // Deletando o alerta
+    setIsButtonDisabled(true);
     setModalState(false);
   }
 
-  const responseButtonStyle = !isButtonDisabled ? "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition" : "bg-gray-100 outline-1 text-gray-300"
+  // Atualizar o botão quando renderizar
+  useEffect(() => {
+    if (selectedNotification.visualized === true){
+      setChangeButton(true);
+    }
+    if (selectedNotification.active === "inactive"){
+      setIsButtonDisabled(true);
+    }
+  }, [])
+
+  const responseButtonStyle = !isButtonDisabled ? "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 cursor-pointer transition" : "bg-gray-100 outline-1 text-gray-300"
 
   return (
     <div className='fixed flex justify-center items-center top-0 bg-black/50 z-40 min-h-screen w-screen h-screen'>
@@ -66,10 +129,10 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
               <div className="space-y-2">
                 <h4 className="font-semibold text-md text-red-700">Protocolos de Segurança</h4>
                 <ul className="space-y-1 text-sm">
-                  {UserResponseProtocolText[selectedNotification.software_from][selectedNotification.alert].map((text, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="text-destructive mt-1">•</span>
-                      <span>{text}</span>
+                  {protocols?.map((text, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <div className="flex h-full text-destructive">•</div>
+                      <div className='flex h-full'>{text}</div>
                     </li>
                   ))}
                 </ul>
@@ -77,13 +140,22 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
 
               {/* Action Buttons */}
               <div className='flex justify-between w-full h-10 px-8'>
-                <button 
-                disabled={isButtonDisabled}
-                onClick={() => sendResponse()} 
-                className={`w-40 h-full rounded-lg text-white cursor-pointer ${responseButtonStyle}`}
-                >
-                  Ajuda à caminho!
-                </button>
+                {!changeButton ? (
+                  <button 
+                  disabled={isButtonDisabled}
+                  onClick={() => sendResponse()} 
+                  className={`w-40 h-full rounded-lg text-white ${responseButtonStyle}`}>
+                    Ajuda à caminho!
+                  </button>                  
+                ) : (
+                  <button 
+                  disabled={isButtonDisabled}
+                  onClick={() => endAlert()} 
+                  className={`w-40 h-full rounded-lg text-white ${responseButtonStyle}`}>
+                    Terminar alerta
+                  </button>      
+                )}
+
                 <button onClick={() => dismissAlert()} className='w-40 h-full bg-red-200 rounded-lg outline-1 text-red-500 hover:bg-red-300 hover:cursor-pointer transition'>
                   <p className='text-red-500'>
                     Dispensar Alerta

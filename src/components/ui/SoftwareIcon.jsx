@@ -10,7 +10,7 @@ const icons = {
   "fullcond": FaBuildingShield,
   "fullcam": BiSolidCctv,
   "f/safe": FaUserShield,
-  "f/setect": FaPersonRays,
+  "f/detect": FaPersonRays,
   "fullarm": BsFillHouseExclamationFill
 }
 

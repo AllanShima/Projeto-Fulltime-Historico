@@ -1,15 +1,14 @@
 import { doc, deleteDoc } from 'firebase/firestore'; // Importe deleteDoc
 import { db } from '../firebase';
 
-export const firestoreDeleteAlertOnByUid = async (userState, userDispatch) => {
+export const firestoreDeleteAlertOnByUid = async (uid) => {
     try {
-        if (!userState.uid) {
-            console.error("UID do usuário ausente.");
+        if (!uid) {
+            console.error("UID do alerta ausente.");
             return;
         }
-        userDispatch({type: "RESET_ALERT"});
 
-        const documentId = userState.uid;
+        const documentId = uid;
 
         // Caminho correto: "current_alerts" / [userState.uid]
         const docRef = doc(db, "current_alerts", documentId);

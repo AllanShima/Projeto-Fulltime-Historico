@@ -34,14 +34,16 @@ function App() {
         //const userLocation = await firestoreGetLocationByUid(userState);
         // Armazenando o usuário logado no data layer
         await userDispatch({ type: "LOGIN", payload: 
-          {
-            uid: userData.uid, 
-            first: userData.first ?? "",         // Adiciona fallback para string vazia
-            last: userData.last ?? "",           // Adiciona fallback para string vazia
-            usertype: userData.usertype ?? "",   // Adiciona fallback para string vazia
-            alertOn: currentAlert,
-            location: userData.location ?? null  // Mantém null, se for um objeto complexo, ou usa ""
-          }});
+        {
+          uid: userData.uid, 
+          first: userData.first ?? "",         // Adiciona fallback para string vazia
+          last: userData.last ?? "",           // Adiciona fallback para string vazia
+          usertype: userData.usertype ?? "",   // Adiciona fallback para string vazia
+          alertOn: currentAlert,
+          location: userData.location ?? null,  // Mantém null, se for um objeto complexo, ou usa ""
+          email: userData.email,
+          phone_number: userData.phone_number
+        }});
       } else {
         userDispatch({ type: "LOGOUT" })
       }

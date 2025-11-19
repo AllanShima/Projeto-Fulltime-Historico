@@ -3,7 +3,7 @@ import { BsCameraVideo } from "react-icons/bs";
 import { GoAlert } from "react-icons/go";
 
 import CameraCard from './ui/CameraCard'
-import EventCard from './ui/EventCardMonitor';
+import EventCardMonitor from './ui/EventCardMonitor';
 
 const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams}) => {
 
@@ -43,12 +43,12 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
         ) : (
           <div className='h-full max-h-130'>
             <span className='justify-center text-primary'>
-              <h1>Lista de Eventos ({events.length})</h1>
+              <h1>Lista de Eventos ({events?.length})</h1>
             </span>   
             <div className='flex-1 space-y-3 mt-3 overflow-y-auto'>
               {events.map(event => 
                 <span className='flex w-full pr-4'>
-                  <EventCard key={event.id} event={event} simplified={true}/>                    
+                  <EventCardMonitor key={event.id} event={event} simplified={true}/>                    
                 </span>
               )}              
             </div>

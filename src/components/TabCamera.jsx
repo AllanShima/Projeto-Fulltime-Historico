@@ -2,11 +2,52 @@ import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
-import {cameras, events} from '../assets/data/TempData'
+import {cameras} from '../assets/data/TempData'
+import { useUserContext } from '../contexts/user-context'
+import { collection, onSnapshot, query } from 'firebase/firestore'
+import { db } from '../services/firebase'
 
 const TabCamera = () => {
 
+  const {userState, userDispatch} = useUserContext();
+
   const [selectedCam, setSelectedCam] = useState("1");
+
+  const [events, setEvents] = useState([]);
+  // Listener do monitor_events
+  useEffect(() => {
+    const eventsCollectionRef = collection(db, "monitor_events"); 
+    const qEvents = query(eventsCollectionRef); // A query para a coleção inteira
+
+    // - INICIA O OUVINTE DE "current_alerts"
+    const unsubscribeAlerts = onSnapshot(qEvents, (snapshot) => {
+      console.log("Ouvinte de 'monitor_events' em andamento!");
+      
+      // 3. Mapeia todos os documentos na coleção
+      const newEvents = snapshot.docs.map(doc => ({
+        id: doc.id,
+        // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
+        // Os dados do alerta já devem estar em doc.data()
+        ...doc.data()
+      }));
+       
+      // Use a lógica de verificação de dados
+      if (newEvents.length >= 1) {
+        setEvents(newEvents);
+      } else {
+        // Opcional: Adicionar lógica se todos os alertas forem removidos
+        setEvents([]);
+      }
+    }, (error) => {
+        console.error("Erro no listener de Alertas:", error);
+    });
+
+    // 4. CLEANUP CRUCIAL para o listener
+    return () => {
+      console.log("Listener de current_Alerts cancelado.");
+      unsubscribeAlerts();
+    };
+  }, []);
 
   // Uma nova array que exclui a camera selecionada
   const [remainingCams, setRemainingCams] = useState(cameras.filter(cam => cam.id !== selectedCam))

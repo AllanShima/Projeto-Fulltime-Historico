@@ -7,11 +7,10 @@ import { auth } from '../services/firebase'
 
 // This value is used by components when they try to access the context, but no corresponding <Context.Provider> is found in the component tree above them.
 export const UserContext = createContext();
-let userObject;
 const userContext = (state, action) => {
   switch(action.type){                 
     case "LOGIN":
-        userObject = {
+        const userObject = {
             ...state, 
             isLoggedIn: true, 
             uid: action.payload.uid, 
@@ -19,7 +18,12 @@ const userContext = (state, action) => {
             last: action.payload.last, 
             usertype: action.payload.usertype, 
             alertOn: action.payload.alertOn,
-            location: action.payload.location
+            location: action.payload.location,
+            events: null,
+            can_record: false,
+            can_send_email: false,
+            email: action.payload.email,
+            phone_number: action.payload.phone_number
         }
         const fullname = userObject.first + ' ' + userObject.last;
 
@@ -35,26 +39,57 @@ const userContext = (state, action) => {
             const alertType = userObject.alertOn.title;
             console.log("Estado do alerta: " + alertType);
         } else console.log("Nenhum alerta ativado...");
+
         return userObject;
 
     case "SET_ALERT":
-        userObject = {...state, alertOn:action.payload.alertOn}
-        console.log("Alerta acionado e setado no context: " + userObject.alertOn)
-        return userObject;
-
+        const newStateSetAlert = {...state, alertOn:action.payload.alertOn}
+        console.log("Alerta acionado e setado no context: " + newStateSetAlert.alertOn)
+        return newStateSetAlert;
+        
     case "RESET_ALERT":
-        console.log("Alerta desativado: " + userObject.alertOn)
-        userObject = {...state, alertOn:null}
-        return userObject;
+        console.log("Alerta desativado: " + state.alertOn.type)
+        const newStateResetAlert = {...state, alertOn:null}
+        return newStateResetAlert;
 
     case "SET_LOCATION":
-        userObject = {...state, location:action.payload.location}
-        console.log("Localização setada no context acionado e setado: " + userObject.location)
-        return userObject;
+        const newStateSetLocation = {...state, location:action.payload.location}
+        console.log("Localização setada no context acionado e setado: " + newStateSetLocation.location)
+        return newStateSetLocation;
+
+    case "SET_EVENTS":
+        const newStateSetEvents = {...state, events:action.payload.events}
+        console.log("Eventos encontrados!" )
+        return newStateSetEvents;
+
+    case "RESET_EVENTS":
+        console.log("Nenhum evento encontrado...")
+        const newStateResetEvents = {...state, events:null}
+        return newStateResetEvents;
+
+    case "SET_CAN_RECORD":
+        const newStateSetRecord = {...state, can_record:true}
+        console.log("Setando 'can_record' para true...");
+        return newStateSetRecord;
+
+    case "RESET_CAN_RECORD":
+        console.log("Resetando 'can_record' para false...");
+        const newStateResetRecord = {...state, can_record:false}
+        return newStateResetRecord;
+
+    case "SET_CAN_SEND_EMAIL":
+        const newStateSetSendEmail = {...state, can_send_email:true}
+        console.log("Setando 'can_send_email' para true...");
+        return newStateSetSendEmail;
+
+    case "RESET_CAN_SEND_EMAIL":
+        console.log("Resetando 'can_send_email' para false...");
+        const newStateResetSendEmail = {...state, can_send_email:false}
+        return newStateResetSendEmail;
 
     case "LOGOUT":
         console.log("Usuário atual desconectado.");
-        userObject = 
+        const userLogout = 
         {
             ...state, 
             isLoggedIn: false, 
@@ -63,9 +98,14 @@ const userContext = (state, action) => {
             last: null, 
             usertype:null, 
             alertOn: null, 
-            location: null
+            location: null,
+            events: null,
+            can_record: false,
+            can_send_email: false,
+            email: null,
+            phone_number: null
         }
-        return userObject;
+        return userLogout;
     default:
         console.log("Returning state for unknown reason");
         return state;
@@ -82,7 +122,12 @@ export const UserStateProvider = ({ children }) => {
             last: null, 
             usertype: null, 
             alertOn: null,
-            location: null
+            location: null,
+            events: null,
+            can_record: false,
+            can_send_email: false,
+            email: null,
+            phone_number: null
         })
     return (
         <UserContext value={{userState, userDispatch}}>

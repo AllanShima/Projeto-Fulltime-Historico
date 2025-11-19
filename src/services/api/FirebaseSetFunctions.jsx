@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, limit, orderBy, query, doc, setDoc } from 'firebase/firestore'
+import { addDoc, collection, getDocs, limit, orderBy, query, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase';
 import { useUserContext } from '../../contexts/user-context';
 import { firebaseGetMessages } from './FirebaseGetFunctions';
@@ -133,7 +133,7 @@ export const firestoreSetAlertOnByUid = async(event, userState, userDispatch, cu
       location: currentLocation,
       status: "active",
       response: null,
-      date: new Date()
+      date: new Date()    
     });
     // id é o id do nome do documento inserido no banco, n o id do doc em si
     console.log("Alerta Atual (current_alert) inserido no db...");
@@ -150,52 +150,60 @@ export const firestoreSetMonitorEvent = async(event) => {
     if (!event){
       throw new Error("Sem alerta selecionado!");
     }
-    // if (userState.usertype == "f/safe") {
 
-    // }
-    // Defining the ID of the message
-    // 1. Define the reference to the subcollection
+    // 1. Define a referência para a subcoleção
     const chatCollectionRef = collection(db, "monitor_events");
 
-    // Informações do Evento:
+    const alertType = sevOptions[event.type]; // Assumindo que 'sevOptions' é definido
+
     let docRef;
+
+    // 2. Cria o documento sem o ID no campo 'id'
+    // Deixe o campo 'id' fora ou como null temporariamente se preferir.
+    // Eu o removi abaixo para simplificar a criação inicial.
+
+    const baseData = {
+      software_from: event.software_from,
+      type: event.type,
+      location: event.location,
+      show_button: false,
+      device: event.device,
+      device_pfp: null,
+      video_available: false,
+      video_recorded: null,
+      camera: event.camera,
+      date: event.date,
+      finished: new Date()
+    };
+    
     if (event.software_from == "f/safe") {
       docRef = await addDoc(chatCollectionRef, {
-        software_from: event.software_from,
+        ...baseData,
         title: "Alerta de Segurança",
         description: "Alerta iminente de usuário f/safe",
-        type: EventsConstants.TYPES.EMERGENCY,
-        severity: EventsConstants.SEVERITIES.CRITICAL,
+        severity: EventsConstants.SEVERITIES.CRITICAL, // Assumindo 'EventsConstants'
         alert: alertType,
-        show_button: false,
-        device: userState.first + " " + userState.last,
-        device_pfp: null,
-        video_available: false,
-        video_recorded: null,
-        camera: alert.camera,
-        date: new Date()
+        style: EventsConstants.TYPES.EMERGENCY // Assumindo 'EventsConstants'
       });
     } else {
       docRef = await addDoc(chatCollectionRef, {
-        software_from: event.software_from,
+        ...baseData,
         title: event.title,
         description: event.description,
-        type: event.type,
         severity: event.severity,
         alert: event.alert,
-        show_button: false,
-        device: event.device, 
-        device_pfp: null,
-        camera: event.camera, 
-        video_available: false,
-        video_recorded: null,
-        date: new Date()      
+        style: EventsConstants.TYPES.EMERGENCY // Assumindo 'EventsConstants'
       });
     }
-    // id é o id do nome do documento inserido no banco, n o id do doc em si
-    console.log("Evento inserido com o ID: ", docRef.id);
+
+    // ⭐️ 3. USA O updateDoc PARA ADICIONAR O ID AO CAMPO 'id'
+    await updateDoc(docRef, {
+      id: docRef.id // O ID do documento gerado automaticamente
+    });
+
+    console.log("Evento inserido e atualizado com o ID: ", docRef.id);
   } catch (e) {
-    console.error("Erro ao inserir o evento: ", e);
+    console.error("Erro ao inserir/atualizar o evento: ", e);
   }
 }
 

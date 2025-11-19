@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ExportButton from './ui/ExportButton';
 import { IoSearchOutline } from "react-icons/io5";
 import EventCardMonitor from './ui/EventCardMonitor';
-import { events } from '../assets/data/TempData'
+// import { events } from '../assets/data/TempData'
 import { IoIosArrowDown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
 import PdfViewer from './PdfViewer';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../services/firebase';
 
 const TabHistory = () => {
     const [search, setSearch] = useState("");
@@ -55,6 +57,42 @@ const TabHistory = () => {
         window.alert("baixando relatórios...");
     }
 
+    const [events, setEvents] = useState([]);
+    // Listener do monitor_events
+    useEffect(() => {
+        const eventsCollectionRef = collection(db, "monitor_events"); 
+        const qEvents = query(eventsCollectionRef); // A query para a coleção inteira
+
+        // - INICIA O OUVINTE DE "current_alerts"
+        const unsubscribeAlerts = onSnapshot(qEvents, (snapshot) => {
+        console.log("Ouvinte de 'monitor_events' em andamento!");
+        
+        // 3. Mapeia todos os documentos na coleção
+        const newEvents = snapshot.docs.map(doc => ({
+            id: doc.id,
+            // Não é necessário buscar o userId aqui, pois 'current_alerts' é uma coleção de nível superior.
+            // Os dados do alerta já devem estar em doc.data()
+            ...doc.data()
+        }));
+        
+        // Use a lógica de verificação de dados
+        if (newEvents.length >= 1) {
+            setEvents(newEvents);
+        } else {
+            // Opcional: Adicionar lógica se todos os alertas forem removidos
+            setEvents([]);
+        }
+        }, (error) => {
+            console.error("Erro no listener de Alertas:", error);
+        });
+
+        // 4. CLEANUP CRUCIAL para o listener
+        return () => {
+        console.log("Listener de current_Alerts cancelado.");
+        unsubscribeAlerts();
+        };
+    }, []);
+
     return (
         <div className='flex flex-1 w-full bg-amber-600'>
             {showExportModal && (
@@ -86,7 +124,7 @@ const TabHistory = () => {
                         <span className='flex h-fit justify-between text-primary'>
                             <span className='grid'>
                                 <h1 className='h-fit'>Histórico de Relatório dos Eventos</h1> 
-                                <h3 className='text-xs text-gray-400'>8 eventos encontrados</h3>
+                                <h3 className='text-xs text-gray-400'>{events.length} {events.length > 1 ? "Eventos encontrados" : "Evento encontrado"}</h3>
                             </span>
                             <button onClick={() => setShowExportAllModal(!showExportAllModal)}>
                                 <ExportButton text="Exportar Tudo"/>

@@ -17,8 +17,26 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
 
     const hoverStyle1 = "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition"
 
+    // ⭐️ NOVA LÓGICA DE TRATAMENTO DE DATA (Para ser usada no retorno)
+    let startDate = previewEvent.date;
+    if (startDate && typeof startDate === 'object' && startDate.seconds) {
+        startDate = startDate.seconds * 1000;
+    }
+    const eventStartDate = new Date(startDate); // eventDate é agora um objeto Date
+    // ⭐️ STRING DE DATA FORMATADA (Dia, Mês, Ano)
+    const formattedStartDate = eventStartDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    // ⭐️ STRING DE HORA FORMATADA (Hora e Minuto)
+    const formattedStartTime = eventStartDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    let endDate = previewEvent.finished;
+    if (endDate && typeof endDate === 'object' && endDate.seconds) {
+        endDate = endDate.seconds * 1000;
+    }
+    const eventEndDate = new Date(endDate); // eventDate é agora um objeto Date
+
+    const totalDuration = new Date(endDate )
+
     return (
-        <div className='fixed z-0 flex justify-center items-center top-0 bg-black/50 min-h-screen w-screen h-screen'>
+        <div className='fixed z-20 flex justify-center items-center top-0 bg-black/50 min-h-screen w-screen h-screen'>
             <div className='grid content-between w-200 h-150 p-5 bg-white rounded-2xl font-regular'>
                 <span className='overflow-auto scroll-smooth'>
                     <div className="space-y-6 p-6 bg-white text-black rounded-lg border-2 border-gray-200">
@@ -47,7 +65,7 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                         <span className="text-gray-900">{previewEvent.title}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Nível de Gravidade:</span>
+                                        <span className="font-medium text-gray-700">Gravidade do Alerta:</span>
                                         <span className={`capitalize font-medium ${
                                             previewEvent.severity === 'critical' ? 'text-red-600' :
                                             previewEvent.severity === 'high' ? 'text-orange-600' :
@@ -65,7 +83,7 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Tempo & Data:</span>
-                                        <span className="text-gray-900">{previewEvent.date.toLocaleString()}</span>
+                                        <span className="text-gray-900">{formattedStartDate}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Duração:</span>
@@ -86,11 +104,11 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Camera:</span>
-                                        <span className="text-gray-900">{previewEvent.camera.name}</span>
+                                        <span className="text-gray-900">{previewEvent.camera?.name}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Localização:</span>
-                                        <span className="text-gray-900">{previewEvent.camera.location}</span>
+                                        <span className="text-gray-900">{previewEvent.camera?.location}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -99,8 +117,8 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                         <span className="text-gray-900">{previewEvent.video_available ? 'Sim' : 'Não'}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Tamanho do Arquivo:</span>
-                                        <span className="text-gray-900">{previewEvent.video_recorded.size}</span>
+                                        <span className="font-medium text-gray-700">URL do vídeo (Vimeo):</span>
+                                        <span className="text-gray-900">{previewEvent.video_recorded}</span>
                                     </div>
                                 </div>
                             </div>

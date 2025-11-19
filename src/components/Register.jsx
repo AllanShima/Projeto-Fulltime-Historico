@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BsCameraVideo } from "react-icons/bs";
 import { CiViewTimeline } from "react-icons/ci";
 import { PiAddressBookFill } from "react-icons/pi";
+import { FaPhoneAlt } from "react-icons/fa";
 
 import { IoMdPerson } from "react-icons/io"; // user
 import { FaUnlock } from "react-icons/fa"; // password
@@ -32,14 +33,16 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [address, setAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('')
 
     const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
     const [isLastNameFocused, setIsLastNameFocused] = useState(false);
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPassFocused, setIsPassFocused] = useState(false);
     const [isPassConfirmFocused, setIsPassConfirmFocused] = useState(false);
-
     const [isAdressFocused, setIsAddressFocused] = useState(false);
+    const [isPhoneNumberFocused, SetIsPhoneNumberFocused] = useState(false);
+
     const [confirmedLocation, setConfirmedLocation] = useState(null);
 
     const [buttonSelected, setButtonSelected] = useState("f/center");
@@ -105,7 +108,7 @@ const Register = () => {
                 const user = userCredential.user;
 
                 // Registrando no firestore o UID, fullName, type
-                firestoreSetNewUser(user.uid, firstName, lastName, email, buttonSelected, confirmedLocation);
+                firestoreSetNewUser(user.uid, firstName, lastName, email, buttonSelected, confirmedLocation, phoneNumber);
 
                 // O usuário é automaticamente logado depois da sua conta criada
                 if(buttonSelected === "f/center"){
@@ -124,7 +127,7 @@ const Register = () => {
     const buttonOnClass = "bg-primary text-white transition duration-200";
     const buttonOnSafeClass = "bg-red-700 text-white transition duration-200";
     const buttonOffClass = "bg-gray-200 text-primary transition duration-200";
-    const registerButtonStyle = "w-5/6 h-10 ml-auto mr-auto rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white";
+    const registerButtonStyle = "w-1/2 h-10 ml-4 rounded-4xl font-bold cursor-pointer bg-linear-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 transition duration-200 text-md text-white";
 
     return (
         <div className='flex w-full h-full items-center justify-center bg-gray-50 font-regular'>
@@ -195,7 +198,26 @@ const Register = () => {
                         </span>
                     </span> 
                     <span className='space-y-2'>
-                        <h3 className='text-gray-500'>Cadastre o Endereço da seu Posto/Residência</h3>
+                        <h3 className='text-gray-500'>Seu telefone</h3>
+                        <span className={`
+                                flex items-center w-full h-10 outline-2 outline-gray-300 focus:shadow-lg transition duration-100 rounded-xs 
+                                ${isPhoneNumberFocused === true ? ("outline-2 outline-gray-600") : ("")}`
+                            }>
+                            <span className='flex w-12 h-full items-center justify-center outline-r-1 text-gray-300'>
+                               <FaPhoneAlt className='text-gray-900/90 w-4'/>
+                            </span>
+                            <input 
+                            className={`w-full pl-4 focus:outline-none`} 
+                            onFocus={() => SetIsPhoneNumberFocused(true)} 
+                            onBlur={() => SetIsPhoneNumberFocused(false)} 
+                            type="text" 
+                            value={phoneNumber} 
+                            onChange={(e) => setPhoneNumber(e.target.value)} 
+                            placeholder='14981624552' />                            
+                        </span>
+                    </span> 
+                    <span className='space-y-2'>
+                        <h3 className='text-gray-500'>Cadastre o endereço da seu posto/residência</h3>
                         <span className={`
                                 flex items-center w-full h-10 outline-2 outline-gray-300 focus:shadow-lg transition duration-100 rounded-xs 
                                 ${isAdressFocused === true ? ("outline-2 outline-gray-600") : ("")}`
@@ -239,26 +261,28 @@ const Register = () => {
                             type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder='e.g.allanshima123' />                            
                         </span>
                     </span> 
-                    <span className='flex w-xs ml-auto mr-auto h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>
-                      <button onClick={() => setButtonSelected("f/center")} className={`${buttonClass}
-                        ${buttonSelected === "f/center" ? buttonOnClass : buttonOffClass}`}>
-                        <BsCameraVideo className='w-4'/>
-                        <h4>FullCenter</h4>
-                      </button>
-                      <button onClick={() => setButtonSelected("f/safe")} className={`${buttonClass} 
-                        ${buttonSelected === "f/safe" ? buttonOnSafeClass : buttonOffClass}`}>
-                        <FaUserShield className='w-4'/>
-                        <h4>F/Safe</h4>
-                      </button>
+                    <span className='flex h-10 mt-3'>
+                        <span className='flex w-xs ml-auto mr-auto h-full p-1 space-x-1 rounded-xl text-xs bg-gray-200'>
+                            <button onClick={() => setButtonSelected("f/center")} className={`${buttonClass}
+                                ${buttonSelected === "f/center" ? buttonOnClass : buttonOffClass}`}>
+                                <BsCameraVideo className='w-4'/>
+                                <h4>F/Center</h4>
+                            </button>
+                            <button onClick={() => setButtonSelected("f/safe")} className={`${buttonClass} 
+                                ${buttonSelected === "f/safe" ? buttonOnSafeClass : buttonOffClass}`}>
+                                <FaUserShield className='w-4'/>
+                                <h4>F/Safe</h4>
+                            </button>
+                        </span>
+                        <button 
+                            onClick={register}
+                            disabled={!geocodingLibrary}
+                            className={`${registerButtonStyle} ${!geocodingLibrary ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                            {geocodingLibrary ? 'Cadastrar' : 'Carregando Endereço...'}
+                        </button>
                     </span>
-                
-                    <button 
-                        onClick={register}
-                        disabled={!geocodingLibrary}
-                        className={`${registerButtonStyle} ${!geocodingLibrary ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        {geocodingLibrary ? 'Cadastrar' : 'Carregando Endereço...'}
-                    </button>
+
 
 
                     <Link className="underline text-blue-700" to={"/login"}>Já cadastrou uma conta?</Link>
