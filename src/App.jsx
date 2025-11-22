@@ -42,7 +42,9 @@ function App() {
           alertOn: currentAlert,
           location: userData.location ?? null,  // Mantém null, se for um objeto complexo, ou usa ""
           email: userData.email,
-          phone_number: userData.phone_number
+          phone_number: userData.phone_number,
+          can_record: currentAlert.visualized ? true : false,
+          can_send_email: userData.can_send_email
         }});
       } else {
         userDispatch({ type: "LOGOUT" })

@@ -33,6 +33,7 @@ const HeaderMonitor = () => {
 
   const [modeSwitchState, setModeSwitchState] = useState(false);
   const [langSwitchState, setLangSwitchState] = useState(false);
+  const [emailSwitchState, setEmailSwitchState] = useState(false);
   const [showPfpDropdown, setShowPfpDropdown] = useState(false);
   const [showVideoSettingsDropdown, setShowVideoSettingsDropdown] = useState(false);
 
@@ -66,6 +67,12 @@ const HeaderMonitor = () => {
       state: modeSwitchState
     },
     {
+      id: "EMAIL", 
+      text: "Enviar Notificação por Email", 
+      setState: setEmailSwitchState,  
+      state: emailSwitchState
+    },
+    {
       id: "VS", 
       text: "Alterar a duração dos vídeos", 
       setState: setShowVideoSettingsDropdown, 
@@ -88,7 +95,7 @@ const HeaderMonitor = () => {
       setIsFocused: setIsPfpInputFocused,
       placeholder: "url/da/imagem",
       function: ConfigureNewPfp
-    }, 
+    }
   ];
 
 

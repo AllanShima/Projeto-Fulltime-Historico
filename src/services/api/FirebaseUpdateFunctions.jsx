@@ -60,3 +60,21 @@ export const firestoreUpdateCurrentEventVisualizedByUid = async (uid, newInfo) =
     return false;
   }
 };
+
+export const firestoreUpdateCurrentEventSendEmailByUid = async (uid, newInfo) => {
+  try {
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const eventDocRef = doc(db, "current_alerts", uid);
+
+    // 2. Use updateDoc para modificar APENAS o campo 'location'
+    await updateDoc(eventDocRef, {
+      can_send_email: newInfo // O objeto ou valor que você deseja definir
+    });
+    console.log(`Localização do usuário ${uid} atualizada com sucesso.`);
+    return true;
+  } catch (e) {
+    // Se o documento não existir, updateDoc lançará um erro.
+    console.error("Erro ao atualizar a visualização do alerta: ", e);
+    return false;
+  }
+};

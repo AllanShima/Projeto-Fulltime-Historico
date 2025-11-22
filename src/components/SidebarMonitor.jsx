@@ -45,7 +45,7 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
             <span className='justify-center text-primary'>
               <h1>Lista de Eventos ({events?.length})</h1>
             </span>   
-            <div className='flex-1 space-y-3 mt-3 overflow-y-auto'>
+            <div className='flex-1 space-y-3 mt-3 max-h-120 overflow-y-auto'>
               {events.map(event => 
                 <span className='flex w-full pr-4'>
                   <EventCardMonitor key={event.id} event={event} simplified={true}/>                    

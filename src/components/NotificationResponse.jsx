@@ -57,15 +57,16 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
     setIsButtonDisabled(true);
 
     const emailContent = {
-      destinatario: userState.email,
-      assunto: `Alerta Finalizado: ${selectedNotification.device}`,
-      html: `<p>O evento ${selectedNotification.device} foi gerado automaticamente pelo sistema e já pode ser baixado.</p>`,
+      toEmail: userState.email,
+      subject: `Alerta Finalizado: ${selectedNotification.device} - FullCenter`,
+      text: `O evento ${selectedNotification.device} foi gerado automaticamente pelo sistema e já pode ser baixado na plataforma.`,
+      html: `<p>O evento ${selectedNotification.device} foi gerado automaticamente pelo sistema e já pode ser baixado na plataforma.</p>`,
     };
 
     try {
         // 1. Envia o e-mail através do seu endpoint de API seguro
         // await sendAlertEmail(emailContent);
-        
+        await sendAlertEmail(emailContent);
         // 2. Continua com as operações de Firestore
         await userDispatch({ type: "RESET_CAN_RECORD" });
         await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");

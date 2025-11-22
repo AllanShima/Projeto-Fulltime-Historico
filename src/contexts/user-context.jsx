@@ -20,8 +20,8 @@ const userContext = (state, action) => {
             alertOn: action.payload.alertOn,
             location: action.payload.location,
             events: null,
-            can_record: false,
-            can_send_email: false,
+            can_record: can_record,
+            can_send_email: action.payload.can_send_email,
             email: action.payload.email,
             phone_number: action.payload.phone_number
         }

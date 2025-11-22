@@ -131,6 +131,7 @@ export const firestoreSetAlertOnByUid = async(event, userState, userDispatch, cu
       device: userState.first + " " + userState.last,
       camera: null,
       location: currentLocation,
+      can_send_email: false,
       status: "active",
       response: null,
       date: new Date()    

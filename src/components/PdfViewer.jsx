@@ -1,4 +1,6 @@
 import React from 'react'
+import SoftwareIcon from './ui/SoftwareIcon';
+import { useUserContext } from '../contexts/user-context';
 // // Apenas a data:
 // <p>{evento.dataHora.toLocaleDateString()}</p> // Resultado (no Brasil): "10/11/2025"
 
@@ -8,6 +10,8 @@ import React from 'react'
 // // Data e horário completos (o mais recomendado se você precisa de ambos):
 // <p>{evento.dataHora.toLocaleString()}</p> // Resultado: "10/11/2025 16:30:00"
 const PdfViewer = ({setShowModal, selectedEvent}) => {
+    const {userState, userDispatch} = useUserContext();
+
     const downloadPdf = () => {
         window.alert("Downloading");
         setShowModal(false);
@@ -23,17 +27,29 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
         startDate = startDate.seconds * 1000;
     }
     const eventStartDate = new Date(startDate); // eventDate é agora um objeto Date
-    // ⭐️ STRING DE DATA FORMATADA (Dia, Mês, Ano)
+    // ⭐️ STRING DE DATA FORMATADA + HORA (Dia, Mês, Ano) (Hora e Minuto)
     const formattedStartDate = eventStartDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    // ⭐️ STRING DE HORA FORMATADA (Hora e Minuto)
     const formattedStartTime = eventStartDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
     let endDate = previewEvent.finished;
     if (endDate && typeof endDate === 'object' && endDate.seconds) {
         endDate = endDate.seconds * 1000;
     }
     const eventEndDate = new Date(endDate); // eventDate é agora um objeto Date
 
-    const totalDuration = new Date(endDate )
+    const formattedEndDate = eventEndDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const formattedEndTime = eventEndDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    const totalDuration = new Date(endDate - startDate);
+
+    const formattedDuration = totalDuration.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    const ClassTranslated = {
+        "emergency": "emergência",
+        "system": "sistema",
+        "motion": "movimentação",
+        "access": "Acesso"
+    }
 
     return (
         <div className='fixed z-20 flex justify-center items-center top-0 bg-black/50 min-h-screen w-screen h-screen'>
@@ -82,12 +98,18 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                 <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Timestamp & Duração</h3>
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Tempo & Data:</span>
+                                        <span className="font-medium text-gray-700">Data & Horário de Início:</span>
                                         <span className="text-gray-900">{formattedStartDate}</span>
+                                        <span className="text-gray-900">{formattedStartTime}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Duração:</span>
-                                        <span className="text-gray-900">{previewEvent.date.toLocaleString()}</span>
+                                        <span className="font-medium text-gray-700">Data & Horário de Término:</span>
+                                        <span className="text-gray-900">{formattedEndDate}</span>
+                                        <span className="text-gray-900">{formattedEndTime}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-gray-700">Duração Total:</span>
+                                        <span className="text-gray-900">{formattedDuration}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Fuso Horário:</span>
@@ -103,12 +125,14 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                             <div className="grid grid-cols-2 gap-6 text-sm">
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Camera:</span>
-                                        <span className="text-gray-900">{previewEvent.camera?.name}</span>
+                                        <span className="font-medium text-gray-700">Software Origem:</span>
+                                        <span className='w-7 h-7'>
+                                           <SoftwareIcon title={previewEvent.software_from}/>
+                                        </span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">Localização:</span>
-                                        <span className="text-gray-900">{previewEvent.camera?.location}</span>
+                                        <span className="font-medium text-gray-700">Localização: </span>
+                                        <span className="text-gray-900 ml-1">{previewEvent.location}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -119,6 +143,10 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">URL do vídeo (Vimeo):</span>
                                         <span className="text-gray-900">{previewEvent.video_recorded}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-gray-700">Dispositivo Origem:</span>
+                                        <span className="text-gray-900">{previewEvent.device}</span>
                                     </div>
                                 </div>
                             </div>
@@ -138,15 +166,15 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                             <div className="grid grid-cols-3 gap-4 text-sm">
                                 <div className="bg-gray-50 p-3 rounded">
                                     <span className="font-medium text-gray-700 block">Classificação do Evento</span>
-                                    <span className="text-gray-900 capitalize">{previewEvent.id} Evento</span>
+                                    <span className="text-gray-900 capitalize">{ClassTranslated[previewEvent.style]}</span>
                                 </div>
                                 <div className="bg-gray-50 p-3 rounded">
                                     <span className="font-medium text-gray-700 block">Método de Detecção</span>
                                     <span className="text-gray-900">Sistema Automatizado</span>
                                 </div>
                                 <div className="bg-gray-50 p-3 rounded">
-                                    <span className="font-medium text-gray-700 block">Status de Resposta</span>
-                                    <span className="text-gray-900">Logado</span>
+                                    <span className="font-medium text-gray-700 block">Monitor Responsável</span>
+                                    <span className="text-gray-900">{userState.first + " " + userState.last}</span>
                                 </div>
                             </div>
                         </div>

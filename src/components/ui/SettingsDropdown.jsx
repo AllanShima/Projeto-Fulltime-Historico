@@ -2,14 +2,26 @@ import React from 'react'
 import ToggleSwitch from './ToggleSwitch'
 import { FaUserAlt } from "react-icons/fa";
 import { BiSolidCctv } from "react-icons/bi";
+import { useUserContext } from '../../contexts/user-context';
 
 const SettingsDropdown = ({ MenuOptions }) => {
+  const {userState, userDispatch} = useUserContext();
+
+  const setEmail = async(option) => {
+    if (!option.state == true) {
+      await userDispatch({type: "SET_CAN_SEND_EMAIL"});
+    } else{
+      await userDispatch({type: "RESET_CAN_SEND_EMAIL"});
+    }
+    await firestoreUpdateCurrentEventSendEmailByUid(userState.uid, option.state);
+    option.setState(!option.state);
+  }
   return (
     <div className='fixed z-30 flex flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
       <ul>
         {MenuOptions.map((option, index) => (
           <li key={index}>
-            <button onClick={() => option.setState(!option.state)} 
+            <button onClick={() => option.id === "EMAIL" ? setEmail(option) : option.setState(!option.state)} 
               className='w-full p-2 outline-1 text-gray-200 hover:bg-white font-regular text-sm hover:cursor-pointer rounded-sm transition duration-400'>
               <span className='flex items-center justify-between text-primary'>
                 {option.id === "PFP" ? (

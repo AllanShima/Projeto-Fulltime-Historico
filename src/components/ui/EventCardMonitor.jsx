@@ -84,10 +84,28 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
   }
   const eventDate = new Date(rawDate); // eventDate é agora um objeto Date
 
-  // ⭐️ STRING DE DATA FORMATADA (Dia, Mês, Ano)
-  const formattedDate = eventDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  // ⭐️ STRING DE HORA FORMATADA (Hora e Minuto)
-  const formattedTime = eventDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    // ⭐️ NOVA LÓGICA DE TRATAMENTO DE DATA (Para ser usada no retorno)
+    let startDate = event.date;
+    if (startDate && typeof startDate === 'object' && startDate.seconds) {
+        startDate = startDate.seconds * 1000;
+    }
+    const eventStartDate = new Date(startDate); // eventDate é agora um objeto Date
+    // ⭐️ STRING DE DATA FORMATADA + HORA (Dia, Mês, Ano) (Hora e Minuto)
+    const formattedStartDate = eventStartDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const formattedStartTime = eventStartDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    let endDate = event.finished;
+    if (endDate && typeof endDate === 'object' && endDate.seconds) {
+        endDate = endDate.seconds * 1000;
+    }
+    const eventEndDate = new Date(endDate); // eventDate é agora um objeto Date
+
+    const formattedEndDate = eventEndDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const formattedEndTime = eventEndDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    const totalDuration = new Date(endDate - startDate);
+
+    const formattedDuration = totalDuration.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className='font-regular flex w-full h-fit rounded-xl bg-white border-1 border-gray-300'>
@@ -121,7 +139,7 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
                 <span className='flex w-full justify-between text-md'>
                   <span className='flex items-center space-x-1'>
                     <CiCalendar className='w-4 h-4'/>
-                    <h3>{formattedDate}</h3>   
+                    <h3>{formattedEndDate}</h3>   
                     <li className='ml-5'><h3>{timePassed}</h3></li>                           
                   </span>
                   <span className='flex items-center space-x-1'>
@@ -130,7 +148,7 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
                   </span>
                   <span className='flex items-center space-x-1'>
                     <BsCameraVideo className='w-4 h-4'/>
-                    <h3>{event.camera}</h3>                              
+                    <h3>{formattedDuration}</h3>                              
                   </span>
                 </span>
  

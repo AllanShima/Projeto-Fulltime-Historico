@@ -1,27 +1,51 @@
+// SendEmail.jsx (Este código roda no navegador, dentro do seu projeto React/Vite)
+
+/**
+ * Envia uma requisição HTTP POST para o endpoint do backend (/api/send-email)
+ * para solicitar o envio de um e-mail através do SendGrid.
+ * * @param {object} emailData - Objeto contendo {toEmail, subject, text, html}
+ * @returns {Promise<object>} O resultado do envio (sucesso ou falha)
+ */
 export const sendAlertEmail = async (emailData) => {
+    
+    // ATENÇÃO: Se você estiver usando um servidor de desenvolvimento local
+    // que não reconhece /api/send-email (como o servidor padrão do Vite),
+    // você precisará ajustar o proxy no vite.config.js para redirecionar 
+    // essa chamada para sua função serverless.
+    const apiUrl = '/api/send-email'; 
+
     try {
-        const response = await fetch('/api/send-email', { // Use o seu endpoint real aqui
+        console.log("Iniciando requisição fetch para o backend:", apiUrl);
+
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            // Você deve incluir todos os dados necessários aqui para que o backend envie o email.
-            body: JSON.stringify(emailData),
+            // Envia o objeto de dados do e-mail serializado como JSON
+            body: JSON.stringify({
+                toEmail: emailData.toEmail,
+                subject: emailData.subject,
+                text: emailData.text,
+                html: emailData.html
+            }),
         });
+        
+        // Tentativa de ler o corpo da resposta (mesmo em caso de erro)
+        const result = await response.json();
 
         if (!response.ok) {
-            // Se o servidor retornar um erro (4xx, 5xx), lance-o.
-            const errorData = await response.json();
-            throw new Error(errorData.mensagem || `Erro no servidor: ${response.status}`);
+            // Se o status HTTP não for 2xx (ex: 400, 500), lança um erro
+            console.error("Resposta do servidor com erro:", result);
+            throw new Error(result.mensagem || `Erro no servidor: ${response.status}`);
         }
 
-        const result = await response.json();
-        console.log("E-mail de alerta enviado com sucesso:", result);
+        console.log("E-mail solicitado com sucesso:", result.mensagem);
         return result;
 
     } catch (error) {
-        console.error("Falha ao enviar e-mail de alerta:", error);
-        // Você pode re-lançar ou retornar o erro para que a função 'endAlert' lide com ele.
+        console.error("Falha na comunicação com o backend de e-mail:", error);
+        // Re-lança o erro para ser capturado no seu componente NotificationResponse.jsx
         throw error;
     }
 };
