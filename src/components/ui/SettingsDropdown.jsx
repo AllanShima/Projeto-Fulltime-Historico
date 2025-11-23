@@ -1,21 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ToggleSwitch from './ToggleSwitch'
 import { FaUserAlt } from "react-icons/fa";
 import { BiSolidCctv } from "react-icons/bi";
 import { useUserContext } from '../../contexts/user-context';
+import { firestoreUpdateUserCanSendEmail } from '../../services/api/FirebaseUpdateFunctions';
 
 const SettingsDropdown = ({ MenuOptions }) => {
   const {userState, userDispatch} = useUserContext();
 
   const setEmail = async(option) => {
-    if (!option.state == true) {
-      await userDispatch({type: "SET_CAN_SEND_EMAIL"});
-    } else{
-      await userDispatch({type: "RESET_CAN_SEND_EMAIL"});
-    }
-    await firestoreUpdateCurrentEventSendEmailByUid(userState.uid, option.state);
+    await firestoreUpdateUserCanSendEmail(userState.uid, userDispatch, !option.state);
     option.setState(!option.state);
   }
+
   return (
     <div className='fixed z-30 flex flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
       <ul>
@@ -35,7 +32,7 @@ const SettingsDropdown = ({ MenuOptions }) => {
                   </span>
                 ) : (
                   <span>
-                    <ToggleSwitch state={option.state}/>
+                    <ToggleSwitch state={option.state} option={option}/>
                   </span>
                 )}
                 <span className='w-fit px-2 mr-auto ml-auto'>

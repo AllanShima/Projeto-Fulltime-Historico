@@ -6,7 +6,7 @@ import { useUserContext } from '../contexts/user-context';
 import { firebaseGetMessages } from '../services/api/FirebaseGetFunctions';
 import { firebaseSetMessages } from '../services/api/FirebaseSetFunctions';
 
-const MessageComponent = ({ selectedContact }) => {
+const MessageComponent = ({ selectedContact, setLastMessage }) => {
     const [messages, setMessages] = useState([{}])
     const [textareaValue, setTextAreaValue] = useState("");
     const [isTextareaFocused, setIsTextareaFocused] = useState(false);
@@ -113,7 +113,7 @@ const MessageComponent = ({ selectedContact }) => {
                     <>
                         <div className='relative flex flex-col h-fit mt-2'>
                             <h3 className='z-10 w-fit px-2 ml-auto mr-auto bg-white text-xs text-gray-700'>
-                                Conversa iniciada: Hoje, 03:12
+                                {messages[0].createdAt?.toDate().toLocaleDateString('pt-BR')}
                             </h3>
                             {/* Linha horizontal */}
                             <div className='z-0 absolute w-full h-[0.4px] my-2 bg-gray-300'></div>       

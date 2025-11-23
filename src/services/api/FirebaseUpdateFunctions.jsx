@@ -61,20 +61,57 @@ export const firestoreUpdateCurrentEventVisualizedByUid = async (uid, newInfo) =
   }
 };
 
-export const firestoreUpdateCurrentEventSendEmailByUid = async (uid, newInfo) => {
-  try {
-    // 1. Crie a referência DIRETA ao documento usando o UID
-    const eventDocRef = doc(db, "current_alerts", uid);
 
-    // 2. Use updateDoc para modificar APENAS o campo 'location'
-    await updateDoc(eventDocRef, {
-      can_send_email: newInfo // O objeto ou valor que você deseja definir
+export const firestoreUpdateUserCanRecord = async (uid, userDispatch, newBool) => {
+  try {
+    if (!newBool) {
+      throw new Error("Nenhuma variável booleana selecionada!");
+    }
+    if (newBool) {
+      await userDispatch({type: "SET_CAN_RECORD"});
+    } else{
+      await userDispatch({type: "RESET_CAN_RECORD"});
+    }
+    
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const userDocRef = doc(db, "users", uid);
+
+    await updateDoc(userDocRef, {
+      can_record: newBool
     });
-    console.log(`Localização do usuário ${uid} atualizada com sucesso.`);
+
     return true;
+
   } catch (e) {
     // Se o documento não existir, updateDoc lançará um erro.
-    console.error("Erro ao atualizar a visualização do alerta: ", e);
+    console.error("Erro ao atualizar 'can_record' do usuário: ", e);
+    return false;
+  }
+};
+
+export const firestoreUpdateUserCanSendEmail = async (uid, userDispatch, newBool) => {
+  try {
+    if (!newBool) {
+      throw new Error("Nenhuma variável booleana selecionada!");
+    }
+    if (newBool) {
+      await userDispatch({type: "SET_CAN_SEND_EMAIL"});
+    } else{
+      await userDispatch({type: "RESET_CAN_SEND_EMAIL"});
+    }
+    
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const userDocRef = doc(db, "users", uid);
+
+    await updateDoc(userDocRef, {
+      can_send_email: newBool
+    });
+
+    return true;
+
+  } catch (e) {
+    // Se o documento não existir, updateDoc lançará um erro.
+    console.error("Erro ao atualizar 'can_send_email' do usuário: ", e);
     return false;
   }
 };

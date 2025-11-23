@@ -5,10 +5,10 @@ import { FaRegClock } from "react-icons/fa";
 import { FiActivity } from "react-icons/fi";
 import { FiAlertTriangle } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid } from '../services/api/FirebaseUpdateFunctions';
+import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid, firestoreUpdateUserCanRecord } from '../services/api/FirebaseUpdateFunctions';
 import { useUserContext } from '../contexts/user-context';
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions';
-import { firestoreSetMonitorEvent } from '../services/api/FirebaseSetFunctions';
+import { firestoreSetMonitorEvent, firestoreSetUserReport } from '../services/api/FirebaseSetFunctions';
 import { sendAlertEmail } from '../assets/functions/SendEmail';
 
 const UserResponseProtocolText = {
@@ -47,7 +47,7 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
 
   const sendResponse = async() => {
     setIsButtonDisabled(true);
-    await userDispatch({ type: "SET_CAN_RECORD"});
+    await firestoreUpdateUserCanRecord(userState.uid, userDispatch, true);
     await firestoreUpdateCurrentEventVisualizedByUid(notificationId, true);
     setIsButtonDisabled(false);
     setChangeButton(true)
@@ -68,7 +68,8 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
         // await sendAlertEmail(emailContent);
         await sendAlertEmail(emailContent);
         // 2. Continua com as operações de Firestore
-        await userDispatch({ type: "RESET_CAN_RECORD" });
+        await firestoreUpdateUserCanRecord(userState.uid, userDispatch, false);
+
         await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
         await firestoreSetMonitorEvent(selectedNotification); 
         await firestoreDeleteAlertOnByUid(notificationId);

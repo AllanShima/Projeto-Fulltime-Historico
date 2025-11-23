@@ -2,18 +2,23 @@ import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
-import {cameras} from '../assets/data/TempData'
+import {cameras as tempCameras} from '../assets/data/TempData'
 import { useUserContext } from '../contexts/user-context'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../services/firebase'
+import NewCameraModalComponent from './NewCameraModalComponent'
 
 const TabCamera = () => {
 
   const {userState, userDispatch} = useUserContext();
 
+  const [events, setEvents] = useState([]);
+
+  const [cameras, setCameras] = useState(tempCameras);
   const [selectedCam, setSelectedCam] = useState("1");
 
-  const [events, setEvents] = useState([]);
+  const [newCameraModal, setNewCameraModal] = useState(false);
+
   // Listener do monitor_events
   useEffect(() => {
     const eventsCollectionRef = collection(db, "monitor_events"); 
@@ -56,8 +61,18 @@ const TabCamera = () => {
 
   return (
     <>
+      {newCameraModal && (
+        <NewCameraModalComponent setStateModal={setNewCameraModal}/>
+      )}
       <div className='flex flex-1 bg-white'>
-        <SidebarMonitor cameras={cameras} events={events} selectedCam={selectedCam} setSelectedCam={setSelectedCam} setRemainingCams={setRemainingCams}/>
+        <SidebarMonitor 
+        cameras={cameras} 
+        events={events} 
+        selectedCam={selectedCam} 
+        setSelectedCam={setSelectedCam}
+        setRemainingCams={setRemainingCams}
+        setNewCameraModal={setNewCameraModal}
+        />
         <HomeCam cameras={cameras} selectedCam={selectedCam} remainingCams={remainingCams}/>
       </div>    
     </>

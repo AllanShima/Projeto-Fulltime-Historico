@@ -27,7 +27,6 @@ function App() {
     onAuthStateChanged(auth, async (user) => {
       // se estiver logado
       if (user){
-        console.log(user.uid);
         // OBS: NÃO PODE PASSAR USERSTATE PORQUE ELE AINDA NÃO FOI CONFIGURADO PRR
         const userData = await firestoreGetUserById(user.uid);
         const currentAlert = await firestoreGetAlertOnByUid(user.uid);
@@ -39,11 +38,11 @@ function App() {
           first: userData.first ?? "",         // Adiciona fallback para string vazia
           last: userData.last ?? "",           // Adiciona fallback para string vazia
           usertype: userData.usertype ?? "",   // Adiciona fallback para string vazia
-          alertOn: currentAlert,
           location: userData.location ?? null,  // Mantém null, se for um objeto complexo, ou usa ""
+          alertOn: currentAlert,               // Não apaga isso, é importante p usuario f/safe
           email: userData.email,
           phone_number: userData.phone_number,
-          can_record: currentAlert.visualized ? true : false,
+          can_record: userData.can_record ? true : false,
           can_send_email: userData.can_send_email
         }});
       } else {

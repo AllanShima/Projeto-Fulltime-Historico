@@ -3,7 +3,7 @@ import SidebarUser from './SidebarUser'
 import AlertOptions from './AlertOptions'
 import { useUserContext } from '../contexts/user-context'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
-import { firestoreSetAlertOnByUid } from '../services/api/FirebaseSetFunctions'
+import { firestoreSetAlertOnByUid, firestoreSetUserReport } from '../services/api/FirebaseSetFunctions'
 import AwaitingResponseModal from './AwaitingResponseModal'
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions'
 import { getDeviceLocation } from '../services/GetGeocode'
@@ -90,14 +90,15 @@ const WindowUser = () => {
     setSelectedAlert(null);
   }
 
-  const AlertWasVisualized = () => {
+  const AlertWasVisualized = async() => {
     window.alert("Alerta visualizado! Ajuda está a caminho...");
-    setAlertVisualized(true);
+    await firestoreSetUserReport();
+    await setAlertVisualized(true);
     console.log("O campo 'visualized' mudou para true! O alerta foi visualizado.");
   }
 
   const storeReport = () => {
-    firestoreSetUserReport();
+    // firestoreSetUserReport();
     setNotificationButtonModal(false);
     window.alert("Formulário cadastrado com sucesso! O relatório está sendo preparado...");
   }
@@ -116,15 +117,17 @@ const WindowUser = () => {
       // 1. REIDRATAÇÃO DO ESTADO LOCAL E CONDIÇÃO DE GUARDA PRINCIPAL
       // Esta lógica garante que o listener só será criado/mantido se houver um alerta ativo.
       // Setando o alerta mesmo depois de reiniciar a pagina
+      console.log(userState.alertOn);
       if (userState.uid && userState.alertOn != null) {
           // A. Reidratação do estado local:
+          
           setSelectedAlert(userState.alertOn);
           setShowAwaitModal(true);
 
           // B. Configuração do Listener do Firestore
           const alertUid = userState.uid;
           const alertDocRef = doc(db, "current_alerts", alertUid); 
-          
+          console.log("SHISHISHIS");
           const unsubscribeAlert = onSnapshot(alertDocRef, (docSnapshot) => {
               console.log(`Ouvinte para o Alerta ${alertUid} em andamento!`);
               
@@ -133,7 +136,7 @@ const WindowUser = () => {
 
                 if (alertData.visualized === true) {
                   AlertWasVisualized();
-                }
+                } 
 
                 if (alertData.status === "inactive") {
                   ResetAlertMode();

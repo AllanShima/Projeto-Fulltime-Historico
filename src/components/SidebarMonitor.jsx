@@ -5,7 +5,7 @@ import { GoAlert } from "react-icons/go";
 import CameraCard from './ui/CameraCard'
 import EventCardMonitor from './ui/EventCardMonitor';
 
-const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams}) => {
+const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemainingCams, setNewCameraModal}) => {
 
   const [activeTab, setActiveTab] = useState("cameras");
 
@@ -26,8 +26,14 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
       <div className='flex flex-col flex-1 w-full pl-4 pt-4'>
         {activeTab == "cameras" ? (
           <div className='flex flex-col flex-1 w-full max-h-130'>
-            <span className='justify-center text-primary'>
+            <span className='flex justify-between text-primary mr-4'>
               <h1>Camera List ({cameras.filter(c => c.status == "online").length} online)</h1>
+              <button 
+              onClick={() => setNewCameraModal(true)}
+              className='flex items-center rounded-md bg-red-500 text-white text-xs font-bold px-2 hover:cursor-pointer'
+              >
+                +
+              </button>
             </span>   
             <div className='flex-1 space-y-3 mt-3 w-full overflow-y-auto'>
               {cameras.map((camera, index) => (

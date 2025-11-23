@@ -1,8 +1,24 @@
 import React from 'react'
+import { useUserContext } from '../../contexts/user-context';
 
-const ToggleSwitch = ({state}) => {
-    const spanStyle = state ? "right-0" : "left-0";
-    const backgroundStyle = state ? "bg-red-400" : "bg-gray-400";
+const ToggleSwitch = ({state, option}) => {
+  const {userState, userDispatch} = useUserContext();
+
+  let tempState = state;
+
+  if (option.id == "EMAIL"){
+    if (userState.can_send_email){
+      tempState = true;
+    }
+    else{
+      tempState = false;
+    }
+  }  
+
+  const spanStyle = tempState ? "right-0" : "left-0";
+  const backgroundStyle = tempState ? "bg-red-400" : "bg-gray-400";
+
+
   return (
     <div className={`relative w-12 h-6 rounded-l-2xl rounded-r-2xl ${backgroundStyle}`}>
       <input type='checkbox' className='w-0 h-0'></input>

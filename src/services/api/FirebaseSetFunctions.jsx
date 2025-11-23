@@ -120,7 +120,7 @@ export const firestoreSetAlertOnByUid = async(event, userState, userDispatch, cu
     // Informações para notificação do monitor:
     
     await setDoc(docRef, {
-      id: documentId,
+      uid: documentId,
       visualized: false,
       software_from: EventsConstants.SOFTWARES.F_SAFE,
       title: "Alerta de Segurança",
@@ -174,6 +174,7 @@ export const firestoreSetMonitorEvent = async(event) => {
       video_recorded: null,
       camera: event.camera,
       date: event.date,
+      user_report: null,
       finished: new Date()
     };
     
@@ -181,6 +182,7 @@ export const firestoreSetMonitorEvent = async(event) => {
       docRef = await addDoc(chatCollectionRef, {
         ...baseData,
         title: "Alerta de Segurança",
+        uid: event.uid,
         description: "Alerta iminente de usuário f/safe",
         severity: EventsConstants.SEVERITIES.CRITICAL, // Assumindo 'EventsConstants'
         alert: alertType,
@@ -190,6 +192,7 @@ export const firestoreSetMonitorEvent = async(event) => {
       docRef = await addDoc(chatCollectionRef, {
         ...baseData,
         title: event.title,
+        uid: null,
         description: event.description,
         severity: event.severity,
         alert: event.alert,
@@ -208,25 +211,58 @@ export const firestoreSetMonitorEvent = async(event) => {
   }
 }
 
-// Guardando o Formulário do usuário
-export const firestoreSetUserReport = async(data, userState) => {
+
+// Guardando as respostas do sinal de alerta
+export const firestoreSetUserReport = async(userState, notificationData) => {
   try {
-    // se por algum motivo não existe algum dado
-    if (!data){
-      throw new Error("Nenhuma informação foi passado!");
+    // se por algum motivo não existe algum alerta selecionado
+    if (!notificationData){
+      throw new Error("Nenhum dado presente!");
     }
-    // Defining the ID of the message
-    // 1. Define the reference to the subcollection
-    const chatCollectionRef = collection(db, "users", userState.uid, "alerts_sent");
- 
+
+    // 1. Define a referência para a subcoleção
+    const chatCollectionRef = collection(db, "users", uid, "notifications");
+
+    // 2. Cria o documento sem o ID no campo 'id'
+    // Deixe o campo 'id' fora ou como null temporariamente se preferir.
+    // Eu o removi abaixo para simplificar a criação inicial.
+
+    // objeto de entrada
+    {
+      type: "report"
+      title: "Relatório"
+    }
+
+    // const type = 
+
     const docRef = await addDoc(chatCollectionRef, {
-      title: alert.title,
+      incident_cause: null,
+      estimated_time: null,
+      incident_injures: null,
+      evidences: null,
+      monitor_answer: null,
+      response_time: null,
+      software_from: EventsConstants.SOFTWARES.F_SAFE,
+      title: notificationData.title,
+      description: "Nova mensagem do Operador disponível no Live Chat",
+      type: EventsConstants.TYPES.EMERGENCY,
+      severity: EventsConstants.SEVERITIES.CRITICAL,
+      alert: EventsConstants.ALERTS.REPORT,
+      show_button: false,
+      device: userState.first + " " + userState.last, 
+      camera: null, 
+      video_available: false,
       createdAt: new Date()
     });
-    // id é o id do nome do documento inserido no banco, n o id do doc em si
-    console.log("Alerta Inserida com o ID: ", docRef.id);
+
+    // ⭐️ 3. USA O updateDoc PARA ADICIONAR O ID AO CAMPO 'id'
+    await updateDoc(docRef, {
+      id: docRef.id // O ID do documento gerado automaticamente
+    });
+
+    console.log("Notificação do usuário inserido e atualizado com o ID: ", docRef.id);
   } catch (e) {
-    console.error("Erro ao adicionar o alerta: ", e);
+    console.error("Erro ao inserir/atualizar a notificação do usuário: ", e);
   }
 }
 
@@ -242,6 +278,8 @@ export const firestoreSetNewUser = async(userId, firstName, lastName, email, typ
       phone_number: phone_number,
       usertype: type,
       pfpUrl: null,
+      can_record: false,
+      can_send_email: false,
       location: location,
       createdAt: new Date()
     });

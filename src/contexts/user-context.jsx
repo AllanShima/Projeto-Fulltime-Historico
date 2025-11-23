@@ -17,10 +17,10 @@ const userContext = (state, action) => {
             first: action.payload.first, 
             last: action.payload.last, 
             usertype: action.payload.usertype, 
-            alertOn: action.payload.alertOn,
+            alertOn: action.payload.alertOn, // NÃO APAGAR: IMPORTANTE P USUÁRIO
             location: action.payload.location,
             events: null,
-            can_record: can_record,
+            can_record: action.payload.can_record,
             can_send_email: action.payload.can_send_email,
             email: action.payload.email,
             phone_number: action.payload.phone_number

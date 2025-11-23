@@ -17,9 +17,14 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
         setShowModal(false);
     }
 
+    const sendUserNotification = () => {
+        window.alert("as");
+    }
+
     const previewEvent = selectedEvent;
 
-    const hoverStyle1 = "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition"
+    const hoverStyle1 = "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition";
+    const hoverStyle2 = "bg-primary hover:bg-gray-800 transition";
 
     // ⭐️ NOVA LÓGICA DE TRATAMENTO DE DATA (Para ser usada no retorno)
     let startDate = previewEvent.date;
@@ -160,6 +165,19 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                             </p>
                         </div>
 
+                        {/* Informations from the User Report */}
+                        {selectedEvent.software_from == "f/safe" && (
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Narrativa do Usuário</h3>
+                                <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    {previewEvent.description}
+                                </p>
+                                <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    {previewEvent.description}
+                                </p>
+                            </div>                            
+                        )}
+
                         {/* Technical Information */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Detalhes Técnicos</h3>
@@ -217,9 +235,14 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                 </span>
 
                 <div className='flex px-10 w-full h-10 mt-5 justify-center'>
-                    <button onClick={downloadPdf} className={`w-40 h-full rounded-lg text-white px-10 bg-amber-800 ml-auto mr-auto ${hoverStyle1}`}>
+                    <button onClick={downloadPdf} className={`w-40 h-full rounded-lg text-white px-10 ml-auto mr-auto ${hoverStyle1}`}>
                         Baixar
                     </button>
+                    {selectedEvent.software_from == "f/safe" && (
+                        <button onClick={sendUserNotification} className={`w-fit h-full rounded-lg text-white px-10 ml-auto mr-auto ${hoverStyle2}`}>
+                            Enviar para usuário
+                        </button>                        
+                    )}
                     <button onClick={() => setShowModal(false)} className='w-40 h-full bg-gray-200 rounded-lg ml-auto mr-auto hover:bg-gray-300 transition'>
                         Cancelar
                     </button>                        
