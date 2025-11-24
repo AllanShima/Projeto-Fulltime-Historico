@@ -103,9 +103,24 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
     const formattedEndDate = eventEndDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const formattedEndTime = eventEndDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    const totalDuration = new Date(endDate - startDate);
+    // 1. O cálculo da diferença (em milissegundos) está CORRETO.
+    const durationMs = endDate - startDate; 
 
-    const formattedDuration = totalDuration.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    // 2. Converte para horas e minutos
+    const totalHours = Math.floor(durationMs / (1000 * 60 * 60));
+    const totalMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    // 3. Formatação (garantindo que tenha 2 dígitos - padding)
+    const formattedHours = String(totalHours).padStart(2, '0');
+    const formattedMinutes = String(totalMinutes).padStart(2, '0');
+
+    // 4. Cria a string final da duração
+    const formattedDuration = `${formattedHours}:${formattedMinutes}`;
+
+    // Exemplo: Se durationMs = 3600000 (1 hora)
+    // totalHours = 1
+    // totalMinutes = 0
+    // formattedDuration = "01:00"
 
   return (
     <div className='font-regular flex w-full h-fit rounded-xl bg-white border-1 border-gray-300'>

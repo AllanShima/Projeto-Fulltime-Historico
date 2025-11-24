@@ -64,9 +64,7 @@ export const firestoreUpdateCurrentEventVisualizedByUid = async (uid, newInfo) =
 
 export const firestoreUpdateUserCanRecord = async (uid, userDispatch, newBool) => {
   try {
-    if (!newBool) {
-      throw new Error("Nenhuma variável booleana selecionada!");
-    }
+
     if (newBool) {
       await userDispatch({type: "SET_CAN_RECORD"});
     } else{
@@ -112,6 +110,25 @@ export const firestoreUpdateUserCanSendEmail = async (uid, userDispatch, newBool
   } catch (e) {
     // Se o documento não existir, updateDoc lançará um erro.
     console.error("Erro ao atualizar 'can_send_email' do usuário: ", e);
+    return false;
+  }
+};
+
+// Adicionar o user_forms no evento
+export const firestoreUpdateMonitorEventById = async (id, user_forms) => {
+  try {
+    // 1. Crie a referência DIRETA ao documento usando o UID
+    const eventDocRef = doc(db, "monitor_events", id);
+
+    // 2. Use updateDoc para modificar APENAS o campo 'location'
+    await updateDoc(eventDocRef, {
+      user_forms: user_forms // O objeto ou valor que você deseja definir
+    });
+    console.log(`user_forms foi adicionado/alterado com sucesso!`);
+    return true;
+  } catch (e) {
+    // Se o documento não existir, updateDoc lançará um erro.
+    console.error("Erro ao atualizar o user_forms: ", e);
     return false;
   }
 };

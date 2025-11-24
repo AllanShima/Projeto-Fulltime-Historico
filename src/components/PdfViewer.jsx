@@ -1,6 +1,7 @@
 import React from 'react'
 import SoftwareIcon from './ui/SoftwareIcon';
 import { useUserContext } from '../contexts/user-context';
+import { firestoreSetUserNotification } from '../services/api/FirebaseSetFunctions';
 // // Apenas a data:
 // <p>{evento.dataHora.toLocaleDateString()}</p> // Resultado (no Brasil): "10/11/2025"
 
@@ -9,19 +10,29 @@ import { useUserContext } from '../contexts/user-context';
 
 // // Data e horário completos (o mais recomendado se você precisa de ambos):
 // <p>{evento.dataHora.toLocaleString()}</p> // Resultado: "10/11/2025 16:30:00"
-const PdfViewer = ({setShowModal, selectedEvent}) => {
+const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
     const {userState, userDispatch} = useUserContext();
+
+    let previewEvent;
+
+    if (selectedEvent.software_from == "f/center") {
+        // Se for uma notificação do usuário, ele vai pegar o report, que contem as informações do monitor_event
+        previewEvent = selectedEvent.report;
+    } else {
+        previewEvent = selectedEvent;
+    }
+
+    console.log(previewEvent);
 
     const downloadPdf = () => {
         window.alert("Downloading");
         setShowModal(false);
     }
 
-    const sendUserNotification = () => {
-        window.alert("as");
+    const sendUserNotification = async() => {
+        await firestoreSetUserNotification(selectedEvent.uid, "report", selectedEvent, selectedEvent.id);
+        window.alert("Relatório enviado para usuário...");
     }
-
-    const previewEvent = selectedEvent;
 
     const hoverStyle1 = "bg-linear-to-t from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 transition";
     const hoverStyle2 = "bg-primary hover:bg-gray-800 transition";
@@ -58,7 +69,7 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
 
     return (
         <div className='fixed z-20 flex justify-center items-center top-0 bg-black/50 min-h-screen w-screen h-screen'>
-            <div className='grid content-between w-200 h-150 p-5 bg-white rounded-2xl font-regular'>
+            <div className='grid content-between w-200 h-165 p-5 bg-white rounded-2xl font-regular'>
                 <span className='overflow-auto scroll-smooth'>
                     <div className="space-y-6 p-6 bg-white text-black rounded-lg border-2 border-gray-200">
                         {/* Report Header */}
@@ -165,15 +176,24 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                             </p>
                         </div>
 
-                        {/* Informations from the User Report */}
-                        {selectedEvent.software_from == "f/safe" && (
+                        {/* Informations from the User Forms */}
+                        {previewEvent.software_from == "f/safe" && previewEvent.user_forms != null && (
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Narrativa do Usuário</h3>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Relato do Usuário</h3>
                                 <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
-                                    {previewEvent.description}
+                                    Causa do Incidente: {previewEvent.user_forms.incident_cause}
                                 </p>
                                 <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
-                                    {previewEvent.description}
+                                    Duração estimada do Incidente: {previewEvent.user_forms.estimated_time}
+                                </p>
+                                <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    Fatalidades: {previewEvent.user_forms.incident_injures}
+                                </p>
+                                <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    Possível evidência(s):  {previewEvent.user_forms.evidences}
+                                </p>
+                                <p className="text-sm text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    Monitor respondeu como esperado? {previewEvent.user_forms.monitor_answer}
                                 </p>
                             </div>                            
                         )}
@@ -238,7 +258,7 @@ const PdfViewer = ({setShowModal, selectedEvent}) => {
                     <button onClick={downloadPdf} className={`w-40 h-full rounded-lg text-white px-10 ml-auto mr-auto ${hoverStyle1}`}>
                         Baixar
                     </button>
-                    {selectedEvent.software_from == "f/safe" && (
+                    {selectedEvent.software_from == "f/safe" &&  sent_to_user && (
                         <button onClick={sendUserNotification} className={`w-fit h-full rounded-lg text-white px-10 ml-auto mr-auto ${hoverStyle2}`}>
                             Enviar para usuário
                         </button>                        

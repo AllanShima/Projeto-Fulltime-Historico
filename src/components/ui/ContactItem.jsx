@@ -15,7 +15,7 @@ const ContactItem = ({ contact, selectedContact }) => {
                     {fullName}
                 </span>
                 <span className='text-gray-500'>
-                    (Última mensagem)
+                    {selectedContact?.phone_number}
                 </span>
             </span>
         </div>

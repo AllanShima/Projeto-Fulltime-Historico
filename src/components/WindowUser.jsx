@@ -3,7 +3,7 @@ import SidebarUser from './SidebarUser'
 import AlertOptions from './AlertOptions'
 import { useUserContext } from '../contexts/user-context'
 import { FaLocationArrow, FaRegEye } from 'react-icons/fa'
-import { firestoreSetAlertOnByUid, firestoreSetUserReport } from '../services/api/FirebaseSetFunctions'
+import { firestoreSetAlertOnByUid } from '../services/api/FirebaseSetFunctions'
 import AwaitingResponseModal from './AwaitingResponseModal'
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions'
 import { getDeviceLocation } from '../services/GetGeocode'
@@ -11,6 +11,8 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import UserSetAddressModal from './UserSetAddressModal'
 import { db } from '../services/firebase'
 import { collection, doc, onSnapshot, query } from 'firebase/firestore'
+import UserReport from './UserReport'
+import PdfViewer from './PdfViewer'
 
 // selectedAlert object;
   // {
@@ -32,6 +34,7 @@ const WindowUser = () => {
   const [showManualAddressModal, setShowManualAddressModal] = useState(false);
 
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
+  const [pdfButtonModal, setPdfButtonModal] = useState(false);
 
   const [selectedAlertType, setSelectedAlertType] = useState(null); // Apenas o nome do alerta para inserir no banco
   const [selectedAlert, setSelectedAlert] = useState(null); // Alerta enviado
@@ -92,15 +95,8 @@ const WindowUser = () => {
 
   const AlertWasVisualized = async() => {
     window.alert("Alerta visualizado! Ajuda está a caminho...");
-    await firestoreSetUserReport();
     await setAlertVisualized(true);
     console.log("O campo 'visualized' mudou para true! O alerta foi visualizado.");
-  }
-
-  const storeReport = () => {
-    // firestoreSetUserReport();
-    setNotificationButtonModal(false);
-    window.alert("Formulário cadastrado com sucesso! O relatório está sendo preparado...");
   }
 
   // Acessa a chave 'alert' de forma segura
@@ -117,7 +113,6 @@ const WindowUser = () => {
       // 1. REIDRATAÇÃO DO ESTADO LOCAL E CONDIÇÃO DE GUARDA PRINCIPAL
       // Esta lógica garante que o listener só será criado/mantido se houver um alerta ativo.
       // Setando o alerta mesmo depois de reiniciar a pagina
-      console.log(userState.alertOn);
       if (userState.uid && userState.alertOn != null) {
           // A. Reidratação do estado local:
           
@@ -127,7 +122,7 @@ const WindowUser = () => {
           // B. Configuração do Listener do Firestore
           const alertUid = userState.uid;
           const alertDocRef = doc(db, "current_alerts", alertUid); 
-          console.log("SHISHISHIS");
+
           const unsubscribeAlert = onSnapshot(alertDocRef, (docSnapshot) => {
               console.log(`Ouvinte para o Alerta ${alertUid} em andamento!`);
               
@@ -144,7 +139,7 @@ const WindowUser = () => {
               } else {
                 console.log("Alerta não encontrado ou foi excluído.");
                 // Se o documento for excluído no Firestore, você também deve redefinir:
-                // ResetAlertMode(); 
+                ResetAlertMode(); 
               }
           }, (error) => {
               console.error("Erro no listener de Alerta específico:", error);
@@ -209,51 +204,43 @@ const WindowUser = () => {
         </div>
       )}
       {notificationButtonModal && (
-        <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
-
-          {currentEvent.alert === "help" || currentEvent.alert === "camera" ? (
-            <div className='grid content-between w-fit h-fit space-y-5 p-5 bg-white rounded-2xl font-regular'>
-              <span className={`flex w-50 h-full rounded-lg justify-center items-center text-xl ${colorStyle}`}>
-                <EventIconComponent/>
-              </span>
-              <h2 className='text-center mt-5 font-bold'>
-                {typeText}
-              </h2>
-              <div className='flex justify-between space-x-5 px-10 w-full h-10'>
-                <button className={`w-40 h-full rounded-lg text-white ${hoverStyle2}`}>
-                  Sim
-                </button>
-                <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
-                  Cancelar
-                </button>
-              </div>              
+        <>
+          {currentEvent.alert === "camera" ? (
+            <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+              <div className='grid content-between w-fit h-fit space-y-5 p-5 bg-white rounded-2xl font-regular'>
+                <span className={`flex w-50 h-full rounded-lg justify-center items-center text-xl ${colorStyle}`}>
+                  <EventIconComponent/>
+                </span>
+                <h2 className='text-center mt-5 font-bold'>
+                  {typeText}
+                </h2>
+                <div className='flex justify-between space-x-5 px-10 w-full h-10'>
+                  <button className={`w-40 h-full rounded-lg text-white ${hoverStyle2}`}>
+                    Sim
+                  </button>
+                  <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
+                    Cancelar
+                  </button>
+                </div>              
+              </div>
             </div>
           ) : (
-            <div className='grid content-between w-fit h-fit p-5 bg-white rounded-2xl font-regular'>
-              <div>
-                <h2 className='text-center font-bold'>
-                  Formulário de Incidente da Vítima
-                </h2>
-                <p className='text-center text-sm text-gray-600'>
-                  Preencha o formulário com a sua perspectiva do Incidente de plau
-                </p>                
-              </div>
-
-              <div className='flex justify-between px-10 w-full h-10'>
-                <button onClick={storeReport} className={`w-40 h-full bg-gradient-to-r bg-red-500 to-90% rounded-lg text-white ${hoverStyle2}`}>
-                  Enviar
-                </button>
-                <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
-                  Cancelar
-                </button>
-              </div>              
+            <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+              <UserReport currentNotification={currentEvent} setNotificationButtonModal={setNotificationButtonModal}/>              
             </div>
-          )}
+          )}        
+        </>
+      )}
+
+      {pdfButtonModal && currentEvent.alert == "report" && (
+        <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+          <PdfViewer setShowModal={setPdfButtonModal} selectedEvent={currentEvent} sent_to_user={false}/>                        
         </div>
       )}
+
       <div className='flex flex-1 w-full h-full'>
         <div className='w-1/2 h-full'>
-          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setCurrentEvent={setCurrentEvent}/>
+          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setPdfButtonModal={setPdfButtonModal} setCurrentEvent={setCurrentEvent}/>
         </div>
         
         <div className='w-1/2 h-full'>

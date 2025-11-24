@@ -169,37 +169,7 @@ const events = [
   },
 ];
 
-const userEvents = [
-  { 
-    id: "1", 
-    software_from: EventsConstants.SOFTWARES.F_SAFE,
-    title: "Mensagem Nova",
-    description: "Nova mensagem do Operador disponível no Live Chat",
-    type: EventsConstants.TYPES.EMERGENCY,
-    severity: EventsConstants.SEVERITIES.CRITICAL,
-    alert: EventsConstants.ALERTS.MESSAGE,
-    show_button: false,
-    device: "Eduarda Ferreira", 
-    camera: null, 
-    date: new Date(2024, 6, 15, 14, 20, 20),
-    video_available: false,
-    video_recorded: null
-  },
-  { 
-    id: "2", 
-    software_from: EventsConstants.SOFTWARES.F_SAFE,
-    title: "Autoridades à Caminho",
-    description: "Clique no botão para acompanhar o GPS em tempo real",
-    type: EventsConstants.TYPES.EMERGENCY,
-    severity: EventsConstants.SEVERITIES.CRITICAL,
-    alert: EventsConstants.ALERTS.HELP,
-    show_button: true,
-    device: "Eduarda Ferreira", 
-    camera: null, 
-    date: new Date(2024, 6, 15, 14, 20, 20),
-    video_available: false,
-    video_recorded: null
-  },
+const ExtraUserEvents = [
   { 
     id: "3", 
     software_from: EventsConstants.SOFTWARES.F_SAFE,
@@ -253,7 +223,7 @@ const userEvents = [
     type: EventsConstants.TYPES.EMERGENCY,
     severity: EventsConstants.SEVERITIES.CRITICAL,
     alert: EventsConstants.ALERTS.ALERT,
-    show_button: true,
+    show_button: false,
     device: "Eduarda Ferreira", 
     camera: null, 
     date: new Date(2024, 6, 15, 14, 20, 20),
@@ -262,4 +232,4 @@ const userEvents = [
   }, 
 ]
 
-export {cameras, events, userEvents};
+export {cameras, events, ExtraUserEvents};

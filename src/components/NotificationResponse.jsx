@@ -8,7 +8,7 @@ import { IoClose } from "react-icons/io5";
 import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid, firestoreUpdateUserCanRecord } from '../services/api/FirebaseUpdateFunctions';
 import { useUserContext } from '../contexts/user-context';
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions';
-import { firestoreSetMonitorEvent, firestoreSetUserReport } from '../services/api/FirebaseSetFunctions';
+import { firestoreSetMonitorEvent, firestoreSetUserNotification } from '../services/api/FirebaseSetFunctions';
 import { sendAlertEmail } from '../assets/functions/SendEmail';
 
 const UserResponseProtocolText = {
@@ -49,6 +49,9 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
     setIsButtonDisabled(true);
     await firestoreUpdateUserCanRecord(userState.uid, userDispatch, true);
     await firestoreUpdateCurrentEventVisualizedByUid(notificationId, true);
+
+    await firestoreSetUserNotification(notificationId, "help_incoming");
+
     setIsButtonDisabled(false);
     setChangeButton(true)
   }
@@ -66,13 +69,15 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
     try {
         // 1. Envia o e-mail através do seu endpoint de API seguro
         // await sendAlertEmail(emailContent);
-        await sendAlertEmail(emailContent);
+
         // 2. Continua com as operações de Firestore
         await firestoreUpdateUserCanRecord(userState.uid, userDispatch, false);
 
         await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
         await firestoreSetMonitorEvent(selectedNotification); 
         await firestoreDeleteAlertOnByUid(notificationId);
+
+        await firestoreSetUserNotification(notificationId, "incident_form", null, selectedNotification.monitor_id);
         
         setModalState(false);
 
@@ -96,7 +101,7 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
     if (selectedNotification.visualized === true){
       setChangeButton(true);
     }
-    if (selectedNotification.active === "inactive"){
+    if (selectedNotification.status === "inactive"){
       setIsButtonDisabled(true);
     }
   }, [])

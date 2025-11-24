@@ -175,7 +175,6 @@ const LocalCamera = ({ viewArea = "center" }) => {
     const [activeAlert, setActiveAlert] = useState(false);
 
     useEffect(() => {
-        console.log(userState.can_record);
         if(userState.can_record) {
             setActiveAlert(true);
         } else{

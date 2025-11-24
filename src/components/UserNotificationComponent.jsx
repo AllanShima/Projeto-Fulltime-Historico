@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
-// import {userEvents} from '../assets/data/TempData'
 import EventCardUser from './ui/EventCardUser'
 import { useUserContext } from '../contexts/user-context'
 import { firestoreGetEvents } from '../services/api/FirebaseGetFunctions'
 import { db } from '../services/firebase'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 
-const UserNotificationComponent = ({setNotificationButtonModal, setCurrentEvent}) => {
+const UserNotificationComponent = ({setNotificationButtonModal, setPdfButtonModal, setCurrentEvent}) => {
     const { userState, userDispatch } = useUserContext();
-    const [userEvents, setUserEvents] = useState([]);
+    const [userEvents, setUserEvents] = useState();
     const userId = userState?.uid;
 
     useEffect(() => {
@@ -18,14 +17,14 @@ const UserNotificationComponent = ({setNotificationButtonModal, setCurrentEvent}
             return; 
         }
 
-        const userEventCollectionRef = collection(db, "users", userId, "events");
+        const userEventCollectionRef = collection(db, "users", userId, "notifications");
 
         // 1. Defina a Query (ex: ordenar por data)
-        const q = query(userEventCollectionRef, orderBy("createdAt", "desc"));
+        const q = query(userEventCollectionRef, orderBy("date", "desc"));
 
         // 2. INICIA O OUVINTE em tempo real
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            console.log("Ouvinte de eventos em andamento! Dados atualizados recebidos.");
+            console.log("Ouvinte de notificações do f/safe em andamento! Dados atualizados sendo recebidos.");
 
             // 3. MAPEIA os novos dados contidos no SNAPSHOT do ouvinte.
             const newEvents = snapshot.docs.map(doc => ({
@@ -33,8 +32,7 @@ const UserNotificationComponent = ({setNotificationButtonModal, setCurrentEvent}
                 ...doc.data()
             }));
 
-            // 4. ATUALIZA O ESTADO COM OS DADOS DO OUVINTE
-            setUserEvents(newEvents); 
+            setUserEvents(newEvents);
         }, (error) => {
             // Trata erros que possam ocorrer com a conexão (permissão, rede)
             console.error("Erro no listener do Firestore:", error);
@@ -65,6 +63,7 @@ const UserNotificationComponent = ({setNotificationButtonModal, setCurrentEvent}
                         key={event.id} 
                         event={event} 
                         setNotificationButtonModal={setNotificationButtonModal}
+                        setPdfButtonModal={setPdfButtonModal}
                         setCurrentEvent={setCurrentEvent}
                     />
                     ))}          

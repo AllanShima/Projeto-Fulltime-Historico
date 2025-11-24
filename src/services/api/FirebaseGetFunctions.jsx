@@ -77,6 +77,34 @@ export const firestoreGetAllCurrentAlerts = async () => {
     }
 };
 
+// Pega todos os monitor_events (todos os documentos na coleção "monitor_events")
+export const firestoreGetAllMonitorEvents = async () => {
+
+    // 1. Crie a referência DIRETA à coleção "current_alerts" (Nível Superior)
+    const eventsCollectionRef = collection(db, "monitor_events");
+    const q = query(eventsCollectionRef);
+
+    try {
+        // 2. Busque o snapshot de todos os documentos na coleção
+        const snapshot = await getDocs(q);
+
+        // 3. Mapeie todos os documentos, extraindo o ID e os dados
+        const allCurrentAlerts = snapshot.docs.map(doc => ({
+            // O ID do documento (que pode ser o UID do usuário)
+            id: doc.id, 
+            // Os dados do alerta
+            ...doc.data()
+        }));
+
+        console.log(`Alertas encontrados: ${allCurrentAlerts.length}`);
+        return allCurrentAlerts;
+
+    } catch (error) {
+        console.error("Erro ao obter todos os alertas: ", error);
+        return [];
+    }
+};
+
 // -----
 
 // Pegar o alerta ativo, (se tiver) de acordo com o id do usuário

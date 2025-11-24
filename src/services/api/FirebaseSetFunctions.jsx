@@ -115,11 +115,18 @@ export const firestoreSetAlertOnByUid = async(event, userState, userDispatch, cu
     // 1. Define the reference to the subcollection
     const documentId = userState.uid;
     const docRef = doc(db, "current_alerts", documentId);
+
+    // 2. GERA UM ID ÚNICO PARA USAR COMO CAMPO 'id' NO CONTEÚDO
+    // Usamos o Auto-ID do Firestore para garantir unicidade e formato de ID
+    const newAlertRef = doc(collection(db, "current_alerts"));
+    const uniqueAlertId = newAlertRef.id;
+    
     const alertType = sevOptions[event];
 
     // Informações para notificação do monitor:
     
     await setDoc(docRef, {
+      monitor_id: uniqueAlertId, 
       uid: documentId,
       visualized: false,
       software_from: EventsConstants.SOFTWARES.F_SAFE,
@@ -152,18 +159,21 @@ export const firestoreSetMonitorEvent = async(event) => {
       throw new Error("Sem alerta selecionado!");
     }
 
+    const monitor_id = event.monitor_id;
+
     // 1. Define a referência para a subcoleção
-    const chatCollectionRef = collection(db, "monitor_events");
+    const docRef = doc(db, "monitor_events", monitor_id);
 
     const alertType = sevOptions[event.type]; // Assumindo que 'sevOptions' é definido
 
-    let docRef;
+    let additionalDoc;
 
     // 2. Cria o documento sem o ID no campo 'id'
     // Deixe o campo 'id' fora ou como null temporariamente se preferir.
     // Eu o removi abaixo para simplificar a criação inicial.
 
     const baseData = {
+      id: monitor_id,
       software_from: event.software_from,
       type: event.type,
       location: event.location,
@@ -174,12 +184,12 @@ export const firestoreSetMonitorEvent = async(event) => {
       video_recorded: null,
       camera: event.camera,
       date: event.date,
-      user_report: null,
+      user_forms: null,
       finished: new Date()
     };
     
     if (event.software_from == "f/safe") {
-      docRef = await addDoc(chatCollectionRef, {
+      additionalDoc = await setDoc(docRef, {
         ...baseData,
         title: "Alerta de Segurança",
         uid: event.uid,
@@ -189,7 +199,7 @@ export const firestoreSetMonitorEvent = async(event) => {
         style: EventsConstants.TYPES.EMERGENCY // Assumindo 'EventsConstants'
       });
     } else {
-      docRef = await addDoc(chatCollectionRef, {
+      additionalDoc = await setDoc(docRef, {
         ...baseData,
         title: event.title,
         uid: null,
@@ -200,11 +210,6 @@ export const firestoreSetMonitorEvent = async(event) => {
       });
     }
 
-    // ⭐️ 3. USA O updateDoc PARA ADICIONAR O ID AO CAMPO 'id'
-    await updateDoc(docRef, {
-      id: docRef.id // O ID do documento gerado automaticamente
-    });
-
     console.log("Evento inserido e atualizado com o ID: ", docRef.id);
   } catch (e) {
     console.error("Erro ao inserir/atualizar o evento: ", e);
@@ -213,57 +218,88 @@ export const firestoreSetMonitorEvent = async(event) => {
 
 
 // Guardando as respostas do sinal de alerta
-export const firestoreSetUserReport = async(userState, notificationData) => {
-  try {
-    // se por algum motivo não existe algum alerta selecionado
-    if (!notificationData){
-      throw new Error("Nenhum dado presente!");
+export const firestoreSetUserNotification = async(uid, type, report=null, monitor_id=null) => {
+  try {
+    // se por algum motivo não existe nenhum alerta selecionado
+    if (!type){
+      throw new Error("Nenhum tipo passado!");
+    }
+
+    // 1. Define a referência para a coleção de notificações
+    const notificationCollectionRef = collection(db, "users", uid, "notifications");
+    
+    // 2. GERA A REFERÊNCIA DO DOCUMENTO COM ID AUTOMÁTICO (Auto-ID)
+    // Isso cria a referência do documento e obtém o ID, sem gravar ainda.
+    const docRef = doc(notificationCollectionRef);
+    const notificationId = docRef.id; // ✅ ID gerado (ex: "X7sP...")
+
+    // 3. Define a estrutura base da notificação
+    const baseNotification = {
+        // ✅ OTIMIZAÇÃO: O 'id' do documento é inserido aqui na primeira gravação
+        id: notificationId, 
+        report: report,
+        monitor_id: monitor_id,
+        show_button: null, // Será definido nos ifs abaixo
+        camera: null, 
+        video_available: false,
+        uid: uid,
+        software_from: EventsConstants.SOFTWARES.F_CENTER,
+        date: new Date()
+    };
+    
+    let notificationData;
+
+    // 4. Determina os dados específicos com base no 'type'
+    if (type == "incident_form"){
+      notificationData = {
+          ...baseNotification,
+          title: "Formulário de Complemento do Incidente",
+          description: `Conte a sua parte do ocorrido de ${new Date()}`,
+          type: EventsConstants.TYPES.SYSTEM,
+          alert: EventsConstants.ALERTS.FORMS,
+          show_button: true, // Sobrescreve o null em baseNotification
+      };
+    } else if (type == "help_incoming") {
+      notificationData = {
+          ...baseNotification,
+          title: "Ajuda à Caminho",
+          description: "Um monitor visualizou o seu alerta e está a caminho do seu local",
+          type: EventsConstants.TYPES.EMERGENCY,
+          alert: EventsConstants.ALERTS.HELP,
+          show_button: false,
+      };
+    } else if (type == "live_camera") {
+      notificationData = {
+          ...baseNotification,
+          title: "Acesso temporário à Câmera",
+          description: "O monitor habilitou o acesso à camera do local",
+          type: EventsConstants.TYPES.ACCESS,
+          alert: EventsConstants.ALERTS.CAMERA,
+          show_button: true,
+      };
+    } else if (type == "report") {
+      notificationData = {
+          ...baseNotification,
+          title: "Relatório de Incidente",
+          description: `O relatório do último incidente foi disponibilizado`,
+          type: EventsConstants.TYPES.SYSTEM,
+          alert: EventsConstants.ALERTS.REPORT,
+          show_button: true,
+      };
+    } else {
+         throw new Error(`Tipo de notificação inválido: ${type}`);
     }
 
-    // 1. Define a referência para a subcoleção
-    const chatCollectionRef = collection(db, "users", uid, "notifications");
+    // ⭐️ 5. EXECUTA setDoc (UMA ÚNICA GRAVAÇÃO)
+    // Usa setDoc na referência (docRef) com o ID gerado, garantindo atomicidade.
+    await setDoc(docRef, notificationData);
 
-    // 2. Cria o documento sem o ID no campo 'id'
-    // Deixe o campo 'id' fora ou como null temporariamente se preferir.
-    // Eu o removi abaixo para simplificar a criação inicial.
+    console.log("Notificação do usuário inserida com o ID: ", notificationId);
+    return notificationId; // Retorna o ID se precisar dele externamente
 
-    // objeto de entrada
-    {
-      type: "report"
-      title: "Relatório"
-    }
-
-    // const type = 
-
-    const docRef = await addDoc(chatCollectionRef, {
-      incident_cause: null,
-      estimated_time: null,
-      incident_injures: null,
-      evidences: null,
-      monitor_answer: null,
-      response_time: null,
-      software_from: EventsConstants.SOFTWARES.F_SAFE,
-      title: notificationData.title,
-      description: "Nova mensagem do Operador disponível no Live Chat",
-      type: EventsConstants.TYPES.EMERGENCY,
-      severity: EventsConstants.SEVERITIES.CRITICAL,
-      alert: EventsConstants.ALERTS.REPORT,
-      show_button: false,
-      device: userState.first + " " + userState.last, 
-      camera: null, 
-      video_available: false,
-      createdAt: new Date()
-    });
-
-    // ⭐️ 3. USA O updateDoc PARA ADICIONAR O ID AO CAMPO 'id'
-    await updateDoc(docRef, {
-      id: docRef.id // O ID do documento gerado automaticamente
-    });
-
-    console.log("Notificação do usuário inserido e atualizado com o ID: ", docRef.id);
-  } catch (e) {
-    console.error("Erro ao inserir/atualizar a notificação do usuário: ", e);
-  }
+  } catch (e) {
+    console.error("Erro ao inserir/atualizar a notificação do usuário: ", e);
+  }
 }
 
 export const firestoreSetNewUser = async(userId, firstName, lastName, email, type, location, phone_number) => {
