@@ -80,4 +80,4 @@ Site implantado: https://fulltime-historico.web.app
     - Firestore;
 - React Icons
 - React Router
-- 
+- npm install jspdf html2canvas (pdf)

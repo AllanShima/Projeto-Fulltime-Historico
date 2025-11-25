@@ -22,8 +22,6 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
         previewEvent = selectedEvent;
     }
 
-    console.log(previewEvent);
-
     const downloadPdf = () => {
         window.alert("Downloading");
         setShowModal(false);
@@ -154,11 +152,7 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Gravação Disponível:</span>
-                                        <span className="text-gray-900">{previewEvent.video_available ? 'Sim' : 'Não'}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="font-medium text-gray-700">URL do vídeo (Vimeo):</span>
-                                        <span className="text-gray-900">{previewEvent.video_recorded}</span>
+                                        <span className="text-gray-900">{previewEvent.videos_recorded.length >= 1 ? 'Sim' : 'Não'}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="font-medium text-gray-700">Dispositivo Origem:</span>
@@ -168,6 +162,13 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
                             </div>
                         </div>
 
+                        {/* URL video */}
+                        <div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">URL do Vídeo</h3>
+                            <p className="text-xs text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                {previewEvent.videos_recorded}
+                            </p>
+                        </div>
                         {/* Event Description */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Descrição do Incidente</h3>

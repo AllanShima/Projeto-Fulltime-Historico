@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { firestoreUpdateMonitorEventById } from '../services/api/FirebaseUpdateFunctions';
+import { firestoreUpdateMonitorEventById, firestoreUpdateUserNotificationShowButtonFalse } from '../services/api/FirebaseUpdateFunctions';
 import { firestoreGetAllMonitorEvents } from '../services/api/FirebaseGetFunctions';
 import { useUserContext } from '../contexts/user-context';
 
@@ -37,16 +37,11 @@ const UserReport = ({currentNotification, setNotificationButtonModal}) => {
     let monitorEventId
 
     for (let i = 0; i < monitor_events.length; i++) {
-        // Pegando o 
+        // Pegando o id do evento do monitor
         if (monitor_events[i].id == currentNotification.monitor_id) {
             monitorEventId = monitor_events[i].id;
         }
     }
-
-    // if monitor event.finished == currentNotification.date && userState.uid == monitorEvent.uid {
-    //  monitorEventId = monitorEvent.id;
-    // }
-
 
     const formsTemplate = {
       incident_cause: text1,
@@ -56,6 +51,8 @@ const UserReport = ({currentNotification, setNotificationButtonModal}) => {
       monitor_answer: text5
     }
     await firestoreUpdateMonitorEventById(monitorEventId, formsTemplate);
+
+    await firestoreUpdateUserNotificationShowButtonFalse(userState.uid, currentNotification.id);
 
     setNotificationButtonModal(false);
     window.alert("Obrigado pela sua colaboração! Formulário enviado.");

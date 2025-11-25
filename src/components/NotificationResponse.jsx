@@ -5,11 +5,14 @@ import { FaRegClock } from "react-icons/fa";
 import { FiActivity } from "react-icons/fi";
 import { FiAlertTriangle } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid, firestoreUpdateUserCanRecord } from '../services/api/FirebaseUpdateFunctions';
+import { firestoreUpdateCurrentEventStatusByUid, firestoreUpdateCurrentEventVisualizedByUid, firestoreUpdateUserCanRecord, firestoreUpdateUserNotificationShowButtonFalse } from '../services/api/FirebaseUpdateFunctions';
 import { useUserContext } from '../contexts/user-context';
 import { firestoreDeleteAlertOnByUid } from '../services/api/FirebaseDeleteFunctions';
 import { firestoreSetMonitorEvent, firestoreSetUserNotification } from '../services/api/FirebaseSetFunctions';
 import { sendAlertEmail } from '../assets/functions/SendEmail';
+import { db } from '../services/firebase';
+import { collection, getDocs, query } from 'firebase/firestore';
+import { firestoreGetAlertOnByUid } from '../services/api/FirebaseGetFunctions';
 
 const UserResponseProtocolText = {
   "f/safe": {
@@ -67,26 +70,56 @@ const NotificationResponse = ({setModalState, selectedNotification}) => {
     };
 
     try {
-        // 1. Envia o e-mail através do seu endpoint de API seguro
-        // await sendAlertEmail(emailContent);
+      // 1. Envia o e-mail através do seu endpoint de API seguro
+      // await sendAlertEmail(emailContent);
 
-        // 2. Continua com as operações de Firestore
-        await firestoreUpdateUserCanRecord(userState.uid, userDispatch, false);
+      // 2. Continua com as operações de Firestore
+      await firestoreUpdateUserCanRecord(userState.uid, userDispatch, false);
 
-        await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
-        await firestoreSetMonitorEvent(selectedNotification); 
-        await firestoreDeleteAlertOnByUid(notificationId);
+      // Fazer esperar 10 segundos aqui ANTES DE EXECUTAR AS FUNÇÕES
+      console.log("Aguardando 10 segundos antes de finalizar o alerta...");
+      // ************ IMPLEMENTAÇÃO DO ATRASO ************
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      console.log("10 segundos se passaram. Executando finalização.");
 
-        await firestoreSetUserNotification(notificationId, "incident_form", null, selectedNotification.monitor_id);
+      await firestoreUpdateCurrentEventStatusByUid(notificationId, "inactive");
+
+      const newCurrentAlert = await firestoreGetAlertOnByUid(notificationId);
+
+      await firestoreSetMonitorEvent(newCurrentAlert); 
+      await firestoreDeleteAlertOnByUid(notificationId);
+      await firestoreSetUserNotification(notificationId, "incident_form", null, selectedNotification.monitor_id);
+
+      // Setando show_button para false de todas as notificações do usuário de visualização de camera
+      // 1. Crie a referência DIRETA à coleção "current_alerts" (Nível Superior)
+      const userNotificationsCollection = collection(db, "users", notificationId, "notifications");
+      const q = query(userNotificationsCollection);
+
+      // 2. Busque o snapshot de todos os documentos na coleção
+      const snapshot = await getDocs(q);
+
+      // 3. Mapeie todos os documentos, extraindo o ID e os dados
+      const allUserNotifications = snapshot.docs.map(doc => ({
+          // O ID do documento (que pode ser o UID do usuário)
+          id: doc.id, 
+          // Os dados do alerta
+          ...doc.data()
+      }));
+
+      for (let i = 0; i < allUserNotifications.length; i++){
+        if (allUserNotifications[i].alert == "camera") {
+          await firestoreUpdateUserNotificationShowButtonFalse(notificationId, allUserNotifications[i].id);
+        }
+      }
         
-        setModalState(false);
+      setModalState(false);
 
-    } catch (error) {
-        console.error("Falha na operação completa de 'endAlert', e-mail pode ter falhado.", error);
-        // Implemente uma UI para notificar o usuário sobre a falha do e-mail.
-    } finally {
-        setIsButtonDisabled(false);
-    }
+      } catch (error) {
+          console.error("Falha na operação completa de 'endAlert', e-mail pode ter falhado.", error);
+          // Implemente uma UI para notificar o usuário sobre a falha do e-mail.
+      } finally {
+          setIsButtonDisabled(false);
+      }
   }
 
   const dismissAlert = async() => {

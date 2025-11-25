@@ -129,6 +129,7 @@ export const firestoreSetAlertOnByUid = async(event, userState, userDispatch, cu
       monitor_id: uniqueAlertId, 
       uid: documentId,
       visualized: false,
+      videos_recorded: [],
       software_from: EventsConstants.SOFTWARES.F_SAFE,
       title: "Alerta de Segurança",
       description: "Alerta iminente de usuário f/safe",
@@ -181,7 +182,7 @@ export const firestoreSetMonitorEvent = async(event) => {
       device: event.device,
       device_pfp: null,
       video_available: false,
-      video_recorded: null,
+      videos_recorded: event.videos_recorded,
       camera: event.camera,
       date: event.date,
       user_forms: null,
@@ -218,7 +219,7 @@ export const firestoreSetMonitorEvent = async(event) => {
 
 
 // Guardando as respostas do sinal de alerta
-export const firestoreSetUserNotification = async(uid, type, report=null, monitor_id=null) => {
+export const firestoreSetUserNotification = async(uid, type, report=null, monitor_id=null, camera_info=null) => {
   try {
     // se por algum motivo não existe nenhum alerta selecionado
     if (!type){
@@ -240,7 +241,7 @@ export const firestoreSetUserNotification = async(uid, type, report=null, monito
         report: report,
         monitor_id: monitor_id,
         show_button: null, // Será definido nos ifs abaixo
-        camera: null, 
+        camera: camera_info, 
         video_available: false,
         uid: uid,
         software_from: EventsConstants.SOFTWARES.F_CENTER,
@@ -333,8 +334,8 @@ export const firebaseSetMessages = async(selectedContact, textareaValue, userSta
         const chatCollectionRef = collection(db, "users", userState.uid, "chats", senderFullnameCollection, "messages");
         // 2. Query for the document with the highest 'id'
         const q = query(chatCollectionRef,
-            orderBy("id", "desc"), // Sort by 'id' in descending order
-            limit(1)             // Only get the top document
+          orderBy("id", "desc"), // Sort by 'id' in descending order
+          limit(1)             // Only get the top document
         );
         // 3. Execute the query
         const snapshot = await getDocs(q);

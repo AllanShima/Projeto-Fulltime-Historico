@@ -4,10 +4,15 @@ import { FiMapPin } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa";
 import { FiActivity } from "react-icons/fi";
 import { FiAlertTriangle } from "react-icons/fi";
+import { MdKeyboardArrowUp } from "react-icons/md";
 import RecordingIndicator from './ui/RecordingIndicator';
 import SeverityIndicator from './ui/SeverityIndicator';
 import SoftwareIcon from './ui/SoftwareIcon';
 import getTimePassed from '../assets/functions/GetTimePassed';
+
+import {cameras} from '../assets/data/TempData'
+import { firestoreSetUserNotification } from '../services/api/FirebaseSetFunctions';
+import { firestoreUpdateCurrentEventCameraByUid } from '../services/api/FirebaseUpdateFunctions';
 
 const NotificationsDetails = {
     "f/safe": {
@@ -41,9 +46,21 @@ const AlertProtocols = [
     "Responder à chamada"
 ]
 
+// Dados Mock de Câmeras para o Dropdown
+// const MOCK_CAMERAS = [
+//     { id: 'cam1', name: 'Câmera Principal (Entrada)' },
+//     { id: 'cam2', name: 'Câmera Secundária (Corredor)' },
+//     { id: 'cam3', name: 'Câmera Traseira (Estacionamento)' },
+// ];
+
 const NotificationDetails = ({setModalState, selectedNotification}) => {
 
     const notification = selectedNotification;
+
+    const [showCamerasDropdown, setShowCamerasDropdown] = useState(false);
+    const [cameraOption, setCameraOption] = useState(cameras[0]);
+
+    const [offImmediatly, setOffImmediatly] = useState(false);
 
     const [timePassed, setTimePassed] = useState('');
 
@@ -76,7 +93,10 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
     const severity = severityOpt[notification.severity][0];
 
     const sendCameraAccess = async() => {
-
+        await firestoreSetUserNotification(notification.uid, "live_camera", null, notification.monitor_id, cameraOption);
+        await firestoreUpdateCurrentEventCameraByUid(notification.uid, cameraOption);
+        setOffImmediatly(true)
+        window.alert("Acesso à camera dada ao usuário...");
     }
 
     return (
@@ -193,16 +213,59 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
 
                         {/* Action Buttons */}
                         <div className='flex justify-between px-10 w-full h-10'>
-                            {notification.camera == null && (
-                                <button onClick={sendCameraAccess} className={`w-fit px-4 h-full rounded-lg text-white cursor-pointer ${hoverStyle1}`}>
-                                    Enviar acesso à câmera
-                                </button>                                
+                            {notification.camera == null && !offImmediatly && (
+                                <span className='flex space-x-2'>
+                                    <span className='relative flex flex-col w-full h-full space-x-2'>
+                                        {/* Dropdown Container (Controlado por showCamerasDropdown) */}
+                                        {showCamerasDropdown && (
+                                            // Adicionado 'bottom-full mt-1' para posicionar abaixo do botão
+                                            <div className='absolute bottom-full mb-1 flex flex-col w-full min-w-[120px] max-h-40 overflow-y-auto bg-white border border-gray-300 shadow-lg rounded-lg z-20'>
+                                                {cameras.map((camera) => (
+                                                    <button
+                                                        key={camera.id}
+                                                        // 1. Atualiza a opção selecionada
+                                                        onClick={() => {
+                                                            setCameraOption(camera);
+                                                            // 2. Fecha o dropdown após a seleção
+                                                            setShowCamerasDropdown(false);
+                                                        }}
+                                                        className={`py-2 px-4 text-left hover:bg-red-100 transition duration-150 text-xs ${
+                                                            camera.name === cameraOption.name
+                                                                ? 'bg-red-50 font-bold text-red-600' 
+                                                                : 'text-gray-700'
+                                                        }`}
+                                                    >
+                                                        {camera.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {/* Fim do Dropdown Container */}
+                                        <button 
+                                            onClick={() => setShowCamerasDropdown(!showCamerasDropdown)}
+                                            className='flex items-center w-fit h-full px-4 space-x-2 bg-gray-300 rounded-md hover:bg-gray-400 transition'
+                                        >
+                                            <span className='text-xs w-15'>
+                                                {cameraOption.name}
+                                            </span>     
+                                            <span>
+                                                <MdKeyboardArrowUp/>
+                                            </span>                                       
+                                        </button>
+                                    </span>
+                                    <button onClick={sendCameraAccess} className={`flex w-full px-4 h-full rounded-lg text-white cursor-pointer ${hoverStyle1}`}>
+                                        <span className='flex items-center w-30 text-sm'>
+                                           Enviar acesso à câmera 
+                                        </span>
+                                        
+                                    </button>        
+                                </span>   
                             )}
-                            <button onClick={() => setModalState(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
-                            <p className='text-gray-700'>
-                                Voltar
-                            </p>
-                            </button>
+                            <button onClick={() => setModalState(false)} className='w-35 ml-auto mr-auto h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
+                                <p className='text-gray-700'>
+                                    Voltar
+                                </p>
+                            </button>  
                         </div>
                     </div>
                 </div>

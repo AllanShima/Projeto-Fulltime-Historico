@@ -13,6 +13,7 @@ import { db } from '../services/firebase'
 import { collection, doc, onSnapshot, query } from 'firebase/firestore'
 import UserReport from './UserReport'
 import PdfViewer from './PdfViewer'
+import UserLiveCameraView from './UserLiveCameraView'
 
 // selectedAlert object;
   // {
@@ -35,6 +36,7 @@ const WindowUser = () => {
 
   const [notificationButtonModal, setNotificationButtonModal] = useState(false);
   const [pdfButtonModal, setPdfButtonModal] = useState(false);
+  const [cameraViewButtonModal, setCameraViewButtonModal] = useState(false);
 
   const [selectedAlertType, setSelectedAlertType] = useState(null); // Apenas o nome do alerta para inserir no banco
   const [selectedAlert, setSelectedAlert] = useState(null); // Alerta enviado
@@ -203,33 +205,16 @@ const WindowUser = () => {
           </div>
         </div>
       )}
-      {notificationButtonModal && (
-        <>
-          {currentEvent.alert === "camera" ? (
-            <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
-              <div className='grid content-between w-fit h-fit space-y-5 p-5 bg-white rounded-2xl font-regular'>
-                <span className={`flex w-50 h-full rounded-lg justify-center items-center text-xl ${colorStyle}`}>
-                  <EventIconComponent/>
-                </span>
-                <h2 className='text-center mt-5 font-bold'>
-                  {typeText}
-                </h2>
-                <div className='flex justify-between space-x-5 px-10 w-full h-10'>
-                  <button className={`w-40 h-full rounded-lg text-white ${hoverStyle2}`}>
-                    Sim
-                  </button>
-                  <button onClick={() => setNotificationButtonModal(false)} className='w-40 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
-                    Cancelar
-                  </button>
-                </div>              
-              </div>
-            </div>
-          ) : (
-            <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
-              <UserReport currentNotification={currentEvent} setNotificationButtonModal={setNotificationButtonModal}/>              
-            </div>
-          )}        
-        </>
+      {notificationButtonModal && currentEvent.alert === "forms" && (
+        <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+          <UserReport currentNotification={currentEvent} setNotificationButtonModal={setNotificationButtonModal}/>              
+        </div>
+      )}
+
+      {cameraViewButtonModal && currentEvent.alert == "camera" && (
+        <div className='fixed flex justify-center items-center top-0 bg-black/50 z-20 min-h-screen w-screen h-screen'>
+          <UserLiveCameraView currentNotification={currentEvent} setCameraViewButtonModal={setCameraViewButtonModal}/>
+        </div>
       )}
 
       {pdfButtonModal && currentEvent.alert == "report" && (
@@ -240,7 +225,12 @@ const WindowUser = () => {
 
       <div className='flex flex-1 w-full h-full'>
         <div className='w-1/2 h-full'>
-          <SidebarUser setNotificationButtonModal={setNotificationButtonModal} setPdfButtonModal={setPdfButtonModal} setCurrentEvent={setCurrentEvent}/>
+          <SidebarUser 
+          setNotificationButtonModal={setNotificationButtonModal} 
+          setPdfButtonModal={setPdfButtonModal} 
+          setCameraViewButtonModal={setCameraViewButtonModal} 
+          setCurrentEvent={setCurrentEvent}
+          />
         </div>
         
         <div className='w-1/2 h-full'>

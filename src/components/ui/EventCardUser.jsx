@@ -26,7 +26,7 @@ const typeSpecs = {
   "alert": ["bg-blue-100 text-blue-800", IoAlertCircleOutline],
 }
 
-const EventCardUser = ({ event, setNotificationButtonModal, setPdfButtonModal, setCurrentEvent }) => {
+const EventCardUser = ({ event, setNotificationButtonModal, setPdfButtonModal, setCameraViewButtonModal, setCurrentEvent }) => {
   const [timePassed, setTimePassed] = useState('');
 
     // ⭐️ NOVA LÓGICA DE TRATAMENTO DE DATA (Para ser usada no retorno)
@@ -84,10 +84,11 @@ const EventCardUser = ({ event, setNotificationButtonModal, setPdfButtonModal, s
 
   const buttonClickHandler = () => {
     setCurrentEvent(event);
-    console.log(event);
     if (event.alert == "report"){
       setPdfButtonModal(true);
       console.log(event.alert);
+    } else if (event.alert == "camera"){
+      setCameraViewButtonModal(true); 
     } else{
       setNotificationButtonModal(true); 
     }
