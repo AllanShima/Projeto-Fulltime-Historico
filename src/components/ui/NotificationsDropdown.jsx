@@ -3,7 +3,7 @@ import NotificationCard from '../NotificationCard'
 
 const NotificationsDropdown = ({ notifications, setSelectedNotification, setShowResponseModal, setShowDetailsModal }) => {
   return (
-    <div className='fixed z-10 flex flex-col mt-2 mr-20 w-70 h-fit bg-white rounded-lg shadow-md outline-1 text-gray-300'>
+    <div className='fixed z-10 flex flex-col mt-2 w-70 h-fit bg-white rounded-lg shadow-md outline-1 text-gray-300 right-3'>
       {notifications.length >= 1 ? (
         <ul>
           {notifications.map((notification, index) => (

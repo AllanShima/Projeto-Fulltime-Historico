@@ -349,7 +349,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
 
             {/* Mensagem de Erro/Status */}
             {isButtonDisabled && (
-                <div className="absolute top-4 left-4 z-50 bg-yellow-500/90 text-gray-900 font-semibold px-3 py-1 rounded-lg shadow-xl">
+                <div className="absolute top-18 left-4 mr-auto ml-auto z-50 bg-red-500/90 text-white font-semibold px-3 py-1 rounded-lg shadow-xl">
                     {disableReason}
                 </div>
             )}

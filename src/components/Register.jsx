@@ -66,13 +66,10 @@ const Register = () => {
             geocoder.geocode({ address: address }, (results, status) => {
                 if (status === 'OK' && results.length > 0) {
                     const location = results[0].geometry.location;
-                    setConfirmedLocation(location);
-                    resolve(status);
+                    resolve({ status: 'OK', location: location });
                 } else {
-                    // Se o status não for OK, o endereço não foi encontrado ou é inválido.
-                    setConfirmedLocation(null);
                     console.error('Geocoding falhou devido a: ' + status);
-                    reject(status);
+                    reject(status); // Rejeita com o status de erro
                 }
             });            
         })
@@ -86,15 +83,19 @@ const Register = () => {
             return;
         }
 
-        const geocodeStatus = await handleGeocode();
+        let finalLocation = null;
 
-        // Se o status não for OK, mostramos a mensagem de erro.
-        if (geocodeStatus !== "OK"){
-            // Mensagem mais específica se a biblioteca não carregou a tempo
-            if (geocodeStatus === "NOT_LOADED") {
+        try {
+            // 🚀 CAPTURA O RESULTADO AQUI
+            const geocodeResult = await handleGeocode();
+            finalLocation = geocodeResult.location; // Pega o objeto location
+            
+        } catch (errorStatus) {
+            // Captura a rejeição do Geocoding
+            if (errorStatus === "NOT_LOADED") {
                 window.alert("O mapa ainda está carregando. Por favor, tente novamente em alguns segundos.");
             } else {
-                window.alert("Endereço inválido! O Geocoding retornou status: " + geocodeStatus);
+                window.alert("Endereço inválido! O Geocoding retornou status: " + errorStatus);
             }
             return;
         }
@@ -108,7 +109,7 @@ const Register = () => {
                 const user = userCredential.user;
 
                 // Registrando no firestore o UID, fullName, type
-                firestoreSetNewUser(user.uid, firstName, lastName, email, buttonSelected, confirmedLocation, phoneNumber);
+                firestoreSetNewUser(user.uid, firstName, lastName, email, buttonSelected, address, phoneNumber);
 
                 // O usuário é automaticamente logado depois da sua conta criada
                 if(buttonSelected === "f/center"){

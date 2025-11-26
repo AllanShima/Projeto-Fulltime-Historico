@@ -126,9 +126,9 @@ const TabHistory = () => {
                                 <h1 className='h-fit'>Histórico de Relatório dos Eventos</h1> 
                                 <h3 className='text-xs text-gray-400'>{events.length} {events.length > 1 ? "Eventos encontrados" : "Evento encontrado"}</h3>
                             </span>
-                            <button onClick={() => setShowExportAllModal(!showExportAllModal)}>
+                            {/* <button onClick={() => setShowExportAllModal(!showExportAllModal)}>
                                 <ExportButton text="Exportar Tudo"/>
-                            </button>
+                            </button> */}
                         </span>
                         
                         {/* Sistema de procura */}

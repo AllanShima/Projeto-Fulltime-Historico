@@ -4,7 +4,16 @@ import { IoClose } from 'react-icons/io5'
 import { AlertTextOptions } from './ui/UserProtocolTextOptions';
 
 const UserProtocolsModalComponent = ({setSafetyProtocolsModal, selectedAlert}) => {
-  const selectedAlertTextList = AlertTextOptions[selectedAlert?.type];
+  let selectedAlertTextList;
+  let text;
+  if (typeof selectedAlert == 'object') {
+    selectedAlertTextList = AlertTextOptions[selectedAlert?.type];
+    text = selectedAlert?.type;
+  } else {
+    selectedAlertTextList = AlertTextOptions[selectedAlert];
+    text = selectedAlert;
+  }
+  
   return (
     <div className='fixed flex justify-center items-center top-0 bg-black/50 z-40 min-h-screen w-screen h-screen'>
       <div className='grid content-between w-fit h-fit bg-white rounded-2xl font-regular'>
@@ -21,25 +30,22 @@ const UserProtocolsModalComponent = ({setSafetyProtocolsModal, selectedAlert}) =
             <div className='pb-3'>
               <div className="flex items-center gap-2">
                 <FiAlertTriangle className="h-5 w-5 text-destructive text-red-600"/>
-                <h1 className='text-primary font-bold'>{selectedAlert?.title}</h1>
+                <h1 className='text-primary font-bold'>Alerta de Segurança</h1>
               </div>
               <p className='text-xs text-gray-500 font-regular'>
                 Prossiga com os procedimentos de segurança na espera de ajuda
-              </p>
-              <p className='text-xs text-gray-500 font-regular'>
-                Sua localização: {selectedAlert?.location}
               </p>
             </div>
             <hr className='text-gray-500'/>
             <div className="space-y-4 pt-3">
               {/* Recommended Actions */}
               <div className="space-y-2">
-                <h4 className="font-semibold text-md text-red-700">Protocolos de Segurança - {selectedAlert?.type}</h4>
+                <h4 className="font-semibold text-md text-red-700">Protocolos de Segurança - {text}</h4>
                 <ul className="space-y-1 text-sm max-h-[50vh] overflow-y-auto ">
                     {selectedAlertTextList.map((text, index) => (
-                        <li key={index}>
-                            • {text}
-                        </li>
+                      <li key={index}>
+                        • {text}
+                      </li>
                     ))}
                 </ul>
               </div>

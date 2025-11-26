@@ -15,10 +15,21 @@ import { firestoreGetContacts } from '../services/api/FirebaseGetFunctions';
 //     profileUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f4/USAFA_Hosts_Elon_Musk_%28Image_1_of_17%29_%28cropped%29.jpg"
 // }
 
-const LiveChatComponent = ({ monitoring=true }) => {
+const LiveChatComponent = ({ monitoring=true, setSelectedUserContact, setButtonClick }) => {
 
     const [selectedContact, setSelectedContact] = useState({});
     const [newContacts, setNewContacts] = useState([{}]);
+
+    const setSelected = (contact) => {
+        // 🚀 CORREÇÃO DE SEGURANÇA: Verifica se a prop é uma função antes de chamar
+        if (typeof setSelectedUserContact === 'function') {
+            setSelectedUserContact(contact); 
+        } else {
+            console.warn("A prop setSelectedUserContact não é uma função e foi ignorada.");
+        }
+        setSelectedContact(contact)
+        setButtonClick(false);
+     }
 
     // Atualizar a lista de contatos
     useEffect(() => {
@@ -30,7 +41,6 @@ const LiveChatComponent = ({ monitoring=true }) => {
                 const contatos = await firestoreGetContacts(monitoring); 
                 
                 if (contatos) {
-                    console.log("Contatos Encontrados:", contatos);
                     setNewContacts(contatos);
                 } else {
                     console.log("Lista de contatos vazia.");
@@ -57,7 +67,7 @@ const LiveChatComponent = ({ monitoring=true }) => {
                 {/* Contatos */}
                 <div className='flex flex-col w-full h-full space-y-18 rounded-sm'>
                     {newContacts.map((contact, index) => (
-                        <button key={index} onClick={() => setSelectedContact(contact)} className={`relative w-full h-fit`}>
+                        <button key={index} onClick={() => setSelected(contact)} className={`relative w-full h-fit`}>
                             <ContactItem contact={contact} selectedContact={selectedContact}/>
                         </button>
                     ))}

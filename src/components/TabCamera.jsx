@@ -49,7 +49,7 @@ const TabCamera = () => {
 
     // 4. CLEANUP CRUCIAL para o listener
     return () => {
-      console.log("Listener de current_Alerts cancelado.");
+      console.log("Listener de monitor_events cancelado.");
       unsubscribeAlerts();
     };
   }, []);

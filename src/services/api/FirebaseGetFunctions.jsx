@@ -181,7 +181,7 @@ export const firestoreGetNotifications = async () => {
     }
 }
 
-export const firestoreGetContacts = async(userType) => {
+export const firestoreGetContacts = async(monitoring) => {
     try {
         // const userCollection = (userState.first + userState.last).toLowerCase();
         const chatCollectionRef = collection(db, "users");
@@ -200,7 +200,7 @@ export const firestoreGetContacts = async(userType) => {
             }));
             const filteredContacts = allContactsData.filter(contact => {
                 // Note: Assumindo que o campo com o tipo de contato é 'usertype'
-                return userType 
+                return monitoring 
                 ? contact.usertype === "f/safe" 
                 : contact.usertype === "f/center";
             });

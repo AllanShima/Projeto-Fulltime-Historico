@@ -2,73 +2,118 @@ import React, { useEffect, useState } from 'react'
 import {
     APIProvider, 
     Map, 
-    useApiIsLoaded
+    useApiIsLoaded,
+    // 💡 Importamos os componentes para o Popup/Marcador
+    Marker,
+    InfoWindow 
 } from '@vis.gl/react-google-maps';
 
-// A sintaxe para importar algo do .env é diferente dependendo do template em que o projeto foi criado:
+// const ENDERECO_DESEJADO = "Av. Paulista, 1578, São Paulo, Brasil";
+const API_KEY = 'AIzaSyA8d0Ei0JfjStQcFXOQ0FxG7GSYXZOx7EI';
 
-// Se for pelo Create React App (CRA), utiliza-se: process.env.REACT_APP_...
-// Se o projeto for criado usando VITE, utiliza-se: import.meta.env.VITE_...
+const MAP_ID = '6dc58fdc85a46b2e8d994e53'; // nova instancia
 
-const ENDERECO_DESEJADO = "Av. Paulista, 1578, São Paulo, Brasil";
+// 1. Defina o nível de zoom a partir do qual o Popup deve aparecer
+const MIN_ZOOM_FOR_POPUP = 15;
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-const GeocodeComponent = () => {
-    // Estado para armazenar as coordenadas geográficas
+const GeocodeComponent = ({selectedAddress="Av. Paulista, 1578, São Paulo, Brasil"}) => {
     const [coordenadas, setCoordenadas] = useState(null);
-    const apiLoaded = useApiIsLoaded(); // Hook para saber se a API do Google Maps já carregou
+    const [mapZoom, setMapZoom] = useState(null); // 💡 Novo estado para rastrear o zoom
+    const apiLoaded = useApiIsLoaded(); 
+    // ... outros estados (currentEvents, userContacts, monitorContacts) ...
 
     useEffect(() => {
-        // Verifica se a API do Google Maps (google.maps) carregou com sucesso
-        if (apiLoaded) {
-            // Cria uma nova instância do Geocoder
+        // ... (sua lógica de Geocoding para obter setCoordenadas) ...
+        if (apiLoaded && selectedAddress) {
+            console.log("Atualizou??");
             const geocoder = new google.maps.Geocoder();
-
-            // Chama o método geocode com o endereço
-            geocoder.geocode({ address: ENDERECO_DESEJADO }, (results, status) => {
+            geocoder.geocode({ address: selectedAddress }, (results, status) => {
                 if (status === 'OK' && results.length > 0) {
                     const location = results[0].geometry.location;
                     
-                    // Armazena a latitude e longitude
                     setCoordenadas({
                         lat: location.lat(),
                         lng: location.lng(),
                     });
-
-                    // Exibe no console
-                    console.log(`Endereço: ${ENDERECO_DESEJADO}`);
-                    console.log(`Latitude: ${location.lat()}`);
-                    console.log(`Longitude: ${location.lng()}`);
-
+                    
+                    // console.log(...)
                 } else {
                     console.error('Geocoding falhou devido a: ' + status);
-                    // O status mais comum se a API não estiver habilitada ou a chave for inválida é 'ZERO_RESULTS'
                 }
             });
         }
-    }, [apiLoaded]); // Executa sempre que o estado da API muda para 'loaded'
+    }, [apiLoaded, selectedAddress]);
 
     // Define o centro do mapa para as coordenadas encontradas ou um valor padrão
     const center = coordenadas || { lat: 22.54992, lng: 0 };
-    const zoom = coordenadas ? 15 : 3; // Aumenta o zoom se as coordenadas forem encontradas
+    // O zoom inicial será 15 se as coordenadas forem encontradas
+    const initialZoom = coordenadas ? MIN_ZOOM_FOR_POPUP : 3; 
+
+    // Função chamada quando o zoom do mapa muda
+    const handleMapZoomChange = (event) => {
+        setMapZoom(event.detail.zoom);
+    };
+
+    // 💡 Condição para exibir o Popup
+    const showPopup = coordenadas && mapZoom >= MIN_ZOOM_FOR_POPUP;
+
+    // Dentro de GeocodeComponent
 
     return (
-        <Map
-            center={center}
-            zoom={zoom}
-            gestureHandling='greedy'
-            disableDefaultUI
-        />
+        // 💡 NOVO: Use um div como contêiner principal flexível e de altura total
+        <div className='flex flex-col w-full h-full'> 
+            
+            {/* 1. O Cabeçalho (Altura Fixa: h-10) */}
+            <div className='flex justify-center items-center w-full h-10 bg-gray-100 font-light'>
+                
+                {/* O conteúdo do cabeçalho pode ser simplificado (não relacionado ao erro) */}
+                <h1>
+                    {selectedAddress === "Av. Paulista, 1578, São Paulo, Brasil" 
+                        ? "(Endereço Padrão)" 
+                        : selectedAddress}
+                </h1>
+            </div>
+
+            {/* 2. O Mapa (Altura Flexível: flex-1) */}
+            <Map
+                // 💡 Adicione a classe flex-1 para ocupar o espaço restante
+                className='flex-1' 
+                center={center}
+                zoom={initialZoom}
+                gestureHandling='greedy'
+                disableDefaultUI
+                onZoomChanged={handleMapZoomChange} 
+            >
+                <Marker position={coordenadas}>
+                    {/* O InfoWindow é o nosso "Popup". 
+                    Ele será exibido condicionalmente baseado no zoom.*/}
+                    {showPopup && (
+                        <InfoWindow 
+                            position={coordenadas} 
+                            // O disableAutoPan garante que o mapa não se mova para centralizar o popup
+                            disableAutoPan={true}
+                        >
+                            <div style={{ padding: '5px' }}>
+                                📌 Local Exato do Endereço
+                            </div>
+                        </InfoWindow>
+                    )}
+                </Marker>
+            </Map>
+        </div>
     );
 };
 
-const GoogleMapsComponent = () => {
-
+const GoogleMapsComponent = ({selectedAddress}) => {
     return (
-        <APIProvider apiKey={API_KEY} libraries={['marker', 'geometry']}>
+        // 💡 Certifique-se de que 'geometry' está nas libraries para o Circle funcionar
+        <APIProvider 
+        apiKey={API_KEY} 
+        mapId={MAP_ID}
+        libraries={['marker', 'geometry']}
+        > 
             <div className='w-full h-full'>
-                <GeocodeComponent/>           
+                <GeocodeComponent selectedAddress={selectedAddress}/>
             </div>
         </APIProvider>
     )

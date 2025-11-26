@@ -133,12 +133,6 @@ const UserLiveCameraView = ({currentNotification, setCameraViewButtonModal}) => 
                         }}
                     />                    
                 </div>
-                
-                {/* 6. OUTROS CONTROLES OU INFORMAÇÕES (Opcional) */}
-                <div className="mt-4 text-sm text-gray-600">
-                    <p>Área de foco: **{                                                                                                                  }**</p>
-                    {/* Você pode adicionar botões de gravação ou outras ações aqui */}
-                </div>
             </div>              
         </div>
     )

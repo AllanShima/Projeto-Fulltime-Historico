@@ -14,7 +14,7 @@ const SettingsDropdown = ({ MenuOptions }) => {
   }
 
   return (
-    <div className='fixed z-30 flex flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
+    <div className='fixed z-30 flex flex-col mt-10 w-fit h-fit p-3 outline-1 text-gray-200 bg-gray-50 rounded-lg shadow-xl'>
       <ul>
         {MenuOptions.map((option, index) => (
           <li key={index}>

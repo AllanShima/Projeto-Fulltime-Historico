@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import SoftwareIcon from './ui/SoftwareIcon';
 import { useUserContext } from '../contexts/user-context';
 import { firestoreSetUserNotification } from '../services/api/FirebaseSetFunctions';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 // // Apenas a data:
 // <p>{evento.dataHora.toLocaleDateString()}</p> // Resultado (no Brasil): "10/11/2025"
 
@@ -13,6 +15,9 @@ import { firestoreSetUserNotification } from '../services/api/FirebaseSetFunctio
 const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
     const {userState, userDispatch} = useUserContext();
 
+    // ⭐️ A. Crie a referência para o conteúdo do relatório
+    const reportRef = useRef(null);
+
     let previewEvent;
 
     if (selectedEvent.software_from == "f/center") {
@@ -22,10 +27,91 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
         previewEvent = selectedEvent;
     }
 
-    const downloadPdf = () => {
-        window.alert("Downloading");
+    // ⭐️ B. Lógica de Download do PDF
+    const downloadPdf = async () => {
+        const input = reportRef.current;
+        const parentContainer = input.parentElement; // O elemento pai que limita a altura e tem 'h-165'
+
+        if (!input) return;
+
+        // --- ⭐️ Passo 1: Preparar para Captura ⭐️ ---
+        // 1. Guardar e forçar estilos para remover rolagem/limite
+        const originalStyle = {
+            maxHeight: parentContainer.style.maxHeight,
+            overflow: input.style.overflow,
+            height: input.style.height
+        };
+
+        // Remove o limite de altura e rolagem do elemento principal do relatório
+        input.style.overflow = 'visible';
+        // Opcional: Remova o limite de altura do container pai (se houver)
+        if (parentContainer) {
+            parentContainer.style.height = 'auto';
+            parentContainer.style.maxHeight = 'none';
+        }
+
+        // O elemento que estamos convertendo precisa ter seu estilo de rolagem removido, 
+        // e o pai precisa permitir que ele se expanda.
+        const canvas = await html2canvas(input, {
+            scale: 2,
+            useCORS: true,
+            // Ignora a rolagem da janela principal, focando no elemento
+            scrollX: 0, 
+            scrollY: 0,
+            windowWidth: document.documentElement.offsetWidth,
+            windowHeight: document.documentElement.offsetHeight
+        });
+
+        // --- ⭐️ Passo 2: Restaurar o DOM ⭐️ ---
+        // 1. Restaurar os estilos originais do elemento e do container pai
+        input.style.overflow = originalStyle.overflow;
+        if (parentContainer) {
+            parentContainer.style.height = originalStyle.height || '100%'; // Revertendo o que foi alterado
+            parentContainer.style.maxHeight = originalStyle.maxHeight || '100%';
+        }
+
+        // --- ⭐️ Passo 3: Criar o PDF de Múltiplas Páginas ⭐️ ---
+        
+        const imgData = canvas.toDataURL('image/jpeg');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth(); // 210 mm
+        const pageHeight = pdf.internal.pageSize.getHeight(); // 297 mm
+        
+        // 1. Calcula a Altura Proporcional da imagem se ela ocupasse toda a largura do PDF
+        const originalImgHeight = (imgProps.height * pdfWidth) / imgProps.width; 
+
+        let finalPdfHeight = originalImgHeight;
+        let finalPdfWidth = pdfWidth;
+
+        // 2. Verifica se a altura da imagem é maior que a altura da página A4
+        if (originalImgHeight > pageHeight) {
+            // Se for maior, calcula a escala necessária para que a altura caiba exatamente na página (297mm)
+            const scaleFactor = pageHeight / originalImgHeight;
+            
+            // Aplica o fator de escala à altura e largura para comprimir proporcionalmente
+            finalPdfHeight = pageHeight;
+            finalPdfWidth = pdfWidth * scaleFactor;
+            
+            // Opcional: Centralizar a imagem na largura se ela foi reduzida
+            // let xOffset = (pdfWidth - finalPdfWidth) / 2;
+            // pdf.addImage(imgData, 'JPEG', xOffset, 0, finalPdfWidth, finalPdfHeight);
+            
+        }
+        
+        // 3. Adiciona a imagem ao PDF
+        // Se a imagem couber normalmente, ela usará a altura proporcional (originalImgHeight)
+        // Se a imagem for muito alta, ela usará a altura comprimida (finalPdfHeight)
+        pdf.addImage(imgData, 'JPEG', 0, 0, finalPdfWidth, finalPdfHeight);
+
+
+        // 4. Salva o PDF
+        const pdfName = `Relatorio_Seguranca_${previewEvent.id}.pdf`;
+        pdf.save(pdfName);
+
         setShowModal(false);
-    }
+    };
 
     const sendUserNotification = async() => {
         await firestoreSetUserNotification(selectedEvent.uid, "report", selectedEvent, selectedEvent.id);
@@ -68,7 +154,7 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
     return (
         <div className='fixed z-20 flex justify-center items-center top-0 bg-black/50 min-h-screen w-screen h-screen'>
             <div className='grid content-between w-200 h-165 p-5 bg-white rounded-2xl font-regular'>
-                <span className='overflow-auto scroll-smooth'>
+                <span ref={reportRef} className='overflow-auto scroll-smooth'>
                     <div className="space-y-6 p-6 bg-white text-black rounded-lg border-2 border-gray-200">
                         {/* Report Header */}
                             <div className="text-center border-b border-gray-300 pb-4">

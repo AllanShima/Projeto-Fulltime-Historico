@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import ThreeDotLoading from './ui/ThreeDotLoading';
 import UserProtocolsModalComponent from './UserProtocolsModalComponent';
 
+
 const AwaitingResponseModal = ({selectedAlert, alertVisualized}) => {
     const [safetyProtocolsModal, setSafetyProtocolsModal] = useState(false);
 
     const text = selectedAlert?.type || selectedAlert;
+
+    console.log(selectedAlert);
     return (
         <>
-            {safetyProtocolsModal && (
+            {safetyProtocolsModal && selectedAlert && (
                 <UserProtocolsModalComponent setSafetyProtocolsModal={setSafetyProtocolsModal} selectedAlert={selectedAlert}/>
             )}
             <div className='fixed flex w-full h-15 justify-center items-center top-0 bg-black/50 z-20'>
