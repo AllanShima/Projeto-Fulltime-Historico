@@ -3,6 +3,7 @@ import { BiBell, BiCamera, BiDownload, BiHistory, BiShield, BiVideo } from 'reac
 import { BsActivity, BsArrowRight } from 'react-icons/bs';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { IoBarChart } from 'react-icons/io5';
+import SoftwareIcon from './ui/SoftwareIcon';
 
 const LandingPage = () => {
   const [chosenLang, setChosenLang] = useState("pt");
@@ -38,7 +39,7 @@ const LandingPage = () => {
               {/* Botão de logar na plataforma */}
               <li>
                 <a href="/login">
-                  <div className='w-fit h-fit px-6 py-3 bg-gray-200 rounded-2xl'>
+                  <div className='w-fit h-fit px-6 py-3 bg-gray-200 rounded-2xl hover:bg-gray-300 transition'>
                       <h3 className='font-regular'>
                         Login na Plataforma
                       </h3>
@@ -69,24 +70,27 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-purple-600/10"></div>
         <div className="container mx-auto px-6 py-20 relative">
           <div className="text-center max-w-4xl mx-auto">
-            <span className="mb-4 bg-blue-600 hover:bg-blue-700">
-              <BiShield className="w-3 h-3 mr-1" />
-              Sistema de Segurança Profissional
+            <span className="flex mb-4">
+              <span className='flex mx-auto space-x-4'>
+                <SoftwareIcon title={"FullCenter"} showTitle={true}/>
+                <span className='text-2xl font-semibold text-red-600'>
+                  +
+                </span>
+                <SoftwareIcon title={"f/safe"} showTitle={true}/>
+              </span>
+
             </span>
             <h1 className="mb-6 text-slate-900">
-              Monitoramento de Câmeras de Segurança Inteligente
+              Melhoria da Experiência do Usuário e Implementação de Novas Funções entre FullCenter (Central de Monitoramento) e F/Safe
             </h1>
             <p className="mb-8 text-slate-600 max-w-2xl mx-auto">
-              Plataforma completa de vigilância com visualização em tempo real, histórico detalhado de eventos, alertas inteligentes e diagnóstico avançado de câmeras.
+              Plataforma completa de vigilância com visualização em tempo real, histórico detalhado de eventos, alertas inteligentes e diagnósticos.
             </p>
             <div className="flex gap-4 justify-center">
-              <button className="bg-blue-600 hover:bg-blue-700">
-                Acessar Dashboard
+              <a href='/login' className="flex bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg font-semibold text-xs">
+                Acessar Plataforma
                 <BsArrowRight className="ml-2 w-4 h-4" />
-              </button>
-              <button variant="outline">
-                Ver Demonstração
-              </button>
+              </a>
             </div>
           </div>
         </div>

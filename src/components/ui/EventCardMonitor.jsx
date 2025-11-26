@@ -34,6 +34,8 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
     return null; 
   }
 
+console.log(event);
+
   const [timePassed, setTimePassed] = useState('');
 
   const setStates = () => {
@@ -172,7 +174,7 @@ const EventCardMonitor = ({ event, simplified, setStateModal, stateModal, setSel
                   {event.video_available ? (
                     <li>
                       <h3>Video Disponível</h3>
-                      <h3>Tamanho: {event?.video_recorded}</h3>  
+                      <h3>Tamanho: {event?.videos_recorded}</h3>  
                     </li>
                   ) : (
                     <li>

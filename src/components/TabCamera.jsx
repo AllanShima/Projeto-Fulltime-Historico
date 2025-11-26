@@ -7,6 +7,7 @@ import { useUserContext } from '../contexts/user-context'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../services/firebase'
 import NewCameraModalComponent from './NewCameraModalComponent'
+import { events as extraEvents } from '../assets/data/TempData';
 
 const TabCamera = () => {
 
@@ -38,7 +39,8 @@ const TabCamera = () => {
        
       // Use a lógica de verificação de dados
       if (newEvents.length >= 1) {
-        setEvents(newEvents);
+        const combinedEvents = [...newEvents, ...extraEvents,];
+        setEvents(combinedEvents);
       } else {
         // Opcional: Adicionar lógica se todos os alertas forem removidos
         setEvents([]);

@@ -140,9 +140,21 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
     const formattedEndDate = eventEndDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const formattedEndTime = eventEndDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    const totalDuration = new Date(endDate - startDate);
+    // A Duração total em milissegundos:
+    const durationMs = endDate - startDate;
 
-    const formattedDuration = totalDuration.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    // 1. Calcula as horas inteiras
+    const totalHours = Math.floor(durationMs / (1000 * 60 * 60)); 
+
+    // 2. Calcula os minutos restantes
+    const totalMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    // 3. Formata os minutos para ter sempre dois dígitos (ex: 5 -> 05)
+    const formattedDurationHours = String(totalHours).padStart(2, '0');
+    const formattedDurationMinutes = String(totalMinutes).padStart(2, '0');
+
+    // 4. Cria a string final
+    const formattedDuration = `${formattedDurationHours}:${formattedDurationMinutes}`;
 
     const ClassTranslated = {
         "emergency": "emergência",
@@ -249,12 +261,15 @@ const PdfViewer = ({setShowModal, selectedEvent, sent_to_user=true}) => {
                         </div>
 
                         {/* URL video */}
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">URL do Vídeo</h3>
-                            <p className="text-xs text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
-                                {previewEvent.videos_recorded}
-                            </p>
-                        </div>
+                        {previewEvent.videos_recorded.length >= 1 && (
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">URL do Vídeo</h3>
+                                <p className="text-xs text-gray-900 leading-relaxed bg-gray-50 p-3 rounded">
+                                    {previewEvent.videos_recorded}
+                                </p>
+                            </div>                            
+                        )}
+
                         {/* Event Description */}
                         <div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-1">Descrição do Incidente</h3>

@@ -8,6 +8,7 @@ import { FaCheck } from "react-icons/fa6";
 import PdfViewer from './PdfViewer';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { events as extraEvents } from '../assets/data/TempData';
 
 const TabHistory = () => {
     const [search, setSearch] = useState("");
@@ -77,7 +78,8 @@ const TabHistory = () => {
         
         // Use a lógica de verificação de dados
         if (newEvents.length >= 1) {
-            setEvents(newEvents);
+        const combinedEvents = [...newEvents, ...extraEvents,];
+        setEvents(combinedEvents);
         } else {
             // Opcional: Adicionar lógica se todos os alertas forem removidos
             setEvents([]);
