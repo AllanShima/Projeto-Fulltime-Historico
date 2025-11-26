@@ -54,7 +54,7 @@ const UserNotificationComponent = ({setNotificationButtonModal, setPdfButtonModa
     return (
         <div className='flex flex-col pl-4 pt-4 max-h-135 w-full'>
             <span className='justify-center text-primary'>
-                <h1>Lista de Notificações ({userEvents?.length || 0})</h1>
+                <h1>Noticicações ({userEvents?.length || 0})</h1>
             </span>   
             <div className='flex-1 w-full mt-4 justify-between overflow-y-auto'>
                 <div className='w-full pr-4 space-y-3'>

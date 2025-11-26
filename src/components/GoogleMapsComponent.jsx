@@ -18,18 +18,21 @@ const MIN_ZOOM_FOR_POPUP = 15;
 
 const GeocodeComponent = ({selectedAddress="Av. Paulista, 1578, São Paulo, Brasil"}) => {
     const [coordenadas, setCoordenadas] = useState(null);
-    const [mapZoom, setMapZoom] = useState(null); // 💡 Novo estado para rastrear o zoom
+    const initialZoomValue = coordenadas ? MIN_ZOOM_FOR_POPUP : 3;
+    const [mapZoom, setMapZoom] = useState(initialZoomValue); // Inicializa com o valor padrão
     const apiLoaded = useApiIsLoaded(); 
     // ... outros estados (currentEvents, userContacts, monitorContacts) ...
 
     useEffect(() => {
         // ... (sua lógica de Geocoding para obter setCoordenadas) ...
         if (apiLoaded && selectedAddress) {
-            console.log("Atualizou??");
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ address: selectedAddress }, (results, status) => {
                 if (status === 'OK' && results.length > 0) {
                     const location = results[0].geometry.location;
+
+                    // 💡 NOVO: Redefina o zoom para o valor padrão ao carregar novas coordenadas
+                    setMapZoom(MIN_ZOOM_FOR_POPUP);
                     
                     setCoordenadas({
                         lat: location.lat(),
@@ -76,13 +79,12 @@ const GeocodeComponent = ({selectedAddress="Av. Paulista, 1578, São Paulo, Bras
 
             {/* 2. O Mapa (Altura Flexível: flex-1) */}
             <Map
-                // 💡 Adicione a classe flex-1 para ocupar o espaço restante
                 className='flex-1' 
                 center={center}
-                zoom={initialZoom}
-                gestureHandling='greedy'
+                zoom={mapZoom}
+                gestureHandling='cooperative'
                 disableDefaultUI
-                onZoomChanged={handleMapZoomChange} 
+                onZoomChanged={handleMapZoomChange}
             >
                 <Marker position={coordenadas}>
                     {/* O InfoWindow é o nosso "Popup". 

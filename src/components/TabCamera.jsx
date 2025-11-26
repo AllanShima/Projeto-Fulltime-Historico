@@ -39,7 +39,7 @@ const TabCamera = () => {
        
       // Use a lógica de verificação de dados
       if (newEvents.length >= 1) {
-        const combinedEvents = [...newEvents, ...extraEvents,];
+        const combinedEvents = [...newEvents, ...extraEvents];
         setEvents(combinedEvents);
       } else {
         // Opcional: Adicionar lógica se todos os alertas forem removidos
