@@ -167,8 +167,6 @@ export const firestoreSetMonitorEvent = async(event) => {
 
     const alertType = sevOptions[event.type]; // Assumindo que 'sevOptions' é definido
 
-    let additionalDoc;
-
     // 2. Cria o documento sem o ID no campo 'id'
     // Deixe o campo 'id' fora ou como null temporariamente se preferir.
     // Eu o removi abaixo para simplificar a criação inicial.
@@ -359,4 +357,35 @@ export const firebaseSetMessages = async(selectedContact, textareaValue, userSta
     } catch (e) {
         console.error("Erro ao adicionar a mensagem: ", e);
     }
+}
+
+// Guardando nova câmera 
+export const firestoreSetNewCamera = async(camera) => {
+  try {
+    // se por algum motivo não existe algum alerta selecionado
+    if (!camera){
+      throw new Error("Nenhuma câmera detectada!");
+    }
+    // Defining the ID of the message
+    // 1. Define the reference to the subcollection
+    const cameraCollectionRef = collection(db, "monitor_cameras");
+
+    const docRef = doc(cameraCollectionRef);
+    const documentId = docRef.id;
+
+    // Informações para notificação do monitor:
+    await setDoc(docRef, {
+      id: documentId, 
+      imageUrl: camera.imageUrl,
+      name: camera.name,
+      address: camera.address,
+      status: camera.status,
+      position: camera.position,
+      createdAt: new Date()    
+    });
+    // id é o id do nome do documento inserido no banco, n o id do doc em si
+    console.log("Alerta Atual (current_alert) inserido no db...");
+  } catch (e) {
+    console.error("Erro ao adicionar o alerta atual: ", e);
+  }
 }

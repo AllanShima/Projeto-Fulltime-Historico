@@ -146,16 +146,16 @@ const TabHistory = () => {
                             </span>
                             
                             <span className='flex w-1/4 space-x-4 text-xs text-primary'>
-                                <span className='flex flex-col w-1/2 h-full ml-4'>
+                                <div className='flex flex-col w-1/2 h-full ml-4 relative'>
                                     <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className='w-full h-full'>
                                         <div className='flex h-full pl-4 pr-4 items-center rounded-md bg-gray-100 justify-between'>
                                             <h3>{currentType}</h3>
                                             <span><IoIosArrowDown/></span>
-                                        </div>                            
+                                        </div>
                                     </button>     
                                     {showTypeDropdown && (
-                                        <div className='flex fixed z-30 flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
-                                            <ul className='p-0.5'>
+                                        <div className='flex z-30 mt-9 w-full absolute'>
+                                            <ul className='flex flex-col w-full h-fit bg-gray-100 rounded-lg shadow-xl p-2'>
                                                 {types.map(type => (
                                                     <li>
                                                         <button onClick={() => SelectedType(type)} className='w-full p-2 hover:bg-gray-300 transition rounded-md'>
@@ -171,8 +171,8 @@ const TabHistory = () => {
                                             </ul>
                                         </div>                                          
                                     )}                             
-                                </span>
-                                <span className='flex flex-col w-1/2 h-full'>
+                                </div>
+                                <div className='flex flex-col w-1/2 h-full relative'>
                                     <button onClick={() => setShowPropDropdown(!showPropDropdown)} className='w-full h-full'>
                                         <div className='flex h-full pl-4 pr-4 items-center rounded-md bg-gray-100 justify-between'>
                                             <h3>{currentProp}</h3>
@@ -180,8 +180,8 @@ const TabHistory = () => {
                                         </div>                            
                                     </button>
                                     {showPropDropdown && (
-                                        <div className='flex fixed z-30 flex-col mt-12 w-fit h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
-                                            <ul className='w-full h-full space-y-0.5'>
+                                        <div className='flex z-30 absolute mt-9 w-full'>
+                                            <ul className='flex flex-col w-full h-fit space-y-0.5 bg-gray-100 rounded-lg shadow-xl p-2'>
                                                 {severities.map(severity => (
                                                     <li>
                                                         <button onClick={() => SelectedProp(severity)} className='w-full p-2 hover:bg-gray-300 transition rounded-md'>
@@ -197,7 +197,7 @@ const TabHistory = () => {
                                             </ul>
                                         </div>                                            
                                     )}                                        
-                                </span>
+                                </div>
                             </span>
                         </span>
                     </div>

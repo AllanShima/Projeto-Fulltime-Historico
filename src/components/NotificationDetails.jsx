@@ -103,8 +103,8 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
         <div className='fixed flex justify-center items-center top-0 bg-black/50 z-40 min-h-screen w-screen h-screen'>
             <div className='grid content-between w-fit h-fit bg-white rounded-2xl font-regular'>
             {/* Alert Details */}
-                <div className='grid w-fit h-155 items-center'>
-                    <div className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto px-7 py-3">
+                <div className='grid w-200 h-155 items-center'>
+                    <div className="sm:max-w-[1000px] max-h-[85vh] overflow-y-auto px-7 py-3">
                         <span className='flex justify-between'>
                             <div>
                                 <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className='flex justify-between px-10 w-full h-10'>
+                        <div className='flex justify-between w-full h-10'>
                             {notification.camera == null && !offImmediatly && (
                                 <span className='flex space-x-2'>
                                     <span className='relative flex flex-col w-full h-full space-x-2'>
@@ -254,14 +254,13 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
                                         </button>
                                     </span>
                                     <button onClick={sendCameraAccess} className={`flex w-full px-4 h-full rounded-lg text-white cursor-pointer ${hoverStyle1}`}>
-                                        <span className='flex items-center w-30 text-sm'>
+                                        <span className='flex items-center w-35 text-xs justify-center'>
                                            Enviar acesso à câmera 
                                         </span>
-                                        
                                     </button>        
                                 </span>   
                             )}
-                            <button onClick={() => setModalState(false)} className='w-35 ml-auto mr-auto h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
+                            <button onClick={() => setModalState(false)} className='w-20 h-full bg-gray-200 rounded-lg hover:bg-gray-300 transition'>
                                 <p className='text-gray-700'>
                                     Voltar
                                 </p>

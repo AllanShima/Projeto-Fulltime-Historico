@@ -4,12 +4,14 @@
 #### Unimar BCC - TM4, A 2025
 
 #### Integrantes:
-- Allan Shinhama (Líder): Encarregado pela ideia, desenvimento front + montagem dos outros componentes.
+- Allan Shinhama (Líder): Encarregado pela ideia, desenvimento front + montageme encaixe dos outros componentes.
 - Emanuelly: Encarregada pela ingessão da webcam na plataforma.
 - Gabriel Claus: Elaboração dos Protocolos de Segurança e Exportação em Pdf;
 - Carlos Eduardo: Auxiliar com os testes e ideias;
 - Maria Eduarda: Encarregada do código boilerplate de CRUD do Backend no Firebase;
 - Enzo Brumatee: Encarregado do código boilerplate de CRUD do Backend no Firebase;
+
+Apresentação realizada dia 26/11/25 - antes da versão final.
 
 ### Extensões do VSCode p projeto:
 - ES7 React/Redux/GraphQL/React-Native snippets;
