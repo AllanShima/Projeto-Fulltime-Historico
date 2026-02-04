@@ -63,7 +63,7 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
     const [showCamerasDropdown, setShowCamerasDropdown] = useState(false);
     const [cameraOption, setCameraOption] = useState({});
 
-    const [offImmediatly, setOffImmediatly] = useState(false);
+    const [disableUserCameraOptions, setDisableUserCameraOptions] = useState(false);
     const [cameras, setCameras] = useState();
 
     const [timePassed, setTimePassed] = useState('');
@@ -132,7 +132,7 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
     const sendCameraAccess = async() => {
         await firestoreSetUserNotification(notification.uid, "live_camera", null, notification.monitor_id, cameraOption);
         await firestoreUpdateCurrentEventCameraByUid(notification.uid, cameraOption);
-        setOffImmediatly(true)
+        setDisableUserCameraOptions(true)
         window.alert("Acesso à camera dada ao usuário...");
     }
 
@@ -250,7 +250,7 @@ const NotificationDetails = ({setModalState, selectedNotification}) => {
 
                         {/* Action Buttons */}
                         <div className='flex justify-between w-full h-10'>
-                            {notification.camera == null && !offImmediatly && (
+                            {notification.camera == null && !disableUserCameraOptions && (
                                 <span className='flex space-x-2'>
                                     <span className='relative flex flex-col w-full h-full space-x-2'>
                                         {/* Dropdown Container (Controlado por showCamerasDropdown) */}

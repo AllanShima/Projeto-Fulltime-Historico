@@ -16,16 +16,16 @@ const UserProtocolsModalComponent = ({setSafetyProtocolsModal, selectedAlert}) =
   
   return (
     <div className='fixed flex justify-center items-center top-0 bg-black/50 z-40 min-h-screen w-screen h-screen'>
-      <div className='grid content-between w-fit h-fit bg-white rounded-2xl font-regular'>
-      <span className='flex justify-end px-2 mt-2'>
-        <button onClick={() => setSafetyProtocolsModal(false)}>
-          <span className='flex w-fit h-fit p-1 justify-center items-center rounded-full hover:bg-gray-200 transition'>
-            <IoClose className='w-5 h-5 text-gray-400'/>              
-          </span>
-        </button>
-      </span>
+      <div className='relative grid w-fit h-11/12 bg-white rounded-2xl font-regular'>
+        <span className='absolute flex w-full justify-end p-2 px-2 mt-0.5'>
+          <button onClick={() => setSafetyProtocolsModal(false)}>
+            <span className='flex w-fit h-fit p-1 justify-center items-center rounded-full hover:bg-gray-200 transition'>
+              <IoClose className='w-5 h-5 text-gray-400'/>              
+            </span>
+          </button>
+        </span>
       {/* Alert Details */}
-        <div className='grid w-fit h-fit items-center'>
+        <div className='grid w-fit h-full items-center'>
           <div className="sm:max-w-[600px] pb-7 px-7">
             <div className='pb-3'>
               <div className="flex items-center gap-2">
@@ -39,9 +39,9 @@ const UserProtocolsModalComponent = ({setSafetyProtocolsModal, selectedAlert}) =
             <hr className='text-gray-500'/>
             <div className="space-y-4 pt-3">
               {/* Recommended Actions */}
-              <div className="space-y-2">
+              <div className="">
                 <h4 className="font-semibold text-md text-red-700">Protocolos de Segurança - {text}</h4>
-                <ul className="space-y-1 text-sm max-h-[50vh] overflow-y-auto ">
+                <ul className="space-y-1 text-sm max-h-[67vh] overflow-y-auto ">
                     {selectedAlertTextList.map((text, index) => (
                       <li key={index}>
                         • {text}
