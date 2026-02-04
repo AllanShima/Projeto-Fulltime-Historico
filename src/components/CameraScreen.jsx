@@ -29,12 +29,12 @@ const CameraScreen = ({ camera }) => {
         <>
             <div className="relative w-1/2 rounded-xl overflow-hidden"
                  style={{
-                     // backgroundImage: `url(${camera.imageUrl})`,
-                     // backgroundSize: 'cover',
-                     // backgroundPosition: 'center',
-                     // backgroundRepeat: 'no-repeat',
-                     overflow: 'hidden',
-                     zIndex: 0
+                    // backgroundImage: `url(${camera.imageUrl})`,
+                    // backgroundSize: 'cover',
+                    // backgroundPosition: 'center',
+                    // backgroundRepeat: 'no-repeat',
+                    overflow: 'hidden',
+                    zIndex: 0
                  }}>
                 {/* {console.log(camera)} */}
                 <LocalCamera viewArea={camera.position} />

@@ -378,13 +378,13 @@ export const firestoreSetNewCamera = async(camera) => {
       id: documentId, 
       imageUrl: camera.imageUrl,
       name: camera.name,
-      address: camera.address,
+      location: camera.location,
       status: camera.status,
       position: camera.position,
       createdAt: new Date()    
     });
     // id é o id do nome do documento inserido no banco, n o id do doc em si
-    console.log("Alerta Atual (current_alert) inserido no db...");
+    console.log("Inserindo a nova câmera no db...");
   } catch (e) {
     console.error("Erro ao adicionar o alerta atual: ", e);
   }

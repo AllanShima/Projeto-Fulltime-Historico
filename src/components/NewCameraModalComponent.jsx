@@ -34,10 +34,11 @@ const NewCameraModalComponent = ({setStateModal}) => {
   ]
   
   const setNewCamera = () => {
+    const image = imageUrl == '' ? null : imageUrl;
     const cameraData = {
-      imageUrl: imageUrl,
+      imageUrl: image,
       name: cameraName,
-      address: cameraAddress,
+      location: cameraAddress,
       status: statusSelected,
       position: selectedCameraPos
     }

@@ -10,7 +10,7 @@ const CameraCard = ({ camera, selectedId }) => {
     return (
         <div className={`flex items-center w-full h-15 rounded-xl bg-white ${selected} ${hoverClass}`}>
             <span className='flex w-full h-10 text-primary'>
-                {camera.imageUrl == "" ? 
+                {camera.imageUrl == null ? 
                     <span className='flex ml-3 w-14 rounded-lg justify-center items-center bg-gray-200'>
                         <BsCameraVideo/>
                     </span> : 

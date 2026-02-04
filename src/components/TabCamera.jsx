@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import SidebarMonitor from './SidebarMonitor'
 import HomeCam from './HomeCam'
-import {cameras as tempCameras} from '../assets/data/TempData'
+// import {cameras as tempCameras} from '../assets/data/TempData'
 import { useUserContext } from '../contexts/user-context'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../services/firebase'
@@ -10,12 +10,9 @@ import NewCameraModalComponent from './NewCameraModalComponent'
 import { events as extraEvents } from '../assets/data/TempData';
 
 const TabCamera = () => {
-
-  const {userState, userDispatch} = useUserContext();
-
   const [events, setEvents] = useState([]);
 
-  const [cameras, setCameras] = useState(tempCameras);
+  const [cameras, setCameras] = useState([]);
   const [selectedCam, setSelectedCam] = useState("1");
 
   const [newCameraModal, setNewCameraModal] = useState(false);
@@ -53,6 +50,38 @@ const TabCamera = () => {
     return () => {
       console.log("Listener de monitor_events cancelado.");
       unsubscribeAlerts();
+    };
+  }, []);
+
+  // Este useEffect cuida da atualização recorrente das cameras criadas pelo monitor
+  useEffect(() => {
+    // 1. Crie a referência para a Coleção 'monitor_cameras'
+    const camerasCollectionRef = collection(db, "monitor_cameras"); 
+    const qCameras = query(camerasCollectionRef); // A query para a coleção inteira
+
+    // - INICIA O OUVINTE DE "monitor_cameras"
+    const unsubscribeCameras = onSnapshot(qCameras, (snapshot) => {
+      // console.log("Ouvinte de monitor_cameras em andamento!");
+      
+      // 3. Mapeia todos os documentos na coleção
+      const newCameras = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+       
+      // Use a lógica de verificação de dados
+      if (newCameras.length >= 1) {
+        setCameras([...newCameras]);
+        setSelectedCam(newCameras[0].id);
+      }
+    }, (error) => {
+      console.error("Erro no listener de Alertas:", error);
+    });
+
+    // 4. CLEANUP CRUCIAL para o listener
+    return () => {
+      // console.log("Listener de monitor_cameras cancelado.");
+      unsubscribeCameras();
     };
   }, []);
 

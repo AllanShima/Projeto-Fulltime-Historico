@@ -1,22 +1,13 @@
+// Seção elaborada por Emanuelly
+// Objetivo: emitir alguma imagem na posição das câmeras
+
+// ====================------------------====================
+
 import React, {useEffect, useRef, useState, useMemo, useCallback} from "react";
 
 // --- Imports e Configuração Firebase ---
-import { initializeApp } from 'firebase/app';
+import { app } from "../services/firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-// 🚨 MODIFIQUE AQUI: Coloque a sua configuração REAL do Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAC3_QCymO3bSL53gSohMWGk3G9mkotOOg",
-  authDomain: "fulltime-historico.firebaseapp.com",
-  projectId: "fulltime-historico",
-  storageBucket: "fulltime-historico.firebasestorage.app",
-  messagingSenderId: "888352218511",
-  appId: "1:888352218511:web:716be04e4fc99a649bbffa"
-};
-
-// Variáveis globais de ambiente (MANDATÓRIO)
-// AGORA PEGA O APP ID DIRETAMENTE DO OBJETO DE CONFIGURAÇÃO ACIMA OU UM VALOR SEGURO
-const appId = firebaseConfig.appId || 'default-app-id';
 
 // --- REINSTALANDO SUA IMPORTAÇÃO ORIGINAL ---
 // O sistema de build pode reclamar se este arquivo não estiver presente, mas 
@@ -26,7 +17,6 @@ import { firestoreUpdateCurrentEventVideosByUid, firestoreUpdateMonitorVideoById
 import { firestoreGetAllCurrentAlerts, firestoreGetAllMonitorEvents } from "../services/api/FirebaseGetFunctions";
 import { db } from "../services/firebase";
 import { collection, onSnapshot, query } from "firebase/firestore";
-
 
 // --- Ícones substituidos por SVGs inline ---
 
@@ -92,12 +82,11 @@ const LocalCamera = ({ viewArea = "center" }) => {
     
     // Inicialização do Firebase Storage
     const storageInstance = useMemo(() => {
-        if (!firebaseConfig) {
+        if (!app) {
             setDisabledReason("Configuração do Firebase ausente.");
             return null;
         }
         try {
-            const app = initializeApp(firebaseConfig, appId);
             // Verifica se as chaves do config são válidas antes de pegar o Storage
             if (!app.options.projectId) {
                 setDisabledReason("Configuração do Firebase Inválida.");
@@ -109,7 +98,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
             setDisabledReason("Erro ao inicializar Firebase Storage.");
             return null;
         }
-    }, [firebaseConfig, appId]);
+    }, [app]);
 
 
     const areaConfigs = {
@@ -125,9 +114,11 @@ const LocalCamera = ({ viewArea = "center" }) => {
 
     // --- 1. Inicialização da Câmera e Cleanup ---
     useEffect(() => {
-        // Inclui audio: true para captura de áudio
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+
+        // audio: true para captura de áudio (dando erro)
+        navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
+                
                 streamRef.current = stream;
                 videoRef.current.srcObject = stream;
                 setIsCameraActive(true); // Câmera OK
@@ -187,7 +178,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
 
         setIsUploading(true);
         try {
-            const filename = `videos/${appId}/recording-${Date.now()}.webm`;
+            const filename = `videos/${app}/recording-${Date.now()}.webm`;
             const storageRef = ref(storageInstance, filename);
 
             const uploadTask = await uploadBytes(storageRef, videoBlob, {
@@ -333,7 +324,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
 
     return (
         <div className="relative w-full h-full rounded-xl shadow-lg bg-gray-900 overflow-hidden">
-            <canvas ref={canvasRef} className="hidden" /> 
+            <canvas ref={canvasRef} /> 
             
             <video
                 ref={videoRef}
@@ -403,7 +394,7 @@ const LocalCamera = ({ viewArea = "center" }) => {
                                 </a>
                             )}
                         </div>
-                    }                      
+                    } 
                 </>
             )}
 

@@ -245,53 +245,53 @@ const LandingPage = () => {
             </div>
 
             <div className="flex h-20 justify-center gap-12 mx-auto px-30 mb-12">
-              <div className="h-full p-6 rounded-xl bg-slate-200 border-slate-700">
+              <div className="h-full p-6 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://vite.org/logo-large.png" 
-                alt="jsPdf logo" 
+                alt="vite logo" 
                 className='h-full'
                 />
               </div>
-              <div className="h-full p-2 rounded-xl bg-slate-200 border-slate-700">
+              <div className="h-full p-2 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://1000logos.net/wp-content/uploads/2024/09/Figma-Logo.png" 
-                alt="jsPdf logo" 
+                alt="figma logo" 
                 className='h-full'
                 />
               </div>
-              <div className="h-full p-6 rounded-xl bg-slate-200 border-slate-700">
+              <div className="h-full p-6 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Tailwind_CSS_logo_with_dark_text.svg/2560px-Tailwind_CSS_logo_with_dark_text.svg.png" 
-                alt="jsPdf logo" 
+                alt="tailwind logo" 
                 className='h-full'
                 />
               </div>
-              <div className="w-fit h-full p-6 rounded-xl bg-slate-200 border-slate-700">
+              <div className="w-fit h-full p-6 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/New_Firebase_logo.svg/2560px-New_Firebase_logo.svg.png" 
-                alt="jsPdf logo" 
+                alt="firebase logo" 
                 className='h-full'
                 />
               </div>
-              <div className="w-fit h-full p-4 rounded-xl bg-slate-800 border-slate-700">
+              <div className="w-fit h-full p-4 rounded-xl bg-slate-800 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://b73-1056645.smushcdn.com/1056645/wp-content/uploads/2024/01/React-Js-logo.png?lossy=2&strip=1&webp=1" 
-                alt="jsPdf logo" 
+                alt="react logo" 
                 className='h-full'
                 />
               </div>
             </div>
             <div className="flex h-20 justify-center gap-12 mx-auto px-30">
-              <div className="w-fit h-full p-2 rounded-xl bg-slate-200 border-slate-700">
+              <div className="w-fit h-full p-2 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
                 src="https://pyjun01.github.io/react-google-map-wrapper/_astro/logo.l2bwXLJ9.svg" 
-                alt="jsPdf logo" 
+                alt="react google maps logo" 
                 className='h-full'
                 />
               </div>
-              <div className="w-fit h-full p-6 rounded-xl bg-slate-200 border-slate-700">
+              <div className="w-fit h-full p-6 rounded-xl bg-slate-200 border-slate-700 hover:shadow-xl hover:scale-105 transition duration-200">
                 <img 
-                src="https://camo.githubusercontent.com/ec89146b14eaa5632043bda5d5ae13ddfca563718c4b9ec01a44ce15acbbb7f6/68747470733a2f2f706172616c6c2e61782f706172616c6c61782d323031362f696d672f7376672f6a737064662d6c6f676f2e737667" 
+                src="https://miro.medium.com/v2/resize:fit:610/1*AK-jZW4skGC5BzP9Rj0Hfw.png" 
                 alt="jsPdf logo" 
                 className='h-full'
                 />
@@ -305,7 +305,7 @@ const LandingPage = () => {
           <div className="text-center mb-12">
             <h2 className="mb-4 text-slate-900">Funcionamento FullCenter</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              Navegação simples e intuitiva para monitoramento eficiente
+              Etapas para navegação simples e intuitiva para o monitoramento eficiente
             </p>
           </div>
 
@@ -355,7 +355,7 @@ const LandingPage = () => {
                   <div>
                     <h3 className="mb-2 text-slate-900">Dropdown de Notificações</h3>
                     <p className="text-slate-600">
-                      Ao clicar no sino localizado em cima do canto direito, mostrará os alertas ativados atualmente
+                      Ao pressionar o sino localizado acima no canto direito, mostrará os alertas ativados atualmente
                     </p>
                   </div>
                 </div>
@@ -397,7 +397,7 @@ const LandingPage = () => {
           <div className="text-center mb-12">
             <h2 className="mb-4 text-slate-900">Funcionamento F/Safe</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              Comunicação direta com o monitor
+              Etapas para uma comunicação direta com o monitor e envio dos alertas
             </p>
           </div>
 
@@ -423,7 +423,7 @@ const LandingPage = () => {
                   <div>
                     <h3 className="mb-2 text-slate-900">Opções de Alertas</h3>
                     <p className="text-slate-600">
-                      Clique no tipo de alerta em necessidade para enviar um sinal ao monitor
+                      Escolha e pressione o tipo de alerta em necessidade para enviar um sinal ao monitor
                     </p>
                   </div>
                 </div>
