@@ -73,18 +73,6 @@ const HeaderMonitor = () => {
       state: emailSwitchState
     },
     {
-      id: "VS", 
-      text: "Alterar a duração dos vídeos", 
-      setState: setShowVideoSettingsDropdown, 
-      state: showVideoSettingsDropdown, 
-      input: videoAmountInSeconds, 
-      setInput: setVideoAmountInSeconds, 
-      isFocused: isVideoInputFocused, 
-      setIsFocused: setIsVideoInputFocused,
-      placeholder: "Duração em segundos",
-      function: ConfigureVideoAmount
-    },
-    {
       id: "PFP", 
       text: "Mudar imagem de perfil", 
       setState: setShowPfpDropdown,  
@@ -228,10 +216,15 @@ const HeaderMonitor = () => {
 
       <div className='font-regular grid grid-flow-col px-6 content-center items-center justify-between space-x-0 top-0 w-full h-18 border-b-1 text-gray-300'>
         {/* FullCenter logo */}
-        <div className='flex content-center mt-auto mb-auto w-40 space-x-2'>
+        <div className='flex content-center mt-auto mb-auto w-fit space-x-2'>
             <img src="/icon.png" alt="Fulltime logo" className='w-8 rounded-sm'/>
             <h1 className='mt-auto mb-auto font-regular text-primary'>
               FullCenter
+            </h1>
+        </div>
+        <div className='flex mt-auto mb-auto w-fit'>
+            <h1 className='mt-auto mb-auto font-light text-gray-300'>
+              (Protótipo)
             </h1>
         </div>
         <span className='flex w-180 h-fit p-1 space-x-1 rounded-xl text-sm bg-gray-200'>

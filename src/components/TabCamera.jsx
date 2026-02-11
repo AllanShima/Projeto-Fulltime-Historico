@@ -73,6 +73,7 @@ const TabCamera = () => {
       if (newCameras.length >= 1) {
         setCameras([...newCameras]);
         setSelectedCam(newCameras[0].id);
+        setRemainingCams(newCameras.filter(cam => cam.id !== newCameras[0].id));
       }
     }, (error) => {
       console.error("Erro no listener de Alertas:", error);
@@ -102,7 +103,7 @@ const TabCamera = () => {
         selectedCam={selectedCam} 
         setSelectedCam={setSelectedCam}
         setRemainingCams={setRemainingCams}
-        setNewCameraModal={setNewCameraModal}
+        setNewCameraModal={setNewCameraModal} 
         />
         <HomeCam cameras={cameras} selectedCam={selectedCam} remainingCams={remainingCams}/>
       </div>    

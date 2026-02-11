@@ -30,8 +30,7 @@ const SidebarMonitor = ({cameras, events, selectedCam, setSelectedCam, setRemain
               <h1>Camera List ({cameras.filter(c => c.status == "online").length} online)</h1>
               <button 
               onClick={() => setNewCameraModal(true)}
-              className='flex items-center rounded-md bg-red-500 text-white text-xs font-bold px-2 hover:cursor-pointer'
-              >
+              className='flex items-center rounded-md bg-red-500 text-white text-xs font-bold px-2 hover:cursor-pointer'>
                 +
               </button>
             </span>   

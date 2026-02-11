@@ -40,14 +40,14 @@ const SettingsDropdown = ({ MenuOptions }) => {
                 </span>
               </span>
             </button>       
-            {(option.id === "VS" || option.id === "PFP") && (option.state) && (
+            {(option.id === "PFP") && (option.state) && (
               <div className='flex w-full h-fit p-2 text-xs'>
                 <span className={`
                       flex items-center w-full h-8 outline-2 outline-gray-300 focus:shadow-lg transition duration-100 rounded-xs 
                       ${option.isFocused === true ? ("outline-2 outline-gray-600") : ("")}`
                     }>
                     <input 
-                      className={`w-full pl-4 focus:outline-none`} 
+                      className={`w-full pl-4 focus:outline-none text-gray-500`} 
                       onFocus={() => option.setIsFocused(true)} 
                       onBlur={() => option.setIsFocused(false)} 
                       type="text" 

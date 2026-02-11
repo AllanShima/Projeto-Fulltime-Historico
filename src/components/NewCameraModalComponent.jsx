@@ -114,8 +114,8 @@ const NewCameraModalComponent = ({setStateModal}) => {
                 {cameraPosDropdown && (
                     <div className='absolute bottom-full flex z-30 flex-col w-full h-fit p-3 bg-gray-100 rounded-lg shadow-xl'>
                         <ul className='w-full h-full space-y-0.5'>
-                            {CameraPositions.map(position => (
-                                <li>
+                            {CameraPositions.map((position, index) => (
+                                <li key={index}>
                                     <button onClick={() => setSelectedCameraPos(position)} className='w-full p-2 hover:bg-gray-300 transition rounded-md'>
                                         <span className='flex items-center justify-between'>
                                             <h3 className='text-left text-md font-regular'>{position}</h3>  
